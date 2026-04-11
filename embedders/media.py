@@ -43,42 +43,69 @@ class MediaEmbedder:
         self, html_content: str, markdown_dir: Path
     ) -> Tuple[str, int]:
         """
-        HTMLの<img>タグをBase64埋め込みデータに置換
+        HTMLの<img>タグおよび<situ-ab-test>のメディアをBase64データに置換
 
         Args:
             html_content: 変換対象のHTML文字列
             markdown_dir: Markdownファイルが存在するディレクトリ
 
         Returns:
-            (変換後のHTML, 埋め込み画像数)
+            (変換後のHTML, 埋め込みメディア数)
         """
-        # パターン: <img ...src="..." ... > 形式の画像タグを検索
-        pattern = re.compile(HTML_IMG_TAG_PATTERN, re.IGNORECASE)
+        media_count = 0
 
-        image_count = 0
+        def resolve_and_encode(src_value: str) -> str:
+            nonlocal media_count
+            if src_value.startswith(("http://", "https://", "data:")):
+                return src_value
 
-        def replacer(match: re.Match) -> str:
-            nonlocal image_count
+            media_path = (markdown_dir / src_value).resolve()
+            if not media_path.exists():
+                self.logger.warning(f"メディアファイルが見つかりません: {src_value}")
+                return src_value
+
+            try:
+                base64_data = self.encode_media_to_base64(media_path)
+                mime_type = self.mime_registry.get_mime_type(media_path)
+                media_count += 1
+                self.logger.debug(f"埋め込み: {media_path.name} ({mime_type})")
+                return f"data:{mime_type};base64,{base64_data}"
+            except ImageEmbeddingError as e:
+                self.logger.error(f"メディア埋め込み失敗: {e}")
+                return src_value
+
+        # 1. <img> タグの処理
+        img_pattern = re.compile(HTML_IMG_TAG_PATTERN, re.IGNORECASE)
+
+        def img_replacer(match: re.Match) -> str:
             before_src = match.group(1)
             src_value = match.group(2)
             after_src = match.group(3)
 
-            # 相対パスを絶対パスに解決
-            image_path = (markdown_dir / src_value).resolve()
+            new_src = resolve_and_encode(src_value)
+            return f'<img {before_src}src="{new_src}"{after_src}>'
 
-            if not image_path.exists():
-                self.logger.warning(f"画像ファイルが見つかりません: {src_value}")
-                return match.group(0)
+        html_content = img_pattern.sub(img_replacer, html_content)
 
-            try:
-                base64_data = self.encode_media_to_base64(image_path)
-                mime_type = self.mime_registry.get_mime_type(image_path)
-                image_count += 1
-                self.logger.debug(f"埋め込み: {image_path.name} ({mime_type})")
-                return f'<img {before_src}src="data:{mime_type};base64,{base64_data}"{after_src}>'
-            except ImageEmbeddingError as e:
-                self.logger.error(f"画像埋め込み失敗: {e}")
-                return match.group(0)
+        # 2. <situ-ab-test> タグの処理
+        # format: <situ-ab-test title="..." src-a="..." src-b="..."></situ-ab-test>
+        ab_test_pattern = re.compile(
+            r'(<situ-ab-test\s+[^>]*?src-a=")([^"]+)(".*?src-b=")([^"]+)("[^>]*></situ-ab-test>)',
+            re.IGNORECASE,
+        )
 
-        result = pattern.sub(replacer, html_content)
-        return result, image_count
+        def ab_test_replacer(match: re.Match) -> str:
+            part1 = match.group(1)
+            src_a = match.group(2)
+            part3 = match.group(3)
+            src_b = match.group(4)
+            part5 = match.group(5)
+
+            new_src_a = resolve_and_encode(src_a)
+            new_src_b = resolve_and_encode(src_b)
+
+            return f"{part1}{new_src_a}{part3}{new_src_b}{part5}"
+
+        html_content = ab_test_pattern.sub(ab_test_replacer, html_content)
+
+        return html_content, media_count
