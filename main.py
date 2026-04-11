@@ -20,6 +20,25 @@ from typing import Dict, List, Optional, Tuple
 
 import markdown
 
+from constants import (
+    CODE_BLOCK_CSS_FILE,
+    COPY_BUTTON_JS_FILE,
+    DEFAULT_MIME_TYPE,
+    DEFAULT_TEMPLATE_PATH,
+    DEFAULT_TEXT_ENCODING,
+    HIGHLIGHT_JS_CDN_CSS,
+    HIGHLIGHT_JS_CDN_JS,
+    HTML_HEAD_CLOSING_TAG,
+    HTML_IMG_TAG_PATTERN,
+    HTML_OPENING_TAG,
+    HTML_TABLE_STYLE_PATTERN,
+    LOG_DATE_FORMAT,
+    LOG_FORMAT,
+    MARKDOWN_EXTENSIONS,
+    MIME_TYPE_REGISTRY,
+    TEMPLATES_DIR,
+)
+
 # ============================================================================
 # Logging Configuration
 # ============================================================================
@@ -47,8 +66,8 @@ def configure_logging(verbose: bool = False) -> logging.Logger:
 
     # ログフォーマッタ
     formatter = logging.Formatter(
-        "%(asctime)s | %(levelname)-8s | %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
+        LOG_FORMAT,
+        datefmt=LOG_DATE_FORMAT,
     )
     console_handler.setFormatter(formatter)
 
@@ -129,16 +148,7 @@ class ConversionStats:
 class MIMETypeRegistry:
     """ファイル拡張子とMIMEタイプのマッピング管理"""
 
-    DEFAULT_REGISTRY = {
-        ".png": "image/png",
-        ".jpg": "image/jpeg",
-        ".jpeg": "image/jpeg",
-        ".gif": "image/gif",
-        ".webp": "image/webp",
-        ".svg": "image/svg+xml",
-        ".bmp": "image/bmp",
-        ".tiff": "image/tiff",
-    }
+    DEFAULT_REGISTRY = MIME_TYPE_REGISTRY
 
     def __init__(self, registry: Optional[Dict[str, str]] = None):
         self.registry = registry or self.DEFAULT_REGISTRY.copy()
@@ -146,7 +156,7 @@ class MIMETypeRegistry:
     def get_mime_type(self, file_path: Path) -> str:
         """ファイルパスからMIMEタイプを取得"""
         ext = file_path.suffix.lower()
-        return self.registry.get(ext, "application/octet-stream")
+        return self.registry.get(ext, DEFAULT_MIME_TYPE)
 
 
 # ============================================================================
@@ -160,7 +170,7 @@ class FileHandler:
     def __init__(self, logger: logging.Logger):
         self.logger = logger
 
-    def read_text(self, file_path: Path, encoding: str = "utf-8") -> str:
+    def read_text(self, file_path: Path, encoding: str = DEFAULT_TEXT_ENCODING) -> str:
         """テキストファイルを読み込む"""
         try:
             self.logger.debug(f"読み込み中: {file_path}")
@@ -185,7 +195,7 @@ class FileHandler:
             ) from e
 
     def write_text(
-        self, file_path: Path, content: str, encoding: str = "utf-8"
+        self, file_path: Path, content: str, encoding: str = DEFAULT_TEXT_ENCODING
     ) -> None:
         """テキストファイルを書き込む"""
         try:
@@ -234,7 +244,7 @@ class ImageEmbedder:
             (変換後のHTML, 埋め込み画像数)
         """
         # パターン: <img ...src="..." ... > 形式の画像タグを検索
-        pattern = re.compile(r'<img\s+([^>]*?)src="([^"]+)"([^>]*)/?>', re.IGNORECASE)
+        pattern = re.compile(HTML_IMG_TAG_PATTERN, re.IGNORECASE)
 
         image_count = 0
 
@@ -316,7 +326,7 @@ class CSSEmbedder:
         style_tag = f"<style>\n{css_content}\n</style>"
 
         # </head> の直前に挿入
-        head_match = re.search(r"</head>", html_content, re.IGNORECASE)
+        head_match = re.search(HTML_HEAD_CLOSING_TAG, html_content, re.IGNORECASE)
         if head_match:
             insert_pos = head_match.start()
             return (
@@ -324,7 +334,7 @@ class CSSEmbedder:
             )
 
         # <html> タグを探す
-        html_match = re.search(r"<html[^>]*>", html_content, re.IGNORECASE)
+        html_match = re.search(HTML_OPENING_TAG, html_content, re.IGNORECASE)
         if html_match:
             insert_pos = html_match.end()
             return (
@@ -360,9 +370,7 @@ class MarkdownProcessor:
             ConversionError: 変換に失敗した場合
         """
         try:
-            html = markdown.markdown(
-                markdown_content, extensions=["fenced_code", "tables", "nl2br"]
-            )
+            html = markdown.markdown(markdown_content, extensions=MARKDOWN_EXTENSIONS)
             self.logger.debug("Markdown → HTML 変換完了")
             return html
         except Exception as e:
@@ -372,18 +380,12 @@ class MarkdownProcessor:
 class HTMLDocumentBuilder:
     """テンプレートベースのHTMLドキュメント生成クラス"""
 
-    # ファイルパス定数
-    TEMPLATES_DIR = Path(__file__).parent / "templates"
-    DEFAULT_TEMPLATE_PATH = TEMPLATES_DIR / "default.html"
-
-    # 外部リソースURL定数
-    HIGHLIGHT_JS_VERSION = "11.9.0"
-    HIGHLIGHT_JS_CDN_CSS = f"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/{HIGHLIGHT_JS_VERSION}/styles/atom-one-dark.min.css"
-    HIGHLIGHT_JS_CDN_JS = f"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/{HIGHLIGHT_JS_VERSION}/highlight.min.js"
+    # ファイルパス定数（constants.py から インポート済み）
+    # TEMPLATES_DIR, DEFAULT_TEMPLATE_PATH を使用
 
     def __init__(self, logger: logging.Logger, template_path: Optional[Path] = None):
         self.logger = logger
-        self.template_path = template_path or self.DEFAULT_TEMPLATE_PATH
+        self.template_path = template_path or DEFAULT_TEMPLATE_PATH
 
     def build_document(
         self,
@@ -526,7 +528,7 @@ class HTMLDocumentBuilder:
         """
         # <td style="..."> → <td>
         # <th style="..."> → <th>
-        pattern = re.compile(r'<(td|th)\s+style="[^"]*?"', re.IGNORECASE)
+        pattern = re.compile(HTML_TABLE_STYLE_PATTERN, re.IGNORECASE)
         result = pattern.sub(r"<\1", html_content)
         return result
 
@@ -581,12 +583,12 @@ class HTMLDocumentBuilder:
         return result
 
     def _build_highlight_js_link(self) -> str:
-        """Highlight.js CDN リンクを構築"""
-        return f'<link rel="stylesheet" href="{self.HIGHLIGHT_JS_CDN_CSS}">'
+        """Highlight.js CSSリンクタグを構築"""
+        return f'<link rel="stylesheet" href="{HIGHLIGHT_JS_CDN_CSS}">'
 
     def _load_code_block_css(self) -> str:
         """code-block.css ファイルを読み込んで <style> タグで返す"""
-        css_file = self.TEMPLATES_DIR / "code-block.css"
+        css_file = TEMPLATES_DIR / CODE_BLOCK_CSS_FILE
         try:
             css_content = css_file.read_text(encoding="utf-8")
             return f"<style>\n{css_content}\n</style>"
@@ -599,11 +601,11 @@ class HTMLDocumentBuilder:
 
     def _load_highlight_js_script(self) -> str:
         """Highlight.js スクリプトタグを構築"""
-        return f'<script src="{self.HIGHLIGHT_JS_CDN_JS}"></script>'
+        return f'<script src="{HIGHLIGHT_JS_CDN_JS}"></script>'
 
     def _load_copy_button_script(self) -> str:
         """copy-button.js ファイルを読み込んで <script> タグで返す"""
-        js_file = self.TEMPLATES_DIR / "copy-button.js"
+        js_file = TEMPLATES_DIR / COPY_BUTTON_JS_FILE
         try:
             js_content = js_file.read_text(encoding="utf-8")
             return f"<script>\n{js_content}\n</script>"
