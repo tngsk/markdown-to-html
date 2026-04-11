@@ -12,10 +12,14 @@ from typing import List, Optional
 from config import ConversionError
 from constants import (
     CODE_BLOCK_CSS_FILE,
+    COLAB_BADGE_URL,
+    COLAB_GITHUB_BASE_URL,
     COPY_BUTTON_JS_FILE,
     DEFAULT_TEMPLATE_PATH,
+    GITHUB_BASE_URL,
     HIGHLIGHT_JS_CDN_CSS,
     HIGHLIGHT_JS_CDN_JS,
+    HTML_IPYNB_LINK_PATTERN,
     HTML_TABLE_STYLE_PATTERN,
     TEMPLATES_DIR,
 )
@@ -68,6 +72,9 @@ class HTMLDocumentBuilder:
 
         # カスタム記法処理（{{...}} → <span class="nowrap">...</span>）
         html_body = self._replace_custom_nowrap(html_body)
+
+        # Colabリンクの変換処理 (.ipynb)
+        html_body = self._enhance_colab_links(html_body)
 
         # プレースホルダーを置換
         safe_title = self._escape_html(title)
@@ -203,6 +210,31 @@ class HTMLDocumentBuilder:
             self.logger.debug(f"タグ削除完了: {tag}")
 
         return html_content
+
+    def _enhance_colab_links(self, html_content: str) -> str:
+        """
+        URLに .ipynb が含まれるリンクを検知し、Google Colabリンクに変換する。
+        """
+        pattern = re.compile(HTML_IPYNB_LINK_PATTERN, re.IGNORECASE)
+
+        def replacer(match: re.Match) -> str:
+            before_href = match.group(1)
+            url = match.group(2)
+            after_href = match.group(3)
+            link_text = match.group(4)
+
+            # GitHubのURLであれば、Colab用のURLに変換
+            colab_url = url
+            if url.startswith(GITHUB_BASE_URL):
+                colab_url = url.replace(GITHUB_BASE_URL, COLAB_GITHUB_BASE_URL)
+
+            badge_img = f'<img src="{COLAB_BADGE_URL}" alt="Open In Colab" style="vertical-align: middle; margin-right: 6px; height: 20px;">'
+
+            return f'<a {before_href}href="{colab_url}"{after_href} target="_blank" rel="noopener noreferrer" class="colab-link" style="text-decoration: none;">{badge_img}{link_text}</a>'
+
+        result = pattern.sub(replacer, html_content)
+        self.logger.debug("Colabリンク処理完了: .ipynbリンクをColabバッジに変換")
+        return result
 
     def _replace_custom_nowrap(self, html_content: str) -> str:
         """

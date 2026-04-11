@@ -76,6 +76,12 @@ HTML_TABLE_STYLE_PATTERN = r'<(td|th)\s+style="[^"]*?"'
 HTML_HEAD_CLOSING_TAG = "</head>"
 HTML_OPENING_TAG = r"<html[^>]*>"
 HTML_TAG_REMOVAL_PATTERN_TEMPLATE = r"<{tag}[^>]*>.*?</{tag}>"
+HTML_IPYNB_LINK_PATTERN = r'<a\s+([^>]*?)href="([^"]+\.ipynb)"([^>]*)>(.*?)</a>'
+
+# 外部サービス URL
+GITHUB_BASE_URL = "https://github.com/"
+COLAB_GITHUB_BASE_URL = "https://colab.research.google.com/github/"
+COLAB_BADGE_URL = "https://colab.research.google.com/assets/colab-badge.svg"
 
 # 正規表現フラグ
 REGEX_FLAG_IGNORECASE = "IGNORECASE"
