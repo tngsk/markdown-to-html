@@ -14,7 +14,7 @@ from config import (
     FileProcessingError,
 )
 from embedders.css import CSSEmbedder
-from embedders.image import ImageEmbedder
+from embedders.media import MediaEmbedder
 from handlers.file import FileHandler
 from processors.html import HTMLDocumentBuilder
 from processors.markdown import MarkdownProcessor
@@ -27,7 +27,7 @@ class MarkdownToHTMLConverter:
         self.config = config
         self.logger = logger
         self.file_handler = FileHandler(logger)
-        self.image_embedder = ImageEmbedder(logger, self.file_handler)
+        self.media_embedder = MediaEmbedder(logger, self.file_handler)
         self.css_embedder = CSSEmbedder(logger, self.file_handler)
         self.markdown_processor = MarkdownProcessor(logger, self.file_handler)
         self.html_document_builder = HTMLDocumentBuilder(
@@ -70,13 +70,13 @@ class MarkdownToHTMLConverter:
                         f"✓ {len(self.config.css_files)} 個のCSSを読み込みました"
                     )
 
-            # Step 4: 画像埋め込み
+            # Step 4: メディア埋め込み
             markdown_dir = self.config.input_file.parent
-            html_body, image_count = self.image_embedder.embed_images_in_html(
+            html_body, media_count = self.media_embedder.embed_media_in_html(
                 html_body, markdown_dir
             )
-            self.stats.images_embedded = image_count
-            self.logger.info(f"✓ {image_count} 件の画像をBase64で埋め込みました")
+            self.stats.images_embedded = media_count
+            self.logger.info(f"✓ {media_count} 件のメディアをBase64で埋め込みました")
 
             # Step 5: HTMLドキュメント生成
             title = self.html_document_builder.extract_title_from_html(html_body)

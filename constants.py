@@ -48,6 +48,12 @@ MIME_TYPE_REGISTRY: Dict[str, str] = {
     ".svg": "image/svg+xml",
     ".bmp": "image/bmp",
     ".tiff": "image/tiff",
+    ".wav": "audio/wav",
+    ".mp3": "audio/mpeg",
+    ".ogg": "audio/ogg",
+    ".flac": "audio/flac",
+    ".aac": "audio/aac",
+    ".m4a": "audio/mp4",
 }
 
 # デフォルトMIMEタイプ
