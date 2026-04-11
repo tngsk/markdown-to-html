@@ -77,6 +77,9 @@ HTML_HEAD_CLOSING_TAG = "</head>"
 HTML_OPENING_TAG = r"<html[^>]*>"
 HTML_TAG_REMOVAL_PATTERN_TEMPLATE = r"<{tag}[^>]*>.*?</{tag}>"
 HTML_IPYNB_LINK_PATTERN = r'<a\s+([^>]*?)href="([^"]+\.ipynb)"([^>]*)>(.*?)</a>'
+HTML_POLL_COMPONENT_TEMPLATE = (
+    '<situ-poll title="{title}" options="{options}"></situ-poll>'
+)
 
 # 外部サービス URL
 GITHUB_BASE_URL = "https://github.com/"
@@ -92,6 +95,9 @@ REGEX_FLAG_IGNORECASE = "IGNORECASE"
 
 # Markdownの拡張機能リスト
 MARKDOWN_EXTENSIONS = ["fenced_code", "tables", "nl2br"]
+
+# 投票コンポーネント（Live Polling）の正規表現パターン
+MARKDOWN_POLL_PATTERN = r"@\[poll:\s*(.+?)\]\((.+?)\)"
 
 # ============================================================================
 # Size Formatting
