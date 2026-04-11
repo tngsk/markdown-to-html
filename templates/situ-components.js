@@ -2,7 +2,8 @@
  * Interactive-MD Components
  *
  * Vanilla JS Web Components for educational and research acoustic systems.
- * Designed with a clean, readable aesthetic (themes like Lab-Gear can be applied externally).
+ * Designed with a clean, readable aesthetic.
+ * This file relies on HTML templates injected into the main document.
  */
 
 class SituPoll extends HTMLElement {
@@ -20,14 +21,18 @@ class SituPoll extends HTMLElement {
       this.getAttribute("id") ||
       `poll-${Math.random().toString(36).substring(2, 9)}`;
     this.hasVoted = false;
+    this.selectedValue = null;
 
-    // Load state from mock storage
-    this.checkPreviousVote();
+    // Cache for DOM references
+    this.refs = {};
+    this.optionNodes = [];
   }
 
   connectedCallback() {
-    this.render();
+    this.checkPreviousVote();
+    this.mountTemplate();
     this.setupEventListeners();
+    this.updateView();
   }
 
   checkPreviousVote() {
@@ -68,82 +73,122 @@ class SituPoll extends HTMLElement {
       );
       this.hasVoted = true;
       this.selectedValue = value;
-      this.render(); // Re-render to show voted state
+      this.updateView();
     } catch (e) {
       console.error("Failed to save vote:", e);
       alert("投票の保存に失敗しました。");
     }
   }
 
-  render() {
-    // CSS is injected by the Python builder from components.css
-    const style = `{COMPONENTS_CSS}`;
+  mountTemplate() {
+    // 1. Clone main layout template
+    const template = document.getElementById("situ-poll-template");
+    if (!template) {
+      console.error("Template #situ-poll-template not found.");
+      return;
+    }
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-    const optionsHtml = this.options
-      .map((opt, index) => {
-        const isSelected = this.hasVoted && this.selectedValue === opt;
-        const disabledAttr = this.hasVoted ? "disabled" : "";
-        const checkedAttr = isSelected ? "checked" : "";
-        const classNames = `option-label ${isSelected ? "selected" : ""} ${this.hasVoted ? "voted" : ""}`;
+    // 2. Cache main references
+    this.shadowRoot.querySelectorAll("[data-ref]").forEach((el) => {
+      this.refs[el.dataset.ref] = el;
+    });
 
-        return `
-                <label class="${classNames}">
-                    <input type="radio" name="poll-option" value="${opt}" ${checkedAttr} ${disabledAttr}>
-                    <span class="option-text">${opt}</span>
-                </label>
-            `;
-      })
-      .join("");
+    // 3. Bind static data
+    if (this.refs.title) {
+      this.refs.title.textContent = this.title;
+    }
 
-    const submitHtml = this.hasVoted
-      ? `<div class="voted-message">
-                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg>
-                 記録されました
-               </div>`
-      : `<button class="submit-btn" id="submitBtn" disabled>記録する</button>`;
+    // 4. Render options dynamically
+    const optionTemplate = document.getElementById("situ-poll-option-template");
+    if (!optionTemplate || !this.refs.optionsContainer) return;
 
-    this.shadowRoot.innerHTML = `
-            <style>${style}</style>
-            <div class="poll-wrapper">
-                <h3 class="poll-header">${this.title}</h3>
-                <div class="options-container">
-                    ${optionsHtml}
-                </div>
-                ${submitHtml}
-            </div>
-        `;
+    this.options.forEach((opt) => {
+      const node = optionTemplate.content.cloneNode(true);
+
+      const label = node.querySelector('[data-ref="label"]');
+      const radio = node.querySelector('[data-ref="radio"]');
+      const text = node.querySelector('[data-ref="text"]');
+
+      text.textContent = opt;
+      radio.value = opt;
+
+      this.refs.optionsContainer.appendChild(node);
+
+      // Store references to the appended elements for state updates
+      const appendedLabel = this.refs.optionsContainer.lastElementChild;
+      const appendedRadio = appendedLabel.querySelector("input");
+
+      this.optionNodes.push({
+        value: opt,
+        label: appendedLabel,
+        radio: appendedRadio,
+      });
+    });
+  }
+
+  handleSelection(value) {
+    if (this.hasVoted) return;
+
+    // Reset visual state
+    this.optionNodes.forEach((node) => {
+      node.label.classList.remove("selected");
+    });
+
+    // Apply selected state
+    const selectedNode = this.optionNodes.find((n) => n.value === value);
+    if (selectedNode) {
+      selectedNode.label.classList.add("selected");
+    }
+
+    // Enable submit button
+    if (this.refs.submitBtn) {
+      this.refs.submitBtn.disabled = false;
+    }
   }
 
   setupEventListeners() {
-    if (this.hasVoted) return;
-
-    const radios = this.shadowRoot.querySelectorAll('input[type="radio"]');
-    const submitBtn = this.shadowRoot.getElementById("submitBtn");
-
-    // Enable submit button only when an option is selected
-    radios.forEach((radio) => {
-      radio.addEventListener("change", () => {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-        }
-
-        // Visual feedback for selection
-        this.shadowRoot
-          .querySelectorAll(".option-label")
-          .forEach((label) => label.classList.remove("selected"));
-        radio.closest(".option-label").classList.add("selected");
+    // Radio selection events
+    this.optionNodes.forEach((node) => {
+      node.radio.addEventListener("change", () => {
+        this.handleSelection(node.value);
       });
     });
 
-    if (submitBtn) {
-      submitBtn.addEventListener("click", () => {
-        const selectedRadio = this.shadowRoot.querySelector(
-          'input[type="radio"]:checked',
-        );
-        if (selectedRadio) {
-          this.saveVote(selectedRadio.value);
+    // Submit button event
+    if (this.refs.submitBtn) {
+      this.refs.submitBtn.addEventListener("click", () => {
+        const selectedNode = this.optionNodes.find((n) => n.radio.checked);
+        if (selectedNode) {
+          this.saveVote(selectedNode.value);
         }
       });
+    }
+  }
+
+  updateView() {
+    if (!this.hasVoted) return;
+
+    // Update options state (lock inputs, set final visual selection)
+    this.optionNodes.forEach((node) => {
+      node.radio.disabled = true;
+      node.label.classList.add("voted");
+
+      if (node.value === this.selectedValue) {
+        node.radio.checked = true;
+        node.label.classList.add("selected");
+      } else {
+        node.radio.checked = false;
+        node.label.classList.remove("selected");
+      }
+    });
+
+    // Toggle visibility between submit button and success message
+    if (this.refs.submitBtn) {
+      this.refs.submitBtn.style.display = "none";
+    }
+    if (this.refs.votedMessage) {
+      this.refs.votedMessage.style.display = "flex";
     }
   }
 }

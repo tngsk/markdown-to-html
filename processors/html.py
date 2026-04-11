@@ -88,6 +88,7 @@ class HTMLDocumentBuilder:
         highlight_js = self._load_highlight_js_script()
         copy_button_js = self._load_copy_button_script()
         situ_components_js = self._load_situ_components_script()
+        component_templates = self._load_component_templates()
 
         doc = template_content.replace("{TITLE}", safe_title)
         doc = doc.replace("{CSS_BLOCK}", css_block)
@@ -97,7 +98,7 @@ class HTMLDocumentBuilder:
         doc = doc.replace("{HIGHLIGHT_JS}", highlight_js)
 
         # 既存の {COPY_BUTTON_JS} プレースホルダーにまとめて追記する
-        combined_js = f"{copy_button_js}\n{situ_components_js}"
+        combined_js = f"{component_templates}\n{copy_button_js}\n{situ_components_js}"
         doc = doc.replace("{COPY_BUTTON_JS}", combined_js)
 
         return doc
@@ -304,20 +305,33 @@ class HTMLDocumentBuilder:
     def _load_situ_components_script(self) -> str:
         """situ-components.js ファイルを読み込んで <script> タグで返す"""
         js_file = TEMPLATES_DIR / "situ-components.js"
-        css_file = TEMPLATES_DIR / "components.css"
         try:
             js_content = js_file.read_text(encoding="utf-8")
-            try:
-                css_content = css_file.read_text(encoding="utf-8")
-            except FileNotFoundError:
-                self.logger.warning(f"components.css が見つかりません: {css_file}")
-                css_content = ""
-
-            js_content = js_content.replace("{COMPONENTS_CSS}", css_content)
             return f"<script>\n{js_content}\n</script>"
         except FileNotFoundError:
             self.logger.warning(f"situ-components.js が見つかりません: {js_file}")
             return ""
         except Exception as e:
             self.logger.warning(f"situ-components.js の読み込みエラー: {e}")
+            return ""
+
+    def _load_component_templates(self) -> str:
+        """Web Components 用のHTMLテンプレート群を読み込んで結合する"""
+        template_file = TEMPLATES_DIR / "components/situ-poll.html"
+        css_file = TEMPLATES_DIR / "components.css"
+        try:
+            template_content = template_file.read_text(encoding="utf-8")
+            try:
+                css_content = css_file.read_text(encoding="utf-8")
+            except FileNotFoundError:
+                self.logger.warning(f"components.css が見つかりません: {css_file}")
+                css_content = ""
+
+            template_content = template_content.replace("{COMPONENTS_CSS}", css_content)
+            return template_content
+        except FileNotFoundError:
+            self.logger.warning(f"テンプレートが見つかりません: {template_file}")
+            return ""
+        except Exception as e:
+            self.logger.warning(f"テンプレートの読み込みエラー: {e}")
             return ""
