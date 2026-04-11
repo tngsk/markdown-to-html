@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 from typing import List
 
-from config import CSSEmbeddingError, FileProcessingError
+from config import FileProcessingError
 from constants import HTML_HEAD_CLOSING_TAG, HTML_OPENING_TAG
 from handlers.file import FileHandler
 
