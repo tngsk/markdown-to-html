@@ -274,7 +274,7 @@ class HTMLDocumentBuilder:
 
     def _load_code_block_css(self) -> str:
         """code-block.css ファイルを読み込んで <style> タグで返す"""
-        css_file = TEMPLATES_DIR / CODE_BLOCK_CSS_FILE
+        css_file = TEMPLATES_DIR / "core" / CODE_BLOCK_CSS_FILE
         try:
             css_content = css_file.read_text(encoding="utf-8")
             return f"<style>\n{css_content}\n</style>"
@@ -291,7 +291,7 @@ class HTMLDocumentBuilder:
 
     def _load_copy_button_script(self) -> str:
         """copy-button.js ファイルを読み込んで <script> タグで返す"""
-        js_file = TEMPLATES_DIR / COPY_BUTTON_JS_FILE
+        js_file = TEMPLATES_DIR / "core" / COPY_BUTTON_JS_FILE
         try:
             js_content = js_file.read_text(encoding="utf-8")
             return f"<script>\n{js_content}\n</script>"
@@ -303,35 +303,58 @@ class HTMLDocumentBuilder:
             return ""
 
     def _load_situ_components_script(self) -> str:
-        """situ-components.js ファイルを読み込んで <script> タグで返す"""
-        js_file = TEMPLATES_DIR / "situ-components.js"
-        try:
-            js_content = js_file.read_text(encoding="utf-8")
-            return f"<script>\n{js_content}\n</script>"
-        except FileNotFoundError:
-            self.logger.warning(f"situ-components.js が見つかりません: {js_file}")
+        """components/ ディレクトリ配下のすべての script.js を読み込んで <script> タグで返す"""
+        components_dir = TEMPLATES_DIR / "components"
+        if not components_dir.exists() or not components_dir.is_dir():
             return ""
-        except Exception as e:
-            self.logger.warning(f"situ-components.js の読み込みエラー: {e}")
+
+        js_contents = []
+        for component_dir in sorted(components_dir.iterdir()):
+            if component_dir.is_dir():
+                js_file = component_dir / "script.js"
+                if js_file.exists():
+                    try:
+                        js_contents.append(js_file.read_text(encoding="utf-8"))
+                    except Exception as e:
+                        self.logger.warning(f"JS読み込みエラー ({js_file}): {e}")
+
+        if not js_contents:
             return ""
+
+        combined_js = "\n\n".join(js_contents)
+        return f"<script>\n{combined_js}\n</script>"
 
     def _load_component_templates(self) -> str:
-        """Web Components 用のHTMLテンプレート群を読み込んで結合する"""
-        template_file = TEMPLATES_DIR / "components/situ-poll.html"
-        css_file = TEMPLATES_DIR / "components.css"
-        try:
-            template_content = template_file.read_text(encoding="utf-8")
-            try:
-                css_content = css_file.read_text(encoding="utf-8")
-            except FileNotFoundError:
-                self.logger.warning(f"components.css が見つかりません: {css_file}")
-                css_content = ""
+        """components/ ディレクトリ配下のすべての template.html を読み込み、対応する style.css を注入して結合する"""
+        components_dir = TEMPLATES_DIR / "components"
+        if not components_dir.exists() or not components_dir.is_dir():
+            return ""
 
-            template_content = template_content.replace("{COMPONENTS_CSS}", css_content)
-            return template_content
-        except FileNotFoundError:
-            self.logger.warning(f"テンプレートが見つかりません: {template_file}")
-            return ""
-        except Exception as e:
-            self.logger.warning(f"テンプレートの読み込みエラー: {e}")
-            return ""
+        templates_html = []
+        for component_dir in sorted(components_dir.iterdir()):
+            if component_dir.is_dir():
+                template_file = component_dir / "template.html"
+                css_file = component_dir / "style.css"
+
+                if template_file.exists():
+                    try:
+                        template_content = template_file.read_text(encoding="utf-8")
+                        css_content = ""
+                        if css_file.exists():
+                            try:
+                                css_content = css_file.read_text(encoding="utf-8")
+                            except Exception as e:
+                                self.logger.warning(
+                                    f"CSS読み込みエラー ({css_file}): {e}"
+                                )
+
+                        template_content = template_content.replace(
+                            "{COMPONENTS_CSS}", css_content
+                        )
+                        templates_html.append(template_content)
+                    except Exception as e:
+                        self.logger.warning(
+                            f"テンプレート読み込みエラー ({template_file}): {e}"
+                        )
+
+        return "\n\n".join(templates_html)
