@@ -42,12 +42,27 @@ class SituABTest extends HTMLElement {
     this.refs = {};
 
     this.handleKeyDown = this.handleKeyDown.bind(this);
+
+    // Accessibility & Focus Management
+    this.setAttribute("tabindex", "0");
+    this.setAttribute("role", "region");
+    this.setAttribute("aria-label", "Audio A/B Test Player");
   }
 
   connectedCallback() {
     this.mountTemplate();
     this.checkPreviousVote();
     this.setupEventListeners();
+
+    // Bind keyboard shortcuts to the component itself
+    this.addEventListener("keydown", this.handleKeyDown);
+
+    // Force focus when clicked anywhere inside the component
+    this.addEventListener("click", () => {
+      if (document.activeElement !== this) {
+        this.focus();
+      }
+    });
   }
 
   disconnectedCallback() {
@@ -55,7 +70,7 @@ class SituABTest extends HTMLElement {
     if (this.audioContext) {
       this.audioContext.close();
     }
-    window.removeEventListener("keydown", this.handleKeyDown);
+    this.removeEventListener("keydown", this.handleKeyDown);
   }
 
   // ============================================================================
@@ -94,9 +109,6 @@ class SituABTest extends HTMLElement {
   }
 
   setupEventListeners() {
-    // Global Keyboard Shortcuts
-    window.addEventListener("keydown", this.handleKeyDown);
-
     // Lazy Load: Initialize AudioContext and load files on first interaction
     const initOnFirstClick = async () => {
       if (!this.audioContext) {
@@ -149,17 +161,14 @@ class SituABTest extends HTMLElement {
   }
 
   async handleKeyDown(event) {
+    // Prevent interfering if an input inside shadow DOM is focused
+    const activeEl = this.shadowRoot.activeElement;
     if (
-      document.activeElement &&
-      ["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)
-    )
+      activeEl &&
+      (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA")
+    ) {
       return;
-
-    const isHovered = this.matches(":hover");
-
-    // Only process shortcuts if this component is actively playing, or if it is hovered
-    // (Prevents triggering multiple instances on the same page simultaneously)
-    if (!this.isPlaying && !isHovered) return;
+    }
 
     const key = event.key.toLowerCase();
 
