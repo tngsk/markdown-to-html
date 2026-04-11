@@ -39,8 +39,8 @@ class SituCodeBlock extends HTMLElement {
     // Set Header Label
     if (this.refs.languageLabel) {
       this.refs.languageLabel.textContent = this.language
-        ? this.language.toUpperCase()
-        : "CODE";
+        ? this.language
+        : "Code";
     }
 
     // Move Light DOM content (the original <pre><code> from markdown) into the slot container
