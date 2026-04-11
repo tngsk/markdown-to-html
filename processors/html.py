@@ -76,6 +76,9 @@ class HTMLDocumentBuilder:
         # Colabリンクの変換処理 (.ipynb)
         html_body = self._enhance_colab_links(html_body)
 
+        # 投票コンポーネントの変換
+        html_body = self._enhance_polls(html_body)
+
         # プレースホルダーを置換
         safe_title = self._escape_html(title)
         css_block = self._build_css_block(css_content)
@@ -85,6 +88,7 @@ class HTMLDocumentBuilder:
         code_block_css = self._load_code_block_css()
         highlight_js = self._load_highlight_js_script()
         copy_button_js = self._load_copy_button_script()
+        situ_components_js = self._load_situ_components_script()
 
         doc = template_content.replace("{TITLE}", safe_title)
         doc = doc.replace("{CSS_BLOCK}", css_block)
@@ -92,7 +96,10 @@ class HTMLDocumentBuilder:
         doc = doc.replace("{CODE_BLOCK_CSS}", code_block_css)
         doc = doc.replace("{BODY}", html_body)
         doc = doc.replace("{HIGHLIGHT_JS}", highlight_js)
-        doc = doc.replace("{COPY_BUTTON_JS}", copy_button_js)
+
+        # 既存の {COPY_BUTTON_JS} プレースホルダーにまとめて追記する
+        combined_js = f"{copy_button_js}\n{situ_components_js}"
+        doc = doc.replace("{COPY_BUTTON_JS}", combined_js)
 
         return doc
 
@@ -288,3 +295,38 @@ class HTMLDocumentBuilder:
         except Exception as e:
             self.logger.warning(f"copy-button.js の読み込みエラー: {e}")
             return ""
+
+    def _load_situ_components_script(self) -> str:
+        """situ-components.js ファイルを読み込んで <script> タグで返す"""
+        js_file = TEMPLATES_DIR / "situ-components.js"
+        try:
+            js_content = js_file.read_text(encoding="utf-8")
+            return f"<script>\n{js_content}\n</script>"
+        except FileNotFoundError:
+            self.logger.warning(f"situ-components.js が見つかりません: {js_file}")
+            return ""
+        except Exception as e:
+            self.logger.warning(f"situ-components.js の読み込みエラー: {e}")
+            return ""
+
+    def _enhance_polls(self, html_content: str) -> str:
+        """
+        @[poll: タイトル](選択肢A, 選択肢B, ...) を <situ-poll> に変換する
+        """
+        pattern = re.compile(r"@\[poll:\s*(.+?)\]\((.+?)\)")
+
+        def replacer(match: re.Match) -> str:
+            title = match.group(1).strip()
+            options = match.group(2).strip()
+
+            # HTML属性用にエスケープ
+            safe_title = title.replace('"', "&quot;")
+            safe_options = options.replace('"', "&quot;")
+
+            return (
+                f'<situ-poll title="{safe_title}" options="{safe_options}"></situ-poll>'
+            )
+
+        result = pattern.sub(replacer, html_content)
+        self.logger.debug("投票コンポーネント処理完了: @[poll] → <situ-poll>")
+        return result
