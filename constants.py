@@ -18,8 +18,7 @@ TEMPLATES_DIR = Path(__file__).parent / "templates"
 DEFAULT_TEMPLATE_PATH = TEMPLATES_DIR / "default.html"
 
 # テンプレートファイル名
-CODE_BLOCK_CSS_FILE = "code-block.css"
-COPY_BUTTON_JS_FILE = "copy-button.js"
+BASE_CSS_FILE = "base.css"
 
 # ============================================================================
 # Highlight.js Configuration

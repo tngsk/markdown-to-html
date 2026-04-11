@@ -11,6 +11,7 @@ from typing import List, Optional
 
 from config import ConversionError
 from constants import (
+    BASE_CSS_FILE,
     COLAB_BADGE_URL,
     COLAB_GITHUB_BASE_URL,
     DEFAULT_TEMPLATE_PATH,
@@ -82,6 +83,7 @@ class HTMLDocumentBuilder:
 
         # コードブロック用リソース（CSS/JS）を読み込む
         highlight_js_css = self._build_highlight_js_link()
+        base_css = self._load_base_css()
         highlight_js = self._load_highlight_js_script()
         situ_components_js = self._load_situ_components_script()
         component_templates = self._load_component_templates()
@@ -89,7 +91,7 @@ class HTMLDocumentBuilder:
         doc = template_content.replace("{TITLE}", safe_title)
         doc = doc.replace("{CSS_BLOCK}", css_block)
         doc = doc.replace("{HIGHLIGHT_JS_CSS}", highlight_js_css)
-        doc = doc.replace("{CODE_BLOCK_CSS}", "")
+        doc = doc.replace("{CODE_BLOCK_CSS}", base_css)
         doc = doc.replace("{BODY}", html_body)
         doc = doc.replace("{HIGHLIGHT_JS}", highlight_js)
 
@@ -259,6 +261,19 @@ class HTMLDocumentBuilder:
     def _build_highlight_js_link(self) -> str:
         """Highlight.js CSSリンクタグを構築"""
         return f'<link rel="stylesheet" href="{HIGHLIGHT_JS_CDN_CSS}">'
+
+    def _load_base_css(self) -> str:
+        """base.css ファイルを読み込んで <style> タグで返す"""
+        css_file = TEMPLATES_DIR / "core" / BASE_CSS_FILE
+        try:
+            css_content = css_file.read_text(encoding="utf-8")
+            return f"<style>\n{css_content}\n</style>"
+        except FileNotFoundError:
+            self.logger.warning(f"base.css が見つかりません: {css_file}")
+            return ""
+        except Exception as e:
+            self.logger.warning(f"base.css の読み込みエラー: {e}")
+            return ""
 
     def _load_highlight_js_script(self) -> str:
         """Highlight.js スクリプトタグを構築"""
