@@ -586,8 +586,8 @@ class HTMLDocumentBuilder:
 
     def _load_code_block_css(self) -> str:
         """code-block.css ファイルを読み込んで <style> タグで返す"""
+        css_file = self.TEMPLATES_DIR / "code-block.css"
         try:
-            css_file = self.TEMPLATES_DIR / "code-block.css"
             css_content = css_file.read_text(encoding="utf-8")
             return f"<style>\n{css_content}\n</style>"
         except FileNotFoundError:
@@ -603,8 +603,8 @@ class HTMLDocumentBuilder:
 
     def _load_copy_button_script(self) -> str:
         """copy-button.js ファイルを読み込んで <script> タグで返す"""
+        js_file = self.TEMPLATES_DIR / "copy-button.js"
         try:
-            js_file = self.TEMPLATES_DIR / "copy-button.js"
             js_content = js_file.read_text(encoding="utf-8")
             return f"<script>\n{js_content}\n</script>"
         except FileNotFoundError:
@@ -717,7 +717,7 @@ class MarkdownToHTMLConverter:
             raise ConversionError(f"出力ファイル書き込み失敗: {e}") from e
 
     @staticmethod
-    def _format_size(size_bytes: int) -> str:
+    def _format_size(size_bytes: float) -> str:
         """バイト数をヒューマンリーダブルなサイズに変換"""
         for unit in ("B", "KB", "MB", "GB"):
             if size_bytes < 1024:
