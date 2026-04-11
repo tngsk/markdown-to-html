@@ -23,7 +23,8 @@ class SituABTest extends HTMLElement {
     this.audioContext = null;
     this.audioBufferA = null;
     this.audioBufferB = null;
-    this.sourceNode = null;
+    this.sourceNodeA = null;
+    this.sourceNodeB = null;
     this.gainNodeA = null;
     this.gainNodeB = null;
 
@@ -39,6 +40,8 @@ class SituABTest extends HTMLElement {
 
     // Cache for DOM references
     this.refs = {};
+
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
   connectedCallback() {
@@ -52,6 +55,7 @@ class SituABTest extends HTMLElement {
     if (this.audioContext) {
       this.audioContext.close();
     }
+    window.removeEventListener("keydown", this.handleKeyDown);
   }
 
   // ============================================================================
@@ -90,6 +94,9 @@ class SituABTest extends HTMLElement {
   }
 
   setupEventListeners() {
+    // Global Keyboard Shortcuts
+    window.addEventListener("keydown", this.handleKeyDown);
+
     // Lazy Load: Initialize AudioContext and load files on first interaction
     const initOnFirstClick = async () => {
       if (!this.audioContext) {
@@ -101,6 +108,7 @@ class SituABTest extends HTMLElement {
     if (this.refs.playBtn) {
       // Enable play button initially to trigger lazy load
       this.refs.playBtn.disabled = false;
+      this.refs.playBtn.title = "Play / Pause (Press 'Space')";
       this.refs.playBtn.addEventListener("click", async () => {
         await initOnFirstClick();
         this.togglePlayPause();
@@ -113,12 +121,14 @@ class SituABTest extends HTMLElement {
 
     // Switch Controls
     if (this.refs.switchA) {
+      this.refs.switchA.title = "Switch to A (Press 'A' key)";
       this.refs.switchA.addEventListener("click", async () => {
         await initOnFirstClick();
         this.switchTrack("A");
       });
     }
     if (this.refs.switchB) {
+      this.refs.switchB.title = "Switch to B (Press 'B' key)";
       this.refs.switchB.addEventListener("click", async () => {
         await initOnFirstClick();
         this.switchTrack("B");
@@ -138,6 +148,36 @@ class SituABTest extends HTMLElement {
     });
   }
 
+  async handleKeyDown(event) {
+    if (
+      document.activeElement &&
+      ["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)
+    )
+      return;
+
+    const isHovered = this.matches(":hover");
+
+    // Only process shortcuts if this component is actively playing, or if it is hovered
+    // (Prevents triggering multiple instances on the same page simultaneously)
+    if (!this.isPlaying && !isHovered) return;
+
+    const key = event.key.toLowerCase();
+
+    if (key === "a") {
+      event.preventDefault();
+      if (!this.audioContext) await this.initializeAudioEngine();
+      this.switchTrack("A");
+    } else if (key === "b") {
+      event.preventDefault();
+      if (!this.audioContext) await this.initializeAudioEngine();
+      this.switchTrack("B");
+    } else if (key === " ") {
+      event.preventDefault(); // Prevent page scroll
+      if (!this.audioContext) await this.initializeAudioEngine();
+      this.togglePlayPause();
+    }
+  }
+
   // ============================================================================
   // Audio Engine (Web Audio API)
   // ============================================================================
@@ -148,8 +188,9 @@ class SituABTest extends HTMLElement {
     }
 
     try {
-      this.audioContext = new (window.AudioContext ||
-        window.webkitAudioContext)();
+      this.audioContext = new (
+        window.AudioContext || window.webkitAudioContext
+      )();
 
       // Fetch and decode both files concurrently
       const [bufferA, bufferB] = await Promise.all([
@@ -232,8 +273,8 @@ class SituABTest extends HTMLElement {
 
     if (this.isPlaying) {
       // Pause
-      this.sourceNodeA.stop();
-      this.sourceNodeB.stop();
+      if (this.sourceNodeA) this.sourceNodeA.stop();
+      if (this.sourceNodeB) this.sourceNodeB.stop();
       this.pauseOffset = this.getCurrentTime();
       this.isPlaying = false;
       this.updateTransportUI();
@@ -259,8 +300,8 @@ class SituABTest extends HTMLElement {
 
   stopPlayback() {
     if (this.isPlaying) {
-      this.sourceNodeA.stop();
-      this.sourceNodeB.stop();
+      if (this.sourceNodeA) this.sourceNodeA.stop();
+      if (this.sourceNodeB) this.sourceNodeB.stop();
     }
     this.isPlaying = false;
     this.pauseOffset = 0;
