@@ -31,7 +31,8 @@ Phase 1: Core Packager (Foundation) - ✅ 実装完了・安定化
   - `{{テキスト}}` → 改行を防ぐ `nowrap` 処理。
   - **Open in Colab 自動変換** → `.ipynb` リンクを検知し、Google Colabのバッジ付き起動リンクへ自動置換。
 
-Phase 2: Scaffolding & Audio (次期開発)
+Phase 2: Scaffolding, Polling & Audio (次期開発)
+- `@[poll: タイトル](選択肢1, 選択肢2, ...)`：リアルタイム投票コンポーネント（`<situ-poll>`）。イベント駆動設計により通信インフラ（Phase 3）とUIを分離し、現状はLocal Storageに状態をモックする。
 - `@[audio-ab](ref.wav, test.wav)`：A/Bテストコンポーネント（Web Audio API）。
 - `@[notebook-input](id)`：localStorageに永続化される学生用メモ欄。
 - 音声ファイル (WAV/MP3) の Base64 埋め込み対応。
