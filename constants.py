@@ -86,6 +86,10 @@ GITHUB_BASE_URL = "https://github.com/"
 COLAB_GITHUB_BASE_URL = "https://colab.research.google.com/github/"
 COLAB_BADGE_URL = "https://colab.research.google.com/assets/colab-badge.svg"
 
+# Colabリンク変換用テンプレート
+HTML_COLAB_BADGE_IMG = '<img src="{badge_url}" alt="Open In Colab" style="vertical-align: middle; margin-right: 6px; height: 20px; width: auto; border-radius: 0;">'
+HTML_COLAB_LINK_TEMPLATE = '<a {before_href}href="{colab_url}"{after_href} target="_blank" rel="noopener noreferrer" class="colab-link" style="text-decoration: none;">{badge_img}{link_text}</a>'
+
 # 正規表現フラグ
 REGEX_FLAG_IGNORECASE = "IGNORECASE"
 

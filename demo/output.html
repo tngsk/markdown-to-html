@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Interactive-MD デモ</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"> <style>
+/* ベース -------------------------------------------------- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root {
+    --font-color: #111827;
+    --font-color-light: #374151;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    margin: 0;
+    padding: 5rem;
+    width: 100%;
+    font-family:
+        -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
+        "Segoe UI", "Yu Gothic Medium", "Hiragino Kaku Gothic ProN",
+        "Noto Sans JP", Meiryo, sans-serif;
+    line-height: 1.9;
+    color: var(--font-color);
+    background: #f3f4f6;
+}
+
+hr {
+    width: 10%;
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+    margin-left: auto;
+    margin-right: auto;
+    border: none;
+    border-top: 2px dotted #ddd;
+}
+
+/* 見出し -------------------------------------------------- */
+h1,
+h2,
+h3,
+h4 {
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--font-color);
+    letter-spacing: 0.08em;
+}
+
+h1 {
+    font-size: 2rem;
+    margin: 0 0 1.8rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin: 3rem 0 1rem;
+    padding-bottom: 0.35rem;
+}
+
+h3 {
+    font-size: 1.2rem;
+    margin: 2rem 0 0.6rem;
+    color: var(--font-color-light);
+}
+
+/* 段落・テキスト ------------------------------------------ */
+p {
+    margin: 0.6rem 0 1.3rem;
+}
+
+p + p {
+    margin-top: 0.5rem;
+}
+
+strong {
+    font-weight: 600;
+}
+
+em {
+    font-style: normal;
+    position: relative;
+}
+
+em::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.15em;
+    width: 100%;
+    height: 0.2em;
+    background: rgba(129, 140, 248, 0.25);
+}
+
+img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+/* リンク -------------------------------------------------- */
+a {
+    color: #2563eb;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(37, 99, 235, 0.35);
+    padding-bottom: 0.05em;
+    transition:
+        color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+a:hover {
+    color: #1d4ed8;
+    border-bottom-color: rgba(37, 99, 235, 0.7);
+}
+
+/* リスト -------------------------------------------------- */
+ul,
+ol {
+    margin: 0.4rem 0 1.4rem;
+    padding-left: 1.7rem;
+}
+
+li + li {
+    margin-top: 0.2rem;
+}
+
+/* コード -------------------------------------------------- */
+code {
+    font-family:
+        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+    background: #fff;
+    padding: 0.5rem;
+}
+
+pre {
+    margin: 1.5rem;
+    padding: 1.2rem;
+    background: #020617;
+    color: #e5e7eb;
+    overflow-x: auto;
+    line-height: 1.7;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* 引用 ---------------------------------------------------- */
+blockquote {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+    border-left: 4px solid #9ca3af;
+    background: #f9fafb;
+    color: #4b5563;
+}
+
+/* テーブル ------------------------------------------------ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+}
+
+th,
+td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #666;
+}
+
+th {
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #222;
+}
+
+/* ============================================================================
+ * Code Block Styling
+ * Syntax highlighting and copy button UI for code blocks
+ * ============================================================================ */
+
+.code-block-wrapper {
+    position: relative;
+    margin: 1em 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #282c34;
+}
+
+.code-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5em 1em;
+    background: #21252b;
+    border-bottom: 1px solid #444;
+    font-size: 0.85em;
+    color: #abb2bf;
+}
+
+.code-language {
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.copy-button {
+    padding: 0.4em 0.8em;
+    background: #3e4451;
+    color: #61afef;
+    border: 1px solid #555;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.copy-button:hover {
+    background: #61afef;
+    color: #282c34;
+    border-color: #61afef;
+}
+
+.copy-button:active {
+    transform: scale(0.98);
+}
+
+.copy-button.copied {
+    background: #98c379;
+    color: #282c34;
+    border-color: #98c379;
+}
+
+.code-block-wrapper pre {
+    margin: 0;
+    padding: 1em;
+    overflow-x: auto;
+}
+
+.code-block-wrapper code {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+/* Highlight.js theme overrides */
+.hljs {
+    background: transparent !important;
+    color: #abb2bf;
+}
+
+.hljs-attr {
+    color: #e06c75;
+}
+
+.hljs-string {
+    color: #98c379;
+}
+
+.hljs-number {
+    color: #d19a66;
+}
+
+.hljs-literal {
+    color: #56b6c2;
+}
+
+.hljs-title {
+    color: #61afef;
+}
+
+.hljs-params {
+    color: #abb2bf;
+}
+
+.hljs-comment {
+    color: #5c6370;
+}
+
+.hljs-keyword {
+    color: #c678dd;
+}
+
+.hljs-function {
+    color: #61afef;
+}
+
+.hljs-built_in {
+    color: #e06c75;
+}
+
+/* ============================================================================
+ * Custom Nowrap Styling
+ * Prevents line breaks for text enclosed in {{...}}
+ * ============================================================================ */
+
+.nowrap {
+    white-space: nowrap;
+    display: inline;
+}
+
+</style> 
+    </head>
+    <body>
+        <h1>Interactive-MD デモ</h1>
+<p>これは <code>Interactive-MD</code> のコンポーネントテスト用ファイルです。</p>
+<h2>1. コードブロックとコピーボタン</h2>
+<div class="code-block-wrapper" data-language="python">
+    <div class="code-block-header">
+        <span class="code-language">Python</span>
+        <button class="copy-button" title="コードをコピー">📋 Copy</button>
+    </div>
+    <pre><code class="hljs language-python">def hello_world():
+    print(&quot;Hello, SITU-MD!&quot;)
+    return True
+</code></pre>
+</div>
+<h2>2. カスタム記法 (Nowrap)</h2>
+<p>この文章の中にある <span class="nowrap">絶対に改行されたくない重要なキーワード</span> は、画面幅が狭くなっても途中で折り返されません。</p>
+<h2>3. Open in Colab 自動変換</h2>
+<p>以下のリンクは自動的にColabバッジ付きのリンクに変換されます。<br />
+<a href="https://colab.research.google.com/github/tngsk/markdown-to-html/blob/main/demo/notebook.ipynb" target="_blank" rel="noopener noreferrer" class="colab-link" style="text-decoration: none;"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" style="vertical-align: middle; margin-right: 6px; height: 20px; width: auto; border-radius: 0;">データ分析チュートリアルを開く</a></p>
+<h2>4. Live Polling (リアルタイム投票)</h2>
+<p>以下の質問に答えてください。選択するとブラウザに保存され、リロードしても状態が維持されます。</p>
+<p><situ-poll title="今日のワークショップの難易度はどうでしたか？" options="簡単すぎた, ちょうどよかった, 少し難しかった, 全く理解できなかった"></situ-poll></p>
+<p><situ-poll title="次回も参加したいですか？" options="はい, いいえ, わからない"></situ-poll></p>
+<hr />
+<p><em>Generated by Interactive-MD</em></p> <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script> <script>
+/**
+ * Code Block Enhancement
+ * - Syntax highlighting with Highlight.js
+ * - Copy-to-clipboard functionality
+ */
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Highlight.js
+    initializeSyntaxHighlighting();
+
+    // Initialize copy buttons
+    initializeCopyButtons();
+});
+
+/**
+ * Initialize syntax highlighting for code blocks
+ */
+function initializeSyntaxHighlighting() {
+    if (typeof hljs === 'undefined') {
+        console.warn('Highlight.js not loaded');
+        return;
+    }
+
+    document.querySelectorAll('.hljs').forEach(el => {
+        hljs.highlightElement(el);
+    });
+}
+
+/**
+ * Initialize copy button functionality
+ */
+function initializeCopyButtons() {
+    document.querySelectorAll('.copy-button').forEach(button => {
+        button.addEventListener('click', handleCopyClick);
+    });
+}
+
+/**
+ * Handle copy button click event
+ * @param {Event} event - Click event
+ */
+function handleCopyClick(event) {
+    const button = event.currentTarget;
+    const codeBlock = button.closest('.code-block-wrapper');
+
+    if (!codeBlock) {
+        console.error('Code block wrapper not found');
+        return;
+    }
+
+    const codeElement = codeBlock.querySelector('code');
+    if (!codeElement) {
+        console.error('Code element not found');
+        return;
+    }
+
+    const text = codeElement.textContent;
+
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            showCopySuccess(button);
+        })
+        .catch(err => {
+            showCopyError(button);
+            console.error('Copy failed:', err);
+        });
+}
+
+/**
+ * Show success state after copy
+ * @param {HTMLElement} button - Copy button element
+ */
+function showCopySuccess(button) {
+    const originalText = button.textContent;
+    button.textContent = '✓ Copied!';
+    button.classList.add('copied');
+
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.classList.remove('copied');
+    }, 2000);
+}
+
+/**
+ * Show error state after copy failure
+ * @param {HTMLElement} button - Copy button element
+ */
+function showCopyError(button) {
+    const originalText = button.textContent;
+    button.textContent = '✗ Failed';
+
+    setTimeout(() => {
+        button.textContent = originalText;
+    }, 2000);
+}
+
+</script>
+<script>
+/**
+ * Interactive-MD Components
+ *
+ * Vanilla JS Web Components for educational and research acoustic systems.
+ * Designed with a clean, readable aesthetic (themes like Lab-Gear can be applied externally).
+ */
+
+class SituPoll extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+
+    // Component state
+    this.title = this.getAttribute("title") || "Poll";
+    this.options = (this.getAttribute("options") || "")
+      .split(",")
+      .map((opt) => opt.trim())
+      .filter((opt) => opt);
+    this.componentId =
+      this.getAttribute("id") ||
+      `poll-${Math.random().toString(36).substring(2, 9)}`;
+    this.hasVoted = false;
+
+    // Load state from mock storage
+    this.checkPreviousVote();
+  }
+
+  connectedCallback() {
+    this.render();
+    this.setupEventListeners();
+  }
+
+  checkPreviousVote() {
+    try {
+      const savedData = localStorage.getItem(`situ_poll_${this.componentId}`);
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        this.hasVoted = true;
+        this.selectedValue = data.selected;
+      }
+    } catch (e) {
+      console.warn("Failed to read from localStorage:", e);
+    }
+  }
+
+  saveVote(value) {
+    const payload = {
+      componentId: this.componentId,
+      type: "poll",
+      title: this.title,
+      selected: value,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Phase 3 Compatibility: Dispatch custom event for future backend integration
+    const event = new CustomEvent("situ:vote", {
+      detail: payload,
+      bubbles: true,
+      composed: true,
+    });
+    this.dispatchEvent(event);
+
+    // Mock Persistence (Phase 2)
+    try {
+      localStorage.setItem(
+        `situ_poll_${this.componentId}`,
+        JSON.stringify(payload),
+      );
+      this.hasVoted = true;
+      this.selectedValue = value;
+      this.render(); // Re-render to show voted state
+    } catch (e) {
+      console.error("Failed to save vote:", e);
+      alert("投票の保存に失敗しました。");
+    }
+  }
+
+  render() {
+    // Clean, readable styling matching the project's default aesthetic
+    const style = `
+            :host {
+                display: block;
+                margin: 1.5rem 0;
+                font-family: var(--situ-font-family, system-ui, -apple-system, sans-serif);
+                color: var(--situ-text-color, #333);
+                background: var(--situ-bg-color, #f9f9f9);
+                border: 1px solid var(--situ-border-color, #e0e0e0);
+                border-radius: 8px;
+                padding: 1.5rem;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                max-width: 600px;
+            }
+
+            .poll-header {
+                margin-top: 0;
+                margin-bottom: 1rem;
+                font-size: 1.1rem;
+                font-weight: 600;
+                line-height: 1.4;
+            }
+
+            .options-container {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .option-label {
+                display: flex;
+                align-items: center;
+                padding: 0.75rem 1rem;
+                border: 1px solid var(--situ-border-color, #d1d5db);
+                border-radius: 6px;
+                background: white;
+                cursor: pointer;
+                transition: background-color 0.15s ease, border-color 0.15s ease;
+            }
+
+            .option-label:hover:not(.voted) {
+                background: var(--situ-hover-bg, #f3f4f6);
+            }
+
+            .option-label.selected {
+                border-color: var(--situ-primary-color, #3b82f6);
+                background: var(--situ-primary-light, #eff6ff);
+            }
+
+            input[type="radio"] {
+                margin-right: 1rem;
+                transform: scale(1.2);
+                cursor: pointer;
+            }
+
+            button.submit-btn {
+                margin-top: 1.5rem;
+                padding: 0.5rem 1.5rem;
+                background-color: var(--situ-primary-color, #3b82f6);
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-size: 1rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            button.submit-btn:hover:not(:disabled) {
+                background-color: var(--situ-primary-dark, #2563eb);
+            }
+
+            button.submit-btn:disabled {
+                background-color: var(--situ-disabled-color, #9ca3af);
+                cursor: not-allowed;
+            }
+
+            .voted-message {
+                margin-top: 1rem;
+                font-size: 0.9rem;
+                color: var(--situ-success-color, #059669);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            /* Read-only state for already voted */
+            .option-label.voted {
+                cursor: default;
+                opacity: 0.8;
+            }
+        `;
+
+    const optionsHtml = this.options
+      .map((opt, index) => {
+        const isSelected = this.hasVoted && this.selectedValue === opt;
+        const disabledAttr = this.hasVoted ? "disabled" : "";
+        const checkedAttr = isSelected ? "checked" : "";
+        const classNames = `option-label ${isSelected ? "selected" : ""} ${this.hasVoted ? "voted" : ""}`;
+
+        return `
+                <label class="${classNames}">
+                    <input type="radio" name="poll-option" value="${opt}" ${checkedAttr} ${disabledAttr}>
+                    <span class="option-text">${opt}</span>
+                </label>
+            `;
+      })
+      .join("");
+
+    const submitHtml = this.hasVoted
+      ? `<div class="voted-message">
+                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg>
+                 記録されました
+               </div>`
+      : `<button class="submit-btn" id="submitBtn" disabled>記録する</button>`;
+
+    this.shadowRoot.innerHTML = `
+            <style>${style}</style>
+            <div class="poll-wrapper">
+                <h3 class="poll-header">${this.title}</h3>
+                <div class="options-container">
+                    ${optionsHtml}
+                </div>
+                ${submitHtml}
+            </div>
+        `;
+  }
+
+  setupEventListeners() {
+    if (this.hasVoted) return;
+
+    const radios = this.shadowRoot.querySelectorAll('input[type="radio"]');
+    const submitBtn = this.shadowRoot.getElementById("submitBtn");
+
+    // Enable submit button only when an option is selected
+    radios.forEach((radio) => {
+      radio.addEventListener("change", () => {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+        }
+
+        // Visual feedback for selection
+        this.shadowRoot
+          .querySelectorAll(".option-label")
+          .forEach((label) => label.classList.remove("selected"));
+        radio.closest(".option-label").classList.add("selected");
+      });
+    });
+
+    if (submitBtn) {
+      submitBtn.addEventListener("click", () => {
+        const selectedRadio = this.shadowRoot.querySelector(
+          'input[type="radio"]:checked',
+        );
+        if (selectedRadio) {
+          this.saveVote(selectedRadio.value);
+        }
+      });
+    }
+  }
+}
+
+// Register the custom element
+if (!customElements.get("situ-poll")) {
+  customElements.define("situ-poll", SituPoll);
+}
+
+</script>
+    </body>
+</html>

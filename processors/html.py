@@ -19,6 +19,8 @@ from constants import (
     GITHUB_BASE_URL,
     HIGHLIGHT_JS_CDN_CSS,
     HIGHLIGHT_JS_CDN_JS,
+    HTML_COLAB_BADGE_IMG,
+    HTML_COLAB_LINK_TEMPLATE,
     HTML_IPYNB_LINK_PATTERN,
     HTML_TABLE_STYLE_PATTERN,
     TEMPLATES_DIR,
@@ -75,9 +77,6 @@ class HTMLDocumentBuilder:
 
         # Colabリンクの変換処理 (.ipynb)
         html_body = self._enhance_colab_links(html_body)
-
-        # 投票コンポーネントの変換
-        html_body = self._enhance_polls(html_body)
 
         # プレースホルダーを置換
         safe_title = self._escape_html(title)
@@ -235,9 +234,15 @@ class HTMLDocumentBuilder:
             if url.startswith(GITHUB_BASE_URL):
                 colab_url = url.replace(GITHUB_BASE_URL, COLAB_GITHUB_BASE_URL)
 
-            badge_img = f'<img src="{COLAB_BADGE_URL}" alt="Open In Colab" style="vertical-align: middle; margin-right: 6px; height: 20px;">'
+            badge_img = HTML_COLAB_BADGE_IMG.format(badge_url=COLAB_BADGE_URL)
 
-            return f'<a {before_href}href="{colab_url}"{after_href} target="_blank" rel="noopener noreferrer" class="colab-link" style="text-decoration: none;">{badge_img}{link_text}</a>'
+            return HTML_COLAB_LINK_TEMPLATE.format(
+                before_href=before_href,
+                colab_url=colab_url,
+                after_href=after_href,
+                badge_img=badge_img,
+                link_text=link_text,
+            )
 
         result = pattern.sub(replacer, html_content)
         self.logger.debug("Colabリンク処理完了: .ipynbリンクをColabバッジに変換")
@@ -308,25 +313,3 @@ class HTMLDocumentBuilder:
         except Exception as e:
             self.logger.warning(f"situ-components.js の読み込みエラー: {e}")
             return ""
-
-    def _enhance_polls(self, html_content: str) -> str:
-        """
-        @[poll: タイトル](選択肢A, 選択肢B, ...) を <situ-poll> に変換する
-        """
-        pattern = re.compile(r"@\[poll:\s*(.+?)\]\((.+?)\)")
-
-        def replacer(match: re.Match) -> str:
-            title = match.group(1).strip()
-            options = match.group(2).strip()
-
-            # HTML属性用にエスケープ
-            safe_title = title.replace('"', "&quot;")
-            safe_options = options.replace('"', "&quot;")
-
-            return (
-                f'<situ-poll title="{safe_title}" options="{safe_options}"></situ-poll>'
-            )
-
-        result = pattern.sub(replacer, html_content)
-        self.logger.debug("投票コンポーネント処理完了: @[poll] → <situ-poll>")
-        return result
