@@ -304,8 +304,16 @@ class HTMLDocumentBuilder:
     def _load_situ_components_script(self) -> str:
         """situ-components.js ファイルを読み込んで <script> タグで返す"""
         js_file = TEMPLATES_DIR / "situ-components.js"
+        css_file = TEMPLATES_DIR / "components.css"
         try:
             js_content = js_file.read_text(encoding="utf-8")
+            try:
+                css_content = css_file.read_text(encoding="utf-8")
+            except FileNotFoundError:
+                self.logger.warning(f"components.css が見つかりません: {css_file}")
+                css_content = ""
+
+            js_content = js_content.replace("{COMPONENTS_CSS}", css_content)
             return f"<script>\n{js_content}\n</script>"
         except FileNotFoundError:
             self.logger.warning(f"situ-components.js が見つかりません: {js_file}")
