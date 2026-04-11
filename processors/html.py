@@ -11,10 +11,8 @@ from typing import List, Optional
 
 from config import ConversionError
 from constants import (
-    CODE_BLOCK_CSS_FILE,
     COLAB_BADGE_URL,
     COLAB_GITHUB_BASE_URL,
-    COPY_BUTTON_JS_FILE,
     DEFAULT_TEMPLATE_PATH,
     GITHUB_BASE_URL,
     HIGHLIGHT_JS_CDN_CSS,
@@ -84,21 +82,19 @@ class HTMLDocumentBuilder:
 
         # コードブロック用リソース（CSS/JS）を読み込む
         highlight_js_css = self._build_highlight_js_link()
-        code_block_css = self._load_code_block_css()
         highlight_js = self._load_highlight_js_script()
-        copy_button_js = self._load_copy_button_script()
         situ_components_js = self._load_situ_components_script()
         component_templates = self._load_component_templates()
 
         doc = template_content.replace("{TITLE}", safe_title)
         doc = doc.replace("{CSS_BLOCK}", css_block)
         doc = doc.replace("{HIGHLIGHT_JS_CSS}", highlight_js_css)
-        doc = doc.replace("{CODE_BLOCK_CSS}", code_block_css)
+        doc = doc.replace("{CODE_BLOCK_CSS}", "")
         doc = doc.replace("{BODY}", html_body)
         doc = doc.replace("{HIGHLIGHT_JS}", highlight_js)
 
         # 既存の {COPY_BUTTON_JS} プレースホルダーにまとめて追記する
-        combined_js = f"{component_templates}\n{copy_button_js}\n{situ_components_js}"
+        combined_js = f"{component_templates}\n{situ_components_js}"
         doc = doc.replace("{COPY_BUTTON_JS}", combined_js)
 
         return doc
@@ -143,17 +139,15 @@ class HTMLDocumentBuilder:
     def _enhance_code_blocks(self, html_content: str) -> str:
         """
         コードブロックを拡張（コピーボタン、シンタックスハイライト対応）
-
-        <pre><code class="language-python">...</code></pre> 形式に変換
         """
         # <pre><code ...>...</code></pre> パターンを検索
         pattern = re.compile(
-            r'<pre><code(?:\s+class="([^"]*)")?>(.*?)</code></pre>', re.DOTALL
+            r'(<pre><code(?:\s+class="([^"]*)")?>.*?</code></pre>)', re.DOTALL
         )
 
         def replacer(match: re.Match) -> str:
-            lang_class = match.group(1) or ""
-            code_content = match.group(2)
+            original_block = match.group(1)
+            lang_class = match.group(2) or ""
 
             # 言語クラスから言語名を抽出（"language-python" → "python"）
             language = ""
@@ -163,13 +157,7 @@ class HTMLDocumentBuilder:
                     language = lang_match.group(1)
 
             # コードブロックの新しい構造を構築
-            enhanced = f'''<div class="code-block-wrapper" data-language="{language}">
-    <div class="code-block-header">
-        <span class="code-language">{language.capitalize() if language else "CODE"}</span>
-        <button class="copy-button" title="コードをコピー">📋 Copy</button>
-    </div>
-    <pre><code class="hljs language-{language}">{code_content}</code></pre>
-</div>'''
+            enhanced = f'<situ-code-block language="{language}">\n{original_block}\n</situ-code-block>'
             return enhanced
 
         result = pattern.sub(replacer, html_content)
@@ -272,35 +260,9 @@ class HTMLDocumentBuilder:
         """Highlight.js CSSリンクタグを構築"""
         return f'<link rel="stylesheet" href="{HIGHLIGHT_JS_CDN_CSS}">'
 
-    def _load_code_block_css(self) -> str:
-        """code-block.css ファイルを読み込んで <style> タグで返す"""
-        css_file = TEMPLATES_DIR / "core" / CODE_BLOCK_CSS_FILE
-        try:
-            css_content = css_file.read_text(encoding="utf-8")
-            return f"<style>\n{css_content}\n</style>"
-        except FileNotFoundError:
-            self.logger.warning(f"code-block.css が見つかりません: {css_file}")
-            return ""
-        except Exception as e:
-            self.logger.warning(f"code-block.css の読み込みエラー: {e}")
-            return ""
-
     def _load_highlight_js_script(self) -> str:
         """Highlight.js スクリプトタグを構築"""
         return f'<script src="{HIGHLIGHT_JS_CDN_JS}"></script>'
-
-    def _load_copy_button_script(self) -> str:
-        """copy-button.js ファイルを読み込んで <script> タグで返す"""
-        js_file = TEMPLATES_DIR / "core" / COPY_BUTTON_JS_FILE
-        try:
-            js_content = js_file.read_text(encoding="utf-8")
-            return f"<script>\n{js_content}\n</script>"
-        except FileNotFoundError:
-            self.logger.warning(f"copy-button.js が見つかりません: {js_file}")
-            return ""
-        except Exception as e:
-            self.logger.warning(f"copy-button.js の読み込みエラー: {e}")
-            return ""
 
     def _load_situ_components_script(self) -> str:
         """components/ ディレクトリ配下のすべての script.js を読み込んで <script> タグで返す"""

@@ -1,0 +1,113 @@
+/* Web Components CSS for situ-code-block */
+
+:host {
+    display: block;
+    margin: 1.5rem 0;
+    font-family: var(--situ-font-family, system-ui, -apple-system, sans-serif);
+}
+
+.code-block-wrapper {
+    position: relative;
+    background-color: var(--situ-code-bg, #282c34);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--situ-border-color, #e0e0e0);
+}
+
+/* Dark mode fallback if variables are missing */
+@media (prefers-color-scheme: light) {
+    .code-block-wrapper {
+        border-color: transparent;
+    }
+}
+
+.code-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--situ-code-header-bg, #21252b);
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.code-language {
+    color: var(--situ-code-lang-color, #abb2bf);
+    font-size: 0.75rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.copy-button {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--situ-code-lang-color, #abb2bf);
+    border-radius: 4px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s step-end; /* Lab-gear snap transition */
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.copy-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+}
+
+.copy-button:active {
+    transform: translateY(1px);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.copy-button.copied {
+    background: var(--situ-success-color, #059669);
+    border-color: var(--situ-success-color, #059669);
+    color: #ffffff;
+}
+
+/* Style the projected/slotted <pre> and <code> content */
+::slotted(pre),
+.code-content-slot pre {
+    margin: 0 !important;
+    padding: 1.25rem !important;
+    overflow-x: auto;
+    background: transparent !important;
+    color: #abb2bf; /* Default text color matching highlight.js atom-one-dark */
+}
+
+::slotted(code),
+.code-content-slot code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Scrollbar styling for the code block */
+.code-content-slot pre::-webkit-scrollbar,
+::slotted(pre)::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+.code-content-slot pre::-webkit-scrollbar-track,
+::slotted(pre)::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.code-content-slot pre::-webkit-scrollbar-thumb,
+::slotted(pre)::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.code-content-slot pre::-webkit-scrollbar-thumb:hover,
+::slotted(pre)::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
