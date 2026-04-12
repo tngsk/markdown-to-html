@@ -93,7 +93,7 @@ class HTMLDocumentBuilder:
         component_templates = self._load_component_templates()
 
         connect_src_str = " ".join(filter(None, ["'self'", connect_src, ws_src]))
-        csp_meta = f'<meta http-equiv="Content-Security-Policy" content="default-src \'self\' \'unsafe-inline\' data:; connect-src {connect_src_str}; object-src \'none\';">'
+        csp_meta = f'<meta http-equiv="Content-Security-Policy" content="default-src \'self\' \'unsafe-inline\' data: https://cdnjs.cloudflare.com; connect-src {connect_src_str}; object-src \'none\';">'
 
         doc = template_content.replace("{TITLE}", safe_title)
         doc = doc.replace("{CSP_META}", csp_meta)
