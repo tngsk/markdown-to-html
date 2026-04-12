@@ -48,6 +48,12 @@ MIME_TYPE_REGISTRY: Dict[str, str] = {
     ".svg": "image/svg+xml",
     ".bmp": "image/bmp",
     ".tiff": "image/tiff",
+    ".wav": "audio/wav",
+    ".mp3": "audio/mpeg",
+    ".ogg": "audio/ogg",
+    ".flac": "audio/flac",
+    ".aac": "audio/aac",
+    ".m4a": "audio/mp4",
 }
 
 # デフォルトMIMEタイプ
@@ -79,6 +85,9 @@ HTML_IPYNB_LINK_PATTERN = r'<a\s+([^>]*?)href="([^"]+\.ipynb)"([^>]*)>(.*?)</a>'
 HTML_POLL_COMPONENT_TEMPLATE = (
     '<situ-poll title="{title}" options="{options}"></situ-poll>'
 )
+HTML_AB_TEST_COMPONENT_TEMPLATE = (
+    '<situ-ab-test title="{title}" src-a="{src_a}" src-b="{src_b}"></situ-ab-test>'
+)
 
 # 外部サービス URL
 GITHUB_BASE_URL = "https://github.com/"
@@ -101,6 +110,9 @@ MARKDOWN_EXTENSIONS = ["fenced_code", "tables", "nl2br"]
 
 # 投票コンポーネント（Live Polling）の正規表現パターン
 MARKDOWN_POLL_PATTERN = r"@\[poll:\s*(.+?)\]\((.+?)\)"
+
+# A/Bテストコンポーネントの正規表現パターン
+MARKDOWN_AB_TEST_PATTERN = r"@\[ab-test:\s*(.+?)\]\((.+?),\s*(.+?)\)"
 
 # ノートブック入力コンポーネントの正規表現パターン
 MARKDOWN_NOTEBOOK_PATTERN = r"@\[notebook-input\]\((.+?)\)"
