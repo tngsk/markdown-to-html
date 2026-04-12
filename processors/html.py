@@ -89,7 +89,7 @@ class HTMLDocumentBuilder:
         # エクスポート機能の自動判定
         has_interactive_components = any(
             tag in html_body
-            for tag in ["<situ-poll", "<situ-ab-test", "<situ-notebook-input"]
+            for tag in ["<situ-poll", "<situ-ab-test", "<situ-notebook-input", "<situ-textfield-input"]
         )
         should_enable_export = enable_export or has_interactive_components
 
