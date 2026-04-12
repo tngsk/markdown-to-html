@@ -4,6 +4,7 @@ Markdown Processor
 Converts Markdown content to intermediate HTML.
 """
 
+import html
 import logging
 import re
 
@@ -49,8 +50,8 @@ class MarkdownProcessor:
             options = match.group(2).strip()
 
             # HTML属性用にエスケープ
-            safe_title = title.replace('"', "&quot;")
-            safe_options = options.replace('"', "&quot;")
+            safe_title = html.escape(title)
+            safe_options = html.escape(options)
 
             return HTML_POLL_COMPONENT_TEMPLATE.format(
                 title=safe_title, options=safe_options
@@ -83,7 +84,7 @@ class MarkdownProcessor:
                 placeholder = content
                 size_attr = ""
 
-            safe_placeholder = placeholder.replace('"', "&quot;")
+            safe_placeholder = html.escape(placeholder)
             return HTML_TEXTFIELD_COMPONENT_TEMPLATE.format(
                 placeholder=safe_placeholder,
                 size_attr=size_attr
@@ -106,7 +107,7 @@ class MarkdownProcessor:
         def replacer(match: re.Match) -> str:
             input_id = match.group(1).strip()
             # エスケープ
-            safe_id = input_id.replace('"', "&quot;")
+            safe_id = html.escape(input_id)
             return HTML_NOTEBOOK_COMPONENT_TEMPLATE.format(id=safe_id)
 
         result = pattern.sub(replacer, markdown_content)
@@ -129,9 +130,9 @@ class MarkdownProcessor:
             src_b = match.group(3).strip()
 
             # HTML属性用にエスケープ
-            safe_title = title.replace('"', "&quot;")
-            safe_src_a = src_a.replace('"', "&quot;")
-            safe_src_b = src_b.replace('"', "&quot;")
+            safe_title = html.escape(title)
+            safe_src_a = html.escape(src_a)
+            safe_src_b = html.escape(src_b)
 
             return HTML_AB_TEST_COMPONENT_TEMPLATE.format(
                 title=safe_title, src_a=safe_src_a, src_b=safe_src_b
@@ -147,7 +148,7 @@ class MarkdownProcessor:
 
         def replacer(match: re.Match) -> str:
             options = match.group(1).strip()
-            safe_options = options.replace('"', "&quot;")
+            safe_options = html.escape(options)
             return HTML_REACTION_COMPONENT_TEMPLATE.format(options=safe_options)
 
         result = pattern.sub(replacer, markdown_content)
@@ -160,7 +161,7 @@ class MarkdownProcessor:
 
         def replacer(match: re.Match) -> str:
             title = match.group(1).strip()
-            safe_title = title.replace('"', "&quot;")
+            safe_title = html.escape(title)
             return HTML_SESSION_JOIN_COMPONENT_TEMPLATE.format(title=safe_title)
 
         result = pattern.sub(replacer, markdown_content)
@@ -175,7 +176,7 @@ class MarkdownProcessor:
 
         def replacer(match: re.Match) -> str:
             title = match.group(1).strip()
-            safe_title = title.replace('"', "&quot;")
+            safe_title = html.escape(title)
             return HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE.format(title=safe_title)
 
         result = pattern.sub(replacer, markdown_content)
