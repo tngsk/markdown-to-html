@@ -1,0 +1,2 @@
+[security]
+connect-src = "https://your-render-api.com"

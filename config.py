@@ -42,6 +42,8 @@ class CSSEmbeddingError(ConversionError):
 # ============================================================================
 
 
+import tomllib
+
 @dataclass
 class ConversionConfig:
     """変換処理の設定を保持するデータクラス"""
@@ -52,6 +54,16 @@ class ConversionConfig:
     template_path: Optional[Path] = None
     verbose: bool = False
     excluded_tags: Optional[List[str]] = None
+    force: bool = False
+    connect_src: str = ""
+
+    def __post_init__(self):
+        try:
+            with open("config.toml", "rb") as f:
+                config_data = tomllib.load(f)
+                self.connect_src = config_data.get("security", {}).get("connect-src", "")
+        except Exception:
+            pass
 
     def resolve_output_file(self) -> Path:
         """出力ファイルパスを決定する（未指定時は入力ファイル名から生成）"""

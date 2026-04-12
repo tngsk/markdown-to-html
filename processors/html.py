@@ -7,6 +7,7 @@ Generates complete HTML documents from markdown with template support.
 import logging
 import re
 from pathlib import Path
+import json
 from typing import List, Optional
 
 from config import ConversionError
@@ -39,6 +40,8 @@ class HTMLDocumentBuilder:
         css_content: Optional[str] = None,
         title: str = "Document",
         excluded_tags: Optional[List[str]] = None,
+        connect_src: str = "",
+        asset_store: Optional[dict] = None,
     ) -> str:
         """
         テンプレートとHTML断片からドキュメントを生成
@@ -88,16 +91,60 @@ class HTMLDocumentBuilder:
         situ_components_js = self._load_situ_components_script()
         component_templates = self._load_component_templates()
 
+        csp_meta = f'<meta http-equiv="Content-Security-Policy" content="default-src \'self\' \'unsafe-inline\' data:; connect-src \'self\' {connect_src}; object-src \'none\';">'
+
         doc = template_content.replace("{TITLE}", safe_title)
+        doc = doc.replace("{CSP_META}", csp_meta)
         doc = doc.replace("{CSS_BLOCK}", css_block)
         doc = doc.replace("{HIGHLIGHT_JS_CSS}", highlight_js_css)
         doc = doc.replace("{CODE_BLOCK_CSS}", base_css)
-        doc = doc.replace("{BODY}", html_body)
         doc = doc.replace("{HIGHLIGHT_JS}", highlight_js)
+
+        html_body += f'\n<situ-export></situ-export>'
+        html_body += f'\n<script>window.SITU_API_URL = "{connect_src}";</script>'
+
+        if asset_store:
+            asset_template = f'<template id="situ-asset-store">{json.dumps(asset_store)}</template>'
+            lazy_load_script = """
+            <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const storeEl = document.getElementById('situ-asset-store');
+                if (storeEl) {
+                    try {
+                        const assets = JSON.parse(storeEl.innerHTML);
+                        const elements = document.querySelectorAll('[data-lazy-src], [data-lazy-src-a], [data-lazy-src-b]');
+                        elements.forEach(el => {
+                            const src = el.getAttribute('data-lazy-src');
+                            if (src && assets[src]) {
+                                el.setAttribute('src', assets[src]);
+                                el.removeAttribute('data-lazy-src');
+                            }
+
+                            const srcA = el.getAttribute('data-lazy-src-a');
+                            if (srcA && assets[srcA]) {
+                                el.setAttribute('src-a', assets[srcA]);
+                                el.removeAttribute('data-lazy-src-a');
+                            }
+
+                            const srcB = el.getAttribute('data-lazy-src-b');
+                            if (srcB && assets[srcB]) {
+                                el.setAttribute('src-b', assets[srcB]);
+                                el.removeAttribute('data-lazy-src-b');
+                            }
+                        });
+                    } catch (e) {
+                        console.error('Failed to load lazy assets', e);
+                    }
+                }
+            });
+            </script>
+            """
+            html_body += f"\n{asset_template}\n{lazy_load_script}"
 
         # 既存の {COPY_BUTTON_JS} プレースホルダーにまとめて追記する
         combined_js = f"{component_templates}\n{situ_components_js}"
         doc = doc.replace("{COPY_BUTTON_JS}", combined_js)
+        doc = doc.replace("{BODY}", html_body) # Ensure BODY is replaced after appending asset store
 
         return doc
 

@@ -72,7 +72,7 @@ class MarkdownToHTMLConverter:
 
             # Step 4: メディア埋め込み
             markdown_dir = self.config.input_file.parent
-            html_body, media_count = self.media_embedder.embed_media_in_html(
+            html_body, media_count, asset_store = self.media_embedder.embed_media_in_html(
                 html_body, markdown_dir
             )
             self.stats.images_embedded = media_count
@@ -85,10 +85,26 @@ class MarkdownToHTMLConverter:
                 css_content=css_content if css_content else None,
                 title=title,
                 excluded_tags=self.config.excluded_tags,
+                connect_src=self.config.connect_src,
+                asset_store=asset_store,
             )
             self.logger.info(
                 f"✓ HTMLドキュメント構造を生成しました (タイトル: {title})"
             )
+
+            # Validate Size
+            total_size = len(html_document.encode("utf-8"))
+            if total_size > 20 * 1024 * 1024:
+                self.logger.warning(f"⚠️ 出力サイズが 20MB を超えています: {self._format_size(total_size)}")
+                for asset_id, asset_data in asset_store.items():
+                    asset_size = len(asset_data.encode("utf-8"))
+                    percentage = (asset_size / total_size) * 100
+                    self.logger.warning(f"   - {asset_id}: {percentage:.1f}% ({self._format_size(asset_size)})")
+
+            if total_size > 30 * 1024 * 1024 and not self.config.force:
+                self.logger.error(f"❌ 出力サイズが 30MB を超えています ({self._format_size(total_size)})。")
+                self.logger.error("   保存を中止します。--force オプションで強制保存できます。")
+                return False
 
             # Step 6: 出力
             output_file = self.config.resolve_output_file()

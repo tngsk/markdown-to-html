@@ -98,6 +98,12 @@ def create_argument_parser() -> argparse.ArgumentParser:
         help="削除対象のHTMLタグ（複数指定可能。例：-e hr div span）",
     )
 
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="30MBの出力サイズ制限をバイパスして強制保存する",
+    )
+
     return parser
 
 
@@ -136,6 +142,7 @@ def main() -> int:
         template_path=args.template,
         verbose=args.verbose,
         excluded_tags=args.excluded_tags,
+        force=args.force,
     )
 
     # ヘッダー表示

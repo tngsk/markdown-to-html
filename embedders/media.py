@@ -7,8 +7,10 @@ Converts media references (Images, Audio) to Base64-encoded data URIs in HTML.
 import base64
 import logging
 import re
+import io
 from pathlib import Path
 from typing import Tuple
+from PIL import Image
 
 from config import FileProcessingError, ImageEmbeddingError
 from constants import HTML_IMG_TAG_PATTERN
@@ -31,6 +33,17 @@ class MediaEmbedder:
 
         try:
             media_data = self.file_handler.read_binary(media_path)
+
+            ext = media_path.suffix.lower()
+            if ext in [".png", ".jpg", ".jpeg", ".bmp", ".tiff"]:
+                try:
+                    img = Image.open(io.BytesIO(media_data))
+                    buffer = io.BytesIO()
+                    img.save(buffer, format="WEBP")
+                    media_data = buffer.getvalue()
+                except Exception as img_e:
+                    self.logger.warning(f"WebP変換失敗 ({media_path}): {img_e}. オリジナルを使用します。")
+
             return base64.b64encode(media_data).decode("utf-8")
         except FileProcessingError:
             raise
@@ -41,7 +54,7 @@ class MediaEmbedder:
 
     def embed_media_in_html(
         self, html_content: str, markdown_dir: Path
-    ) -> Tuple[str, int]:
+    ) -> Tuple[str, int, dict]:
         """
         HTMLの<img>タグおよび<situ-ab-test>のメディアをBase64データに置換
 
@@ -50,9 +63,10 @@ class MediaEmbedder:
             markdown_dir: Markdownファイルが存在するディレクトリ
 
         Returns:
-            (変換後のHTML, 埋め込みメディア数)
+            (変換後のHTML, 埋め込みメディア数, asset_store)
         """
         media_count = 0
+        asset_store = {}
 
         def resolve_and_encode(src_value: str) -> str:
             nonlocal media_count
@@ -65,11 +79,24 @@ class MediaEmbedder:
                 return src_value
 
             try:
+                if media_path.suffix.lower() == ".svg":
+                    svg_content = self.file_handler.read_text(media_path)
+                    media_count += 1
+                    self.logger.debug(f"インライン埋め込み: {media_path.name} (image/svg+xml)")
+                    return svg_content
+
                 base64_data = self.encode_media_to_base64(media_path)
                 mime_type = self.mime_registry.get_mime_type(media_path)
+                ext = media_path.suffix.lower()
+                if ext in [".png", ".jpg", ".jpeg", ".bmp", ".tiff"]:
+                    mime_type = "image/webp"
+
                 media_count += 1
                 self.logger.debug(f"埋め込み: {media_path.name} ({mime_type})")
-                return f"data:{mime_type};base64,{base64_data}"
+
+                asset_id = f"asset-{media_count}"
+                asset_store[asset_id] = f"data:{mime_type};base64,{base64_data}"
+                return asset_id
             except ImageEmbeddingError as e:
                 self.logger.error(f"メディア埋め込み失敗: {e}")
                 return src_value
@@ -83,6 +110,15 @@ class MediaEmbedder:
             after_src = match.group(3)
 
             new_src = resolve_and_encode(src_value)
+            stripped_src = new_src.strip()
+            if stripped_src.startswith("<svg") or stripped_src.startswith("<?xml"):
+                return new_src
+
+            if new_src.startswith("asset-"):
+                # transparent 1x1 gif
+                placeholder = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                return f'<img {before_src}src="{placeholder}" data-lazy-src="{new_src}"{after_src}>'
+
             return f'<img {before_src}src="{new_src}"{after_src}>'
 
         html_content = img_pattern.sub(img_replacer, html_content)
@@ -104,8 +140,16 @@ class MediaEmbedder:
             new_src_a = resolve_and_encode(src_a)
             new_src_b = resolve_and_encode(src_b)
 
-            return f"{part1}{new_src_a}{part3}{new_src_b}{part5}"
+            out_part1 = part1
+            if new_src_a.startswith("asset-"):
+                out_part1 = part1.replace('src-a="', 'data-lazy-src-a="' + new_src_a + '" src-a="')
+
+            out_part3 = part3
+            if new_src_b.startswith("asset-"):
+                out_part3 = part3.replace('src-b="', 'data-lazy-src-b="' + new_src_b + '" src-b="')
+
+            return f"{out_part1}{new_src_a if not new_src_a.startswith('asset-') else ''}{out_part3}{new_src_b if not new_src_b.startswith('asset-') else ''}{part5}"
 
         html_content = ab_test_pattern.sub(ab_test_replacer, html_content)
 
-        return html_content, media_count
+        return html_content, media_count, asset_store
