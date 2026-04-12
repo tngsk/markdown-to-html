@@ -104,12 +104,15 @@ class HTMLDocumentBuilder:
         if should_enable_export:
             html_body += "\n<situ-export></situ-export>"
 
+        # 使用されているコンポーネントを特定
+        used_component_dirs = self._get_used_component_dirs(html_body, should_enable_export)
+
         # コードブロック用リソース（CSS/JS）を読み込む
         highlight_js_css = self._build_highlight_js_link()
         base_css = self._load_base_css()
         highlight_js = self._load_highlight_js_script()
-        situ_components_js = self._load_situ_components_script(should_enable_export)
-        component_templates = self._load_component_templates(should_enable_export)
+        situ_components_js = self._load_situ_components_script(used_component_dirs)
+        component_templates = self._load_component_templates(used_component_dirs)
 
         connect_src_str = " ".join(filter(None, ["'self'", connect_src, ws_src]))
         csp_meta = f"<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self' 'unsafe-inline' data: https://cdnjs.cloudflare.com; connect-src {connect_src_str}; object-src 'none';\">"
@@ -340,23 +343,49 @@ class HTMLDocumentBuilder:
         """Highlight.js スクリプトタグを構築"""
         return f'<script src="{HIGHLIGHT_JS_CDN_JS}"></script>'
 
-    def _load_situ_components_script(self, should_enable_export: bool) -> str:
-        """components/ ディレクトリ配下のすべての script.js を読み込んで <script> タグで返す"""
+    def _get_used_component_dirs(self, html_body: str, should_enable_export: bool) -> List[Path]:
+        """使用されているコンポーネントのディレクトリ一覧を取得する"""
         components_dir = TEMPLATES_DIR / "components"
         if not components_dir.exists() or not components_dir.is_dir():
+            return []
+
+        used_dirs = []
+        for component_dir in sorted(components_dir.iterdir()):
+            if not component_dir.is_dir():
+                continue
+
+            name = component_dir.name
+
+            # 常に含めるコンポーネント
+            if name == "situ-sync":
+                used_dirs.append(component_dir)
+                continue
+
+            # エクスポートコンポーネント
+            if name == "situ-export":
+                if should_enable_export:
+                    used_dirs.append(component_dir)
+                continue
+
+            # HTML内で使用されているかチェック
+            if f"<{name}" in html_body:
+                used_dirs.append(component_dir)
+
+        return used_dirs
+
+    def _load_situ_components_script(self, used_component_dirs: List[Path]) -> str:
+        """指定されたコンポーネントの script.js を読み込んで <script> タグで返す"""
+        if not used_component_dirs:
             return ""
 
         js_contents = []
-        for component_dir in sorted(components_dir.iterdir()):
-            if component_dir.is_dir():
-                if component_dir.name == "situ-export" and not should_enable_export:
-                    continue
-                js_file = component_dir / "script.js"
-                if js_file.exists():
-                    try:
-                        js_contents.append(js_file.read_text(encoding="utf-8"))
-                    except Exception as e:
-                        self.logger.warning(f"JS読み込みエラー ({js_file}): {e}")
+        for component_dir in used_component_dirs:
+            js_file = component_dir / "script.js"
+            if js_file.exists():
+                try:
+                    js_contents.append(js_file.read_text(encoding="utf-8"))
+                except Exception as e:
+                    self.logger.warning(f"JS読み込みエラー ({js_file}): {e}")
 
         if not js_contents:
             return ""
@@ -364,39 +393,35 @@ class HTMLDocumentBuilder:
         combined_js = "\n\n".join(js_contents)
         return f"<script>\n{combined_js}\n</script>"
 
-    def _load_component_templates(self, should_enable_export: bool) -> str:
-        """components/ ディレクトリ配下のすべての template.html を読み込み、対応する style.css を注入して結合する"""
-        components_dir = TEMPLATES_DIR / "components"
-        if not components_dir.exists() or not components_dir.is_dir():
+    def _load_component_templates(self, used_component_dirs: List[Path]) -> str:
+        """指定されたコンポーネントの template.html を読み込み、対応する style.css を注入して結合する"""
+        if not used_component_dirs:
             return ""
 
         templates_html = []
-        for component_dir in sorted(components_dir.iterdir()):
-            if component_dir.is_dir():
-                if component_dir.name == "situ-export" and not should_enable_export:
-                    continue
-                template_file = component_dir / "template.html"
-                css_file = component_dir / "style.css"
+        for component_dir in used_component_dirs:
+            template_file = component_dir / "template.html"
+            css_file = component_dir / "style.css"
 
-                if template_file.exists():
-                    try:
-                        template_content = template_file.read_text(encoding="utf-8")
-                        css_content = ""
-                        if css_file.exists():
-                            try:
-                                css_content = css_file.read_text(encoding="utf-8")
-                            except Exception as e:
-                                self.logger.warning(
-                                    f"CSS読み込みエラー ({css_file}): {e}"
-                                )
+            if template_file.exists():
+                try:
+                    template_content = template_file.read_text(encoding="utf-8")
+                    css_content = ""
+                    if css_file.exists():
+                        try:
+                            css_content = css_file.read_text(encoding="utf-8")
+                        except Exception as e:
+                            self.logger.warning(
+                                f"CSS読み込みエラー ({css_file}): {e}"
+                            )
 
-                        template_content = template_content.replace(
-                            "{COMPONENTS_CSS}", css_content
-                        )
-                        templates_html.append(template_content)
-                    except Exception as e:
-                        self.logger.warning(
-                            f"テンプレート読み込みエラー ({template_file}): {e}"
-                        )
+                    template_content = template_content.replace(
+                        "{COMPONENTS_CSS}", css_content
+                    )
+                    templates_html.append(template_content)
+                except Exception as e:
+                    self.logger.warning(
+                        f"テンプレート読み込みエラー ({template_file}): {e}"
+                    )
 
         return "\n\n".join(templates_html)
