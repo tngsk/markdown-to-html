@@ -106,7 +106,7 @@ REGEX_FLAG_IGNORECASE = "IGNORECASE"
 # ============================================================================
 
 # Markdownの拡張機能リスト
-MARKDOWN_EXTENSIONS = ["fenced_code", "tables", "nl2br"]
+MARKDOWN_EXTENSIONS = ["fenced_code", "tables", "nl2br", "toc"]
 
 # 投票コンポーネント（Live Polling）の正規表現パターン
 MARKDOWN_POLL_PATTERN = r"@\[poll:\s*(.+?)\]\((.+?)\)"
