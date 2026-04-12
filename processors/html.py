@@ -4,10 +4,10 @@ HTML Document Builder
 Generates complete HTML documents from markdown with template support.
 """
 
+import json
 import logging
 import re
 from pathlib import Path
-import json
 from typing import List, Optional
 
 from config import ConversionError
@@ -89,12 +89,17 @@ class HTMLDocumentBuilder:
         # エクスポート機能の自動判定
         has_interactive_components = any(
             tag in html_body
-            for tag in ["<situ-poll", "<situ-ab-test", "<situ-notebook-input", "<situ-textfield-input"]
+            for tag in [
+                "<situ-poll",
+                "<situ-ab-test",
+                "<situ-notebook-input",
+                "<situ-textfield-input",
+            ]
         )
         should_enable_export = enable_export or has_interactive_components
 
         if should_enable_export:
-            html_body += f'\n<situ-export></situ-export>'
+            html_body += "\n<situ-export></situ-export>"
 
         # コードブロック用リソース（CSS/JS）を読み込む
         highlight_js_css = self._build_highlight_js_link()
@@ -104,7 +109,7 @@ class HTMLDocumentBuilder:
         component_templates = self._load_component_templates(should_enable_export)
 
         connect_src_str = " ".join(filter(None, ["'self'", connect_src, ws_src]))
-        csp_meta = f'<meta http-equiv="Content-Security-Policy" content="default-src \'self\' \'unsafe-inline\' data: https://cdnjs.cloudflare.com; connect-src {connect_src_str}; object-src \'none\';">'
+        csp_meta = f"<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self' 'unsafe-inline' data: https://cdnjs.cloudflare.com; connect-src {connect_src_str}; object-src 'none';\">"
 
         meta_tags = []
         if connect_src:
@@ -124,15 +129,21 @@ class HTMLDocumentBuilder:
         doc = doc.replace("{HIGHLIGHT_JS}", highlight_js)
 
         if asset_store:
-            asset_template = f'<template id="situ-asset-store">{json.dumps(asset_store)}</template>'
+            asset_template = (
+                f'<template id="situ-asset-store">{json.dumps(asset_store)}</template>'
+            )
             lazy_load_js = self._load_lazy_load_script()
-            lazy_load_script = f"\n<script>\n{lazy_load_js}\n</script>\n" if lazy_load_js else ""
+            lazy_load_script = (
+                f"\n<script>\n{lazy_load_js}\n</script>\n" if lazy_load_js else ""
+            )
             html_body += f"\n{asset_template}\n{lazy_load_script}"
 
         # 既存の {COPY_BUTTON_JS} プレースホルダーにまとめて追記する
         combined_js = f"{component_templates}\n{situ_components_js}"
         doc = doc.replace("{COPY_BUTTON_JS}", combined_js)
-        doc = doc.replace("{BODY}", html_body) # Ensure BODY is replaced after appending asset store
+        doc = doc.replace(
+            "{BODY}", html_body
+        )  # Ensure BODY is replaced after appending asset store
 
         return doc
 

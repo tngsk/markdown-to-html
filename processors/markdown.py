@@ -12,20 +12,20 @@ import markdown
 from config import ConversionError
 from constants import (
     HTML_AB_TEST_COMPONENT_TEMPLATE,
-    HTML_POLL_COMPONENT_TEMPLATE,
-    HTML_NOTEBOOK_COMPONENT_TEMPLATE,
-    HTML_TEXTFIELD_COMPONENT_TEMPLATE,
-    MARKDOWN_EXTENSIONS,
-    MARKDOWN_AB_TEST_PATTERN,
-    MARKDOWN_POLL_PATTERN,
-    MARKDOWN_NOTEBOOK_PATTERN,
-    MARKDOWN_TEXTFIELD_PATTERN,
-    MARKDOWN_REACTION_PATTERN,
-    HTML_REACTION_COMPONENT_TEMPLATE,
-    MARKDOWN_SESSION_JOIN_PATTERN,
-    HTML_SESSION_JOIN_COMPONENT_TEMPLATE,
-    MARKDOWN_GROUP_ASSIGNMENT_PATTERN,
     HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE,
+    HTML_NOTEBOOK_COMPONENT_TEMPLATE,
+    HTML_POLL_COMPONENT_TEMPLATE,
+    HTML_REACTION_COMPONENT_TEMPLATE,
+    HTML_SESSION_JOIN_COMPONENT_TEMPLATE,
+    HTML_TEXTFIELD_COMPONENT_TEMPLATE,
+    MARKDOWN_AB_TEST_PATTERN,
+    MARKDOWN_EXTENSIONS,
+    MARKDOWN_GROUP_ASSIGNMENT_PATTERN,
+    MARKDOWN_NOTEBOOK_PATTERN,
+    MARKDOWN_POLL_PATTERN,
+    MARKDOWN_REACTION_PATTERN,
+    MARKDOWN_SESSION_JOIN_PATTERN,
+    MARKDOWN_TEXTFIELD_PATTERN,
 )
 from handlers.file import FileHandler
 
@@ -70,11 +70,15 @@ class MarkdownProcessor:
         def replacer(match: re.Match) -> str:
             placeholder = match.group(1).strip()
             safe_placeholder = placeholder.replace('"', "&quot;")
-            return HTML_TEXTFIELD_COMPONENT_TEMPLATE.format(placeholder=safe_placeholder)
+            return HTML_TEXTFIELD_COMPONENT_TEMPLATE.format(
+                placeholder=safe_placeholder
+            )
 
         result = pattern.sub(replacer, markdown_content)
         if markdown_content != result:
-            self.logger.debug("テキストフィールドコンポーネント前処理完了: @[textfield] → <situ-textfield-input>")
+            self.logger.debug(
+                "テキストフィールドコンポーネント前処理完了: @[textfield] → <situ-textfield-input>"
+            )
         return result
 
     def _preprocess_notebooks(self, markdown_content: str) -> str:
@@ -92,9 +96,10 @@ class MarkdownProcessor:
 
         result = pattern.sub(replacer, markdown_content)
         if markdown_content != result:
-            self.logger.debug("ノートブックコンポーネント前処理完了: @[notebook-input] → <situ-notebook-input>")
+            self.logger.debug(
+                "ノートブックコンポーネント前処理完了: @[notebook-input] → <situ-notebook-input>"
+            )
         return result
-
 
     def _preprocess_ab_tests(self, markdown_content: str) -> str:
         """
@@ -122,7 +127,6 @@ class MarkdownProcessor:
             self.logger.debug("A/Bテスト前処理完了: @[ab-test] → <situ-ab-test>")
         return result
 
-
     def _preprocess_reactions(self, markdown_content: str) -> str:
         pattern = re.compile(MARKDOWN_REACTION_PATTERN)
 
@@ -146,7 +150,9 @@ class MarkdownProcessor:
 
         result = pattern.sub(replacer, markdown_content)
         if markdown_content != result:
-            self.logger.debug("セッション参加前処理完了: @[session-join] → <situ-session-join>")
+            self.logger.debug(
+                "セッション参加前処理完了: @[session-join] → <situ-session-join>"
+            )
         return result
 
     def _preprocess_group_assignment(self, markdown_content: str) -> str:
@@ -159,7 +165,9 @@ class MarkdownProcessor:
 
         result = pattern.sub(replacer, markdown_content)
         if markdown_content != result:
-            self.logger.debug("グループ分け前処理完了: @[group-assignment] → <situ-group-assignment>")
+            self.logger.debug(
+                "グループ分け前処理完了: @[group-assignment] → <situ-group-assignment>"
+            )
         return result
 
     def convert_markdown_to_html(self, markdown_content: str) -> str:

@@ -2,7 +2,7 @@ import json
 import logging
 from typing import List
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
 logging.basicConfig(level=logging.INFO)
@@ -17,6 +17,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 class ConnectionManager:
     def __init__(self):
@@ -39,7 +40,9 @@ class ConnectionManager:
             except Exception as e:
                 logger.error(f"Error broadcasting: {e}")
 
+
 manager = ConnectionManager()
+
 
 @app.websocket("/ws/sync")
 async def websocket_endpoint(websocket: WebSocket):
@@ -55,6 +58,7 @@ async def websocket_endpoint(websocket: WebSocket):
         logger.error(f"WebSocket Error: {e}")
         manager.disconnect(websocket)
 
+
 @app.post("/api/data")
 async def receive_data(request: Request):
     try:
@@ -66,6 +70,8 @@ async def receive_data(request: Request):
         logger.error(f"Error saving data: {e}")
         return {"status": "error", "message": str(e)}
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

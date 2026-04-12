@@ -5,11 +5,12 @@ Converts media references (Images, Audio) to Base64-encoded data URIs in HTML.
 """
 
 import base64
+import io
 import logging
 import re
-import io
 from pathlib import Path
 from typing import Tuple
+
 from PIL import Image
 
 from config import FileProcessingError, ImageEmbeddingError
@@ -42,7 +43,9 @@ class MediaEmbedder:
                     img.save(buffer, format="WEBP")
                     media_data = buffer.getvalue()
                 except Exception as img_e:
-                    self.logger.warning(f"WebP変換失敗 ({media_path}): {img_e}. オリジナルを使用します。")
+                    self.logger.warning(
+                        f"WebP変換失敗 ({media_path}): {img_e}. オリジナルを使用します。"
+                    )
 
             return base64.b64encode(media_data).decode("utf-8")
         except FileProcessingError:
@@ -82,7 +85,9 @@ class MediaEmbedder:
                 if media_path.suffix.lower() == ".svg":
                     svg_content = self.file_handler.read_text(media_path)
                     media_count += 1
-                    self.logger.debug(f"インライン埋め込み: {media_path.name} (image/svg+xml)")
+                    self.logger.debug(
+                        f"インライン埋め込み: {media_path.name} (image/svg+xml)"
+                    )
                     return svg_content
 
                 base64_data = self.encode_media_to_base64(media_path)
@@ -116,7 +121,9 @@ class MediaEmbedder:
 
             if new_src.startswith("asset-"):
                 # transparent 1x1 gif
-                placeholder = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                placeholder = (
+                    "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                )
                 return f'<img {before_src}src="{placeholder}" data-lazy-src="{new_src}"{after_src}>'
 
             return f'<img {before_src}src="{new_src}"{after_src}>'
@@ -142,11 +149,15 @@ class MediaEmbedder:
 
             out_part1 = part1
             if new_src_a.startswith("asset-"):
-                out_part1 = part1.replace('src-a="', 'data-lazy-src-a="' + new_src_a + '" src-a="')
+                out_part1 = part1.replace(
+                    'src-a="', 'data-lazy-src-a="' + new_src_a + '" src-a="'
+                )
 
             out_part3 = part3
             if new_src_b.startswith("asset-"):
-                out_part3 = part3.replace('src-b="', 'data-lazy-src-b="' + new_src_b + '" src-b="')
+                out_part3 = part3.replace(
+                    'src-b="', 'data-lazy-src-b="' + new_src_b + '" src-b="'
+                )
 
             return f"{out_part1}{new_src_a if not new_src_a.startswith('asset-') else ''}{out_part3}{new_src_b if not new_src_b.startswith('asset-') else ''}{part5}"
 

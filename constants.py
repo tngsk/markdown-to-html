@@ -116,11 +116,15 @@ MARKDOWN_AB_TEST_PATTERN = r"@\[ab-test:\s*(.+?)\]\((.+?),\s*(.+?)\)"
 
 # ノートブック入力コンポーネントの正規表現パターン
 MARKDOWN_NOTEBOOK_PATTERN = r"@\[notebook-input\]\((.+?)\)"
-HTML_NOTEBOOK_COMPONENT_TEMPLATE = '<situ-notebook-input id="{id}"></situ-notebook-input>'
+HTML_NOTEBOOK_COMPONENT_TEMPLATE = (
+    '<situ-notebook-input id="{id}"></situ-notebook-input>'
+)
 
 # テキストフィールド入力コンポーネントの正規表現パターン
 MARKDOWN_TEXTFIELD_PATTERN = r"@\[(?:textfield|textfiled):\s*(.+?)\]"
-HTML_TEXTFIELD_COMPONENT_TEMPLATE = '<situ-textfield-input placeholder="{placeholder}"></situ-textfield-input>'
+HTML_TEXTFIELD_COMPONENT_TEMPLATE = (
+    '<situ-textfield-input placeholder="{placeholder}"></situ-textfield-input>'
+)
 
 # リアクションコンポーネントの正規表現パターン
 MARKDOWN_REACTION_PATTERN = r"@\[reaction:\s*\"?(.*?)\"?\]"
@@ -128,11 +132,15 @@ HTML_REACTION_COMPONENT_TEMPLATE = '<situ-reaction options="{options}"></situ-re
 
 # セッション参加コンポーネントの正規表現パターン
 MARKDOWN_SESSION_JOIN_PATTERN = r"@\[session-join:\s*\"?(.*?)\"?\]"
-HTML_SESSION_JOIN_COMPONENT_TEMPLATE = '<situ-session-join title="{title}"></situ-session-join>'
+HTML_SESSION_JOIN_COMPONENT_TEMPLATE = (
+    '<situ-session-join title="{title}"></situ-session-join>'
+)
 
 # グループ分けコンポーネントの正規表現パターン
 MARKDOWN_GROUP_ASSIGNMENT_PATTERN = r"@\[group-assignment:\s*\"?(.*?)\"?\]"
-HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE = '<situ-group-assignment title="{title}"></situ-group-assignment>'
+HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE = (
+    '<situ-group-assignment title="{title}"></situ-group-assignment>'
+)
 
 
 # ============================================================================
