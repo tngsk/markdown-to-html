@@ -40,20 +40,23 @@ class SituSync extends HTMLElement {
     async sendDataToServer(data) {
         const apiUrl = window.SITU_API_URL;
         if (!apiUrl) {
-            console.warn("SITU_API_URL not configured. Data not sent.");
+            console.info("💡 [Interactive-MD] スタンドアロンモードで動作しています。データはローカルにのみ保存されます。");
             return;
         }
 
         try {
-            await fetch(apiUrl + "/api/data", {
+            const response = await fetch(apiUrl + "/api/data", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(data)
             });
+            if (!response.ok) {
+                throw new Error("Server responded with an error");
+            }
         } catch (error) {
-            console.error("Data Recovery failed:", error);
+            console.info("💡 [Interactive-MD] サーバに接続できません（オフライン）。入力内容はブラウザに保存されているため、右下のボタンからJSONでダウンロードできます。");
         }
     }
 
@@ -64,16 +67,29 @@ class SituSync extends HTMLElement {
         const urlParams = new URLSearchParams(window.location.search);
         const isHost = urlParams.get("role") === "host";
 
-        this.ws = new WebSocket(wsUrl + "/ws/sync");
+        try {
+            this.ws = new WebSocket(wsUrl + "/ws/sync");
 
-        this.ws.onopen = () => {
-            console.log("WebSocket connected. Host:", isHost);
-        };
+            this.ws.onopen = () => {
+                console.log("🟢 [Interactive-MD] リアルタイム同期に接続しました（Role: " + (isHost ? "Host" : "Participant") + "）");
+            };
 
-        if (isHost) {
-            this.setupHostObserver();
-        } else {
-            this.setupParticipantListener();
+            this.ws.onerror = () => {
+                console.info("💡 [Interactive-MD] 同期サーバが見つかりません。ドキュメントは引き続き単独で閲覧可能です。");
+            };
+
+            this.ws.onclose = () => {
+                // Connection closed messages can be noisy if the server shuts down, so we use info.
+                console.info("💡 [Interactive-MD] 同期サーバとの接続が終了しました。");
+            };
+
+            if (isHost) {
+                this.setupHostObserver();
+            } else {
+                this.setupParticipantListener();
+            }
+        } catch (e) {
+             console.info("💡 [Interactive-MD] 同期機能を初期化できませんでした。スタンドアロンで実行します。");
         }
     }
 
