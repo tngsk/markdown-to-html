@@ -18,6 +18,12 @@ from constants import (
     MARKDOWN_AB_TEST_PATTERN,
     MARKDOWN_POLL_PATTERN,
     MARKDOWN_NOTEBOOK_PATTERN,
+    MARKDOWN_REACTION_PATTERN,
+    HTML_REACTION_COMPONENT_TEMPLATE,
+    MARKDOWN_SESSION_JOIN_PATTERN,
+    HTML_SESSION_JOIN_COMPONENT_TEMPLATE,
+    MARKDOWN_GROUP_ASSIGNMENT_PATTERN,
+    HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE,
 )
 from handlers.file import FileHandler
 
@@ -98,6 +104,46 @@ class MarkdownProcessor:
             self.logger.debug("A/Bテスト前処理完了: @[ab-test] → <situ-ab-test>")
         return result
 
+
+    def _preprocess_reactions(self, markdown_content: str) -> str:
+        pattern = re.compile(MARKDOWN_REACTION_PATTERN)
+
+        def replacer(match: re.Match) -> str:
+            options = match.group(1).strip()
+            safe_options = options.replace('"', "&quot;")
+            return HTML_REACTION_COMPONENT_TEMPLATE.format(options=safe_options)
+
+        result = pattern.sub(replacer, markdown_content)
+        if markdown_content != result:
+            self.logger.debug("リアクション前処理完了: @[reaction] → <situ-reaction>")
+        return result
+
+    def _preprocess_session_join(self, markdown_content: str) -> str:
+        pattern = re.compile(MARKDOWN_SESSION_JOIN_PATTERN)
+
+        def replacer(match: re.Match) -> str:
+            title = match.group(1).strip()
+            safe_title = title.replace('"', "&quot;")
+            return HTML_SESSION_JOIN_COMPONENT_TEMPLATE.format(title=safe_title)
+
+        result = pattern.sub(replacer, markdown_content)
+        if markdown_content != result:
+            self.logger.debug("セッション参加前処理完了: @[session-join] → <situ-session-join>")
+        return result
+
+    def _preprocess_group_assignment(self, markdown_content: str) -> str:
+        pattern = re.compile(MARKDOWN_GROUP_ASSIGNMENT_PATTERN)
+
+        def replacer(match: re.Match) -> str:
+            title = match.group(1).strip()
+            safe_title = title.replace('"', "&quot;")
+            return HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE.format(title=safe_title)
+
+        result = pattern.sub(replacer, markdown_content)
+        if markdown_content != result:
+            self.logger.debug("グループ分け前処理完了: @[group-assignment] → <situ-group-assignment>")
+        return result
+
     def convert_markdown_to_html(self, markdown_content: str) -> str:
         """
         MarkdownをHTMLに変換
@@ -115,6 +161,9 @@ class MarkdownProcessor:
             markdown_content = self._preprocess_polls(markdown_content)
             markdown_content = self._preprocess_ab_tests(markdown_content)
             markdown_content = self._preprocess_notebooks(markdown_content)
+            markdown_content = self._preprocess_reactions(markdown_content)
+            markdown_content = self._preprocess_session_join(markdown_content)
+            markdown_content = self._preprocess_group_assignment(markdown_content)
             html = markdown.markdown(markdown_content, extensions=MARKDOWN_EXTENSIONS)
             self.logger.debug("Markdown → HTML 変換完了")
             return html
