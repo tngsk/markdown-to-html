@@ -57,6 +57,7 @@ class ConversionConfig:
     force: bool = False
     connect_src: str = ""
     ws_src: str = ""
+    enable_export: bool = False
 
     def __post_init__(self):
         try:

@@ -88,6 +88,7 @@ class MarkdownToHTMLConverter:
                 connect_src=self.config.connect_src,
                 ws_src=self.config.ws_src,
                 asset_store=asset_store,
+                enable_export=self.config.enable_export,
             )
             self.logger.info(
                 f"✓ HTMLドキュメント構造を生成しました (タイトル: {title})"

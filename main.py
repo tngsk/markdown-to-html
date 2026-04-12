@@ -104,6 +104,12 @@ def create_argument_parser() -> argparse.ArgumentParser:
         help="30MBの出力サイズ制限をバイパスして強制保存する",
     )
 
+    parser.add_argument(
+        "--export",
+        action="store_true",
+        help="外部エクスポートモジュール（situ-export）を強制的に有効にする",
+    )
+
     return parser
 
 
@@ -143,6 +149,7 @@ def main() -> int:
         verbose=args.verbose,
         excluded_tags=args.excluded_tags,
         force=args.force,
+        enable_export=args.export,
     )
 
     # ヘッダー表示
