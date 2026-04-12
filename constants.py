@@ -118,6 +118,10 @@ MARKDOWN_AB_TEST_PATTERN = r"@\[ab-test:\s*(.+?)\]\((.+?),\s*(.+?)\)"
 MARKDOWN_NOTEBOOK_PATTERN = r"@\[notebook-input\]\((.+?)\)"
 HTML_NOTEBOOK_COMPONENT_TEMPLATE = '<situ-notebook-input id="{id}"></situ-notebook-input>'
 
+# テキストフィールド入力コンポーネントの正規表現パターン
+MARKDOWN_TEXTFIELD_PATTERN = r"@\[(?:textfield|textfiled):\s*(.+?)\]"
+HTML_TEXTFIELD_COMPONENT_TEMPLATE = '<situ-textfield-input placeholder="{placeholder}"></situ-textfield-input>'
+
 # リアクションコンポーネントの正規表現パターン
 MARKDOWN_REACTION_PATTERN = r"@\[reaction:\s*\"?(.*?)\"?\]"
 HTML_REACTION_COMPONENT_TEMPLATE = '<situ-reaction options="{options}"></situ-reaction>'

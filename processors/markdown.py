@@ -14,10 +14,12 @@ from constants import (
     HTML_AB_TEST_COMPONENT_TEMPLATE,
     HTML_POLL_COMPONENT_TEMPLATE,
     HTML_NOTEBOOK_COMPONENT_TEMPLATE,
+    HTML_TEXTFIELD_COMPONENT_TEMPLATE,
     MARKDOWN_EXTENSIONS,
     MARKDOWN_AB_TEST_PATTERN,
     MARKDOWN_POLL_PATTERN,
     MARKDOWN_NOTEBOOK_PATTERN,
+    MARKDOWN_TEXTFIELD_PATTERN,
     MARKDOWN_REACTION_PATTERN,
     HTML_REACTION_COMPONENT_TEMPLATE,
     MARKDOWN_SESSION_JOIN_PATTERN,
@@ -57,6 +59,22 @@ class MarkdownProcessor:
         result = pattern.sub(replacer, markdown_content)
         if markdown_content != result:
             self.logger.debug("投票コンポーネント前処理完了: @[poll] → <situ-poll>")
+        return result
+
+    def _preprocess_textfield(self, markdown_content: str) -> str:
+        """
+        @[textfield: placeholder] または @[textfiled: placeholder] を <situ-textfield-input> に変換する
+        """
+        pattern = re.compile(MARKDOWN_TEXTFIELD_PATTERN)
+
+        def replacer(match: re.Match) -> str:
+            placeholder = match.group(1).strip()
+            safe_placeholder = placeholder.replace('"', "&quot;")
+            return HTML_TEXTFIELD_COMPONENT_TEMPLATE.format(placeholder=safe_placeholder)
+
+        result = pattern.sub(replacer, markdown_content)
+        if markdown_content != result:
+            self.logger.debug("テキストフィールドコンポーネント前処理完了: @[textfield] → <situ-textfield-input>")
         return result
 
     def _preprocess_notebooks(self, markdown_content: str) -> str:
@@ -161,6 +179,7 @@ class MarkdownProcessor:
             markdown_content = self._preprocess_polls(markdown_content)
             markdown_content = self._preprocess_ab_tests(markdown_content)
             markdown_content = self._preprocess_notebooks(markdown_content)
+            markdown_content = self._preprocess_textfield(markdown_content)
             markdown_content = self._preprocess_reactions(markdown_content)
             markdown_content = self._preprocess_session_join(markdown_content)
             markdown_content = self._preprocess_group_assignment(markdown_content)
