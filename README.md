@@ -65,6 +65,14 @@ uv run main.py document.md -t custom_template.html
 uv run main.py document.md --force
 ```
 
+### 同期・データ収集サーバーの起動
+同期機能（スクロール同期など）やデータ収集（投票結果など）を使用する場合は、付属のFastAPIサーバーを起動します。
+
+```bash
+uv run server.py
+```
+サーバーはデフォルトで `http://0.0.0.0:8000` で起動し、WebSocket (`/ws/sync`) とデータ収集API (`/api/data`) を提供します。
+
 ---
 
 すべてのオプションを確認するにはヘルプを参照してください：
