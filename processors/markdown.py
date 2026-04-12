@@ -11,9 +11,11 @@ import markdown
 
 from config import ConversionError
 from constants import (
+    HTML_AB_TEST_COMPONENT_TEMPLATE,
     HTML_POLL_COMPONENT_TEMPLATE,
     HTML_NOTEBOOK_COMPONENT_TEMPLATE,
     MARKDOWN_EXTENSIONS,
+    MARKDOWN_AB_TEST_PATTERN,
     MARKDOWN_POLL_PATTERN,
     MARKDOWN_NOTEBOOK_PATTERN,
 )
@@ -69,6 +71,33 @@ class MarkdownProcessor:
             self.logger.debug("ノートブックコンポーネント前処理完了: @[notebook-input] → <situ-notebook-input>")
         return result
 
+
+    def _preprocess_ab_tests(self, markdown_content: str) -> str:
+        """
+        @[ab-test: タイトル](file_a, file_b) を <situ-ab-test> に変換する
+        Markdownパーサーがリンクと誤認する前に前処理を行う。
+        """
+        pattern = re.compile(MARKDOWN_AB_TEST_PATTERN)
+
+        def replacer(match: re.Match) -> str:
+            title = match.group(1).strip()
+            src_a = match.group(2).strip()
+            src_b = match.group(3).strip()
+
+            # HTML属性用にエスケープ
+            safe_title = title.replace('"', "&quot;")
+            safe_src_a = src_a.replace('"', "&quot;")
+            safe_src_b = src_b.replace('"', "&quot;")
+
+            return HTML_AB_TEST_COMPONENT_TEMPLATE.format(
+                title=safe_title, src_a=safe_src_a, src_b=safe_src_b
+            )
+
+        result = pattern.sub(replacer, markdown_content)
+        if markdown_content != result:
+            self.logger.debug("A/Bテスト前処理完了: @[ab-test] → <situ-ab-test>")
+        return result
+
     def convert_markdown_to_html(self, markdown_content: str) -> str:
         """
         MarkdownをHTMLに変換
@@ -84,6 +113,7 @@ class MarkdownProcessor:
         """
         try:
             markdown_content = self._preprocess_polls(markdown_content)
+            markdown_content = self._preprocess_ab_tests(markdown_content)
             markdown_content = self._preprocess_notebooks(markdown_content)
             html = markdown.markdown(markdown_content, extensions=MARKDOWN_EXTENSIONS)
             self.logger.debug("Markdown → HTML 変換完了")
