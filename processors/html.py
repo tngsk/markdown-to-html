@@ -86,12 +86,22 @@ class HTMLDocumentBuilder:
         safe_title = self._escape_html(title)
         css_block = self._build_css_block(css_content)
 
+        # エクスポート機能の自動判定
+        has_interactive_components = any(
+            tag in html_body
+            for tag in ["<situ-poll", "<situ-ab-test", "<situ-notebook-input"]
+        )
+        should_enable_export = enable_export or has_interactive_components
+
+        if should_enable_export:
+            html_body += f'\n<situ-export></situ-export>'
+
         # コードブロック用リソース（CSS/JS）を読み込む
         highlight_js_css = self._build_highlight_js_link()
         base_css = self._load_base_css()
         highlight_js = self._load_highlight_js_script()
-        situ_components_js = self._load_situ_components_script()
-        component_templates = self._load_component_templates()
+        situ_components_js = self._load_situ_components_script(should_enable_export)
+        component_templates = self._load_component_templates(should_enable_export)
 
         connect_src_str = " ".join(filter(None, ["'self'", connect_src, ws_src]))
         csp_meta = f'<meta http-equiv="Content-Security-Policy" content="default-src \'self\' \'unsafe-inline\' data:; connect-src {connect_src_str}; object-src \'none\';">'
@@ -102,15 +112,6 @@ class HTMLDocumentBuilder:
         doc = doc.replace("{HIGHLIGHT_JS_CSS}", highlight_js_css)
         doc = doc.replace("{CODE_BLOCK_CSS}", base_css)
         doc = doc.replace("{HIGHLIGHT_JS}", highlight_js)
-
-        # エクスポート機能の自動判定
-        has_interactive_components = any(
-            tag in html_body
-            for tag in ["<situ-poll", "<situ-ab-test", "<situ-notebook-input"]
-        )
-
-        if enable_export or has_interactive_components:
-            html_body += f'\n<situ-export></situ-export>'
 
         if connect_src:
             html_body += f'\n<script>window.SITU_API_URL = "{connect_src}";</script>'
@@ -340,7 +341,7 @@ class HTMLDocumentBuilder:
         """Highlight.js スクリプトタグを構築"""
         return f'<script src="{HIGHLIGHT_JS_CDN_JS}"></script>'
 
-    def _load_situ_components_script(self) -> str:
+    def _load_situ_components_script(self, should_enable_export: bool) -> str:
         """components/ ディレクトリ配下のすべての script.js を読み込んで <script> タグで返す"""
         components_dir = TEMPLATES_DIR / "components"
         if not components_dir.exists() or not components_dir.is_dir():
@@ -349,6 +350,8 @@ class HTMLDocumentBuilder:
         js_contents = []
         for component_dir in sorted(components_dir.iterdir()):
             if component_dir.is_dir():
+                if component_dir.name == "situ-export" and not should_enable_export:
+                    continue
                 js_file = component_dir / "script.js"
                 if js_file.exists():
                     try:
@@ -362,7 +365,7 @@ class HTMLDocumentBuilder:
         combined_js = "\n\n".join(js_contents)
         return f"<script>\n{combined_js}\n</script>"
 
-    def _load_component_templates(self) -> str:
+    def _load_component_templates(self, should_enable_export: bool) -> str:
         """components/ ディレクトリ配下のすべての template.html を読み込み、対応する style.css を注入して結合する"""
         components_dir = TEMPLATES_DIR / "components"
         if not components_dir.exists() or not components_dir.is_dir():
@@ -371,6 +374,8 @@ class HTMLDocumentBuilder:
         templates_html = []
         for component_dir in sorted(components_dir.iterdir()):
             if component_dir.is_dir():
+                if component_dir.name == "situ-export" and not should_enable_export:
+                    continue
                 template_file = component_dir / "template.html"
                 css_file = component_dir / "style.css"
 
