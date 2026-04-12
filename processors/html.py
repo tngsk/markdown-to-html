@@ -43,6 +43,7 @@ class HTMLDocumentBuilder:
         connect_src: str = "",
         ws_src: str = "",
         asset_store: Optional[dict] = None,
+        enable_export: bool = False,
     ) -> str:
         """
         テンプレートとHTML断片からドキュメントを生成
@@ -102,7 +103,15 @@ class HTMLDocumentBuilder:
         doc = doc.replace("{CODE_BLOCK_CSS}", base_css)
         doc = doc.replace("{HIGHLIGHT_JS}", highlight_js)
 
-        html_body += f'\n<situ-export></situ-export>'
+        # エクスポート機能の自動判定
+        has_interactive_components = any(
+            tag in html_body
+            for tag in ["<situ-poll", "<situ-ab-test", "<situ-notebook-input"]
+        )
+
+        if enable_export or has_interactive_components:
+            html_body += f'\n<situ-export></situ-export>'
+
         if connect_src:
             html_body += f'\n<script>window.SITU_API_URL = "{connect_src}";</script>'
         if ws_src:
