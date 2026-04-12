@@ -56,12 +56,14 @@ class ConversionConfig:
     excluded_tags: Optional[List[str]] = None
     force: bool = False
     connect_src: str = ""
+    ws_src: str = ""
 
     def __post_init__(self):
         try:
             with open("config.toml", "rb") as f:
                 config_data = tomllib.load(f)
                 self.connect_src = config_data.get("security", {}).get("connect-src", "")
+                self.ws_src = config_data.get("security", {}).get("ws-src", "")
         except Exception:
             pass
 

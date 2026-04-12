@@ -1,2 +1,3 @@
 [security]
-connect-src = "https://your-render-api.com"
+connect-src = "http://localhost:8000"
+ws-src = "ws://localhost:8000"

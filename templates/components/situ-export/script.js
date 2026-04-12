@@ -72,12 +72,13 @@ class SituExport extends HTMLElement {
             const data = this.collectData();
             const apiUrl = window.SITU_API_URL;
             if (!apiUrl) {
-                alert("API URL (connect_src) is not configured.");
+                alert("サーバのURLが設定されていません。データを保存するには「Download JSON」を使用してください。");
+                console.info("💡 [Interactive-MD] スタンドアロンモードです。手動でJSONをダウンロードしてください。");
                 return;
             }
 
             try {
-                const response = await fetch(apiUrl, {
+                const response = await fetch(apiUrl + "/api/data", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -85,12 +86,14 @@ class SituExport extends HTMLElement {
                     body: JSON.stringify(data)
                 });
                 if (response.ok) {
-                    alert("Sync successful!");
+                    alert("✅ データをサーバに同期しました！");
                 } else {
-                    alert("Sync failed: " + response.statusText);
+                    alert("❌ サーバへの同期に失敗しました。\n\nオフラインの可能性があります。「Download JSON」からローカルに保存してください。");
+                    console.info("💡 [Interactive-MD] サーバエラー。ステータス: " + response.statusText);
                 }
             } catch (error) {
-                alert("Sync failed: " + error.message);
+                alert("❌ サーバへの同期に失敗しました。\n\nオフラインの可能性があります。「Download JSON」からローカルに保存してください。");
+                console.info("💡 [Interactive-MD] オフラインまたはサーバ未起動です。");
             }
             menu.classList.add("hidden");
         });

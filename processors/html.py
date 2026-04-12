@@ -41,6 +41,7 @@ class HTMLDocumentBuilder:
         title: str = "Document",
         excluded_tags: Optional[List[str]] = None,
         connect_src: str = "",
+        ws_src: str = "",
         asset_store: Optional[dict] = None,
     ) -> str:
         """
@@ -91,7 +92,8 @@ class HTMLDocumentBuilder:
         situ_components_js = self._load_situ_components_script()
         component_templates = self._load_component_templates()
 
-        csp_meta = f'<meta http-equiv="Content-Security-Policy" content="default-src \'self\' \'unsafe-inline\' data:; connect-src \'self\' {connect_src}; object-src \'none\';">'
+        connect_src_str = " ".join(filter(None, ["'self'", connect_src, ws_src]))
+        csp_meta = f'<meta http-equiv="Content-Security-Policy" content="default-src \'self\' \'unsafe-inline\' data:; connect-src {connect_src_str}; object-src \'none\';">'
 
         doc = template_content.replace("{TITLE}", safe_title)
         doc = doc.replace("{CSP_META}", csp_meta)
@@ -101,7 +103,10 @@ class HTMLDocumentBuilder:
         doc = doc.replace("{HIGHLIGHT_JS}", highlight_js)
 
         html_body += f'\n<situ-export></situ-export>'
-        html_body += f'\n<script>window.SITU_API_URL = "{connect_src}";</script>'
+        if connect_src:
+            html_body += f'\n<script>window.SITU_API_URL = "{connect_src}";</script>'
+        if ws_src:
+            html_body += f'\n<script>window.SITU_WS_URL = "{ws_src}";</script>'
 
         if asset_store:
             asset_template = f'<template id="situ-asset-store">{json.dumps(asset_store)}</template>'
