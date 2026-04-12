@@ -94,6 +94,9 @@ class HTMLDocumentBuilder:
                 "<situ-ab-test",
                 "<situ-notebook-input",
                 "<situ-textfield-input",
+                "<situ-reaction",
+                "<situ-session-join",
+                "<situ-group-assignment",
             ]
         )
         should_enable_export = enable_export or has_interactive_components
