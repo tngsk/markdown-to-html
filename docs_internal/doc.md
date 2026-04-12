@@ -34,12 +34,12 @@ Phase 1: Core Packager (Foundation) - ✅ 実装完了・安定化
   - `{{テキスト}}` → 改行を防ぐ `nowrap` 処理。
   - **Open in Colab 自動変換** → `.ipynb` リンクを検知し、Google Colabのバッジ付き起動リンクへ自動置換。
 
-Phase 2: Scaffolding, Polling & Universal A/B Test (開発中)
+Phase 2: Scaffolding, Polling & Universal A/B Test (✅ 実装完了・十分なテストが必要)
 - ✅ `@[poll: タイトル](選択肢1, 選択肢2, ...)`：リアルタイム投票コンポーネント（`<situ-poll>`）。実装完了。
   - 状態モックとペイロード: 通信インフラとUIを分離。投票イベントは `タイムスタンプ` と `コンポーネントID` を含む Phase 3 互換の JSON フォーマットで発火させ、現状は Local Storage に保存・モックする設計を実現。
-- `@[ab-test: タイトル](file_a, file_b)`：汎用A/Bテストコンポーネント（`<situ-ab-test>`）。拡張子からメディア（画像、音声等）を自動判別し、対象に応じた最適な比較UI（クロスフェード等）を提供する。
-- `@[notebook-input](id)`：Local Storageに永続化されるユーザー用メモ欄。
-- 埋め込み戦略の具体化: CLIオプションによる「全メディアBase64一括埋め込み（デフォルト）」を基本としつつ、マークダウン上でURL（`http://` 等）を直接指定した場合は外部リンクとして扱うハイブリッド仕様とする。
+- ✅ `@[ab-test: タイトル](file_a, file_b)`：汎用A/Bテストコンポーネント（`<situ-ab-test>`）。拡張子からメディア（画像、音声等）を自動判別し、対象に応じた最適な比較UI（クロスフェード等）を提供する。
+- ✅ `@[notebook-input](id)`：Local Storageに永続化されるユーザー用メモ欄。
+- ✅ 埋め込み戦略の具体化: CLIオプションによる「全メディアBase64一括埋め込み（デフォルト）」を基本としつつ、マークダウン上でURL（`http://` 等）を直接指定した場合は外部リンクとして扱うハイブリッド仕様とする。
 
 Phase 3: Sync & Collection (Experience Design 優先)
 - Focus Sync (Visual First): 主催者の操作（スクロール、チャプター切り替え）を多数の参加者端末にリアルタイム同期（WebSocket）。
