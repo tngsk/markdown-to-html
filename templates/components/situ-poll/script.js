@@ -185,10 +185,10 @@ class SituPoll extends HTMLElement {
 
     // Toggle visibility between submit button and success message
     if (this.refs.submitBtn) {
-      this.refs.submitBtn.style.display = "none";
+      this.refs.submitBtn.classList.add("hidden");
     }
     if (this.refs.votedMessage) {
-      this.refs.votedMessage.style.display = "flex";
+      this.refs.votedMessage.classList.remove("hidden");
     }
   }
 }

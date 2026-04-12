@@ -70,7 +70,8 @@ class SituExport extends HTMLElement {
 
         btnSync.addEventListener("click", async () => {
             const data = this.collectData();
-            const apiUrl = window.SITU_API_URL;
+            const apiMeta = document.querySelector('meta[name="situ-api-url"]');
+            const apiUrl = apiMeta ? apiMeta.content : null;
             if (!apiUrl) {
                 alert("サーバのURLが設定されていません。データを保存するには「Download JSON」を使用してください。");
                 console.info("💡 [Interactive-MD] スタンドアロンモードです。手動でJSONをダウンロードしてください。");

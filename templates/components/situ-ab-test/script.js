@@ -297,7 +297,7 @@ class SituABTest extends HTMLElement {
     } catch (error) {
       console.error("Audio Initialization Error:", error);
       if (this.refs.errorMessage) {
-        this.refs.errorMessage.style.display = "flex";
+        this.refs.errorMessage.classList.remove("hidden");
       }
       if (this.refs.playBtn) this.refs.playBtn.disabled = true;
     } finally {
@@ -483,8 +483,13 @@ if (this.mediaType === "image") {
 
   updateTransportUI() {
     if (this.refs.iconPlay && this.refs.iconPause) {
-      this.refs.iconPlay.style.display = this.isPlaying ? "none" : "block";
-      this.refs.iconPause.style.display = this.isPlaying ? "block" : "none";
+      if (this.isPlaying) {
+        this.refs.iconPlay.classList.add("hidden");
+        this.refs.iconPause.classList.remove("hidden");
+      } else {
+        this.refs.iconPlay.classList.remove("hidden");
+        this.refs.iconPause.classList.add("hidden");
+      }
     }
   }
 
@@ -539,7 +544,7 @@ if (this.mediaType === "image") {
     });
 
     if (this.refs.votedMessage) {
-      this.refs.votedMessage.style.display = "flex";
+      this.refs.votedMessage.classList.remove("hidden");
     }
   }
 }

@@ -38,7 +38,8 @@ class SituSync extends HTMLElement {
     }
 
     async sendDataToServer(data) {
-        const apiUrl = window.SITU_API_URL;
+        const apiMeta = document.querySelector('meta[name="situ-api-url"]');
+        const apiUrl = apiMeta ? apiMeta.content : null;
         if (!apiUrl) {
             console.info("💡 [Interactive-MD] スタンドアロンモードで動作しています。データはローカルにのみ保存されます。");
             return;
@@ -61,7 +62,8 @@ class SituSync extends HTMLElement {
     }
 
     setupFocusSync() {
-        const wsUrl = window.SITU_WS_URL;
+        const wsMeta = document.querySelector('meta[name="situ-ws-url"]');
+        const wsUrl = wsMeta ? wsMeta.content : null;
         if (!wsUrl) return;
 
         const urlParams = new URLSearchParams(window.location.search);
