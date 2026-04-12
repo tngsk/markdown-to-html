@@ -102,6 +102,10 @@ MARKDOWN_EXTENSIONS = ["fenced_code", "tables", "nl2br"]
 # 投票コンポーネント（Live Polling）の正規表現パターン
 MARKDOWN_POLL_PATTERN = r"@\[poll:\s*(.+?)\]\((.+?)\)"
 
+# ノートブック入力コンポーネントの正規表現パターン
+MARKDOWN_NOTEBOOK_PATTERN = r"@\[notebook-input\]\((.+?)\)"
+HTML_NOTEBOOK_COMPONENT_TEMPLATE = '<situ-notebook-input id="{id}"></situ-notebook-input>'
+
 # ============================================================================
 # Size Formatting
 # ============================================================================
