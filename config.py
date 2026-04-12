@@ -4,6 +4,7 @@ Configuration and Exception Classes
 Centralized definitions for conversion configuration and error handling.
 """
 
+import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
@@ -41,8 +42,6 @@ class CSSEmbeddingError(ConversionError):
 # Data Classes & Configuration
 # ============================================================================
 
-
-import tomllib
 
 @dataclass
 class ConversionConfig:
