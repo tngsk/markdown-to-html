@@ -123,7 +123,7 @@ HTML_NOTEBOOK_COMPONENT_TEMPLATE = (
 # テキストフィールド入力コンポーネントの正規表現パターン
 MARKDOWN_TEXTFIELD_PATTERN = r"@\[(?:textfield|textfiled):\s*(.+?)\]"
 HTML_TEXTFIELD_COMPONENT_TEMPLATE = (
-    '<situ-textfield-input placeholder="{placeholder}"></situ-textfield-input>'
+    '<situ-textfield-input placeholder="{placeholder}"{size_attr}></situ-textfield-input>'
 )
 
 # リアクションコンポーネントの正規表現パターン

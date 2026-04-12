@@ -63,15 +63,30 @@ class MarkdownProcessor:
 
     def _preprocess_textfield(self, markdown_content: str) -> str:
         """
-        @[textfield: placeholder] または @[textfiled: placeholder] を <situ-textfield-input> に変換する
+        @[textfield: placeholder] または @[textfiled: placeholder] または @[textfield: size:X (placeholder)] を <situ-textfield-input> に変換する
         """
         pattern = re.compile(MARKDOWN_TEXTFIELD_PATTERN)
 
         def replacer(match: re.Match) -> str:
-            placeholder = match.group(1).strip()
+            content = match.group(1).strip()
+
+            # Check for size:X (placeholder) format
+            size_match = re.match(r"size:\s*(\d+)(?:\s*\((.*?)\))?", content)
+            if size_match:
+                size = size_match.group(1)
+                placeholder = size_match.group(2)
+                if placeholder is None:
+                    placeholder = ""
+                placeholder = placeholder.strip()
+                size_attr = f' size="{size}"'
+            else:
+                placeholder = content
+                size_attr = ""
+
             safe_placeholder = placeholder.replace('"', "&quot;")
             return HTML_TEXTFIELD_COMPONENT_TEMPLATE.format(
-                placeholder=safe_placeholder
+                placeholder=safe_placeholder,
+                size_attr=size_attr
             )
 
         result = pattern.sub(replacer, markdown_content)

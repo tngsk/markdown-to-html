@@ -3,6 +3,7 @@ class SituTextfieldInput extends HTMLElement {
         super();
         this.attachShadow({ mode: "open" });
         this.placeholder = this.getAttribute("placeholder") || "";
+        this.size = this.getAttribute("size");
         this.inputId = `textfield-${Math.random().toString(36).substr(2, 9)}`;
         this.debounceTimeout = null;
         this.storageUnavailable = false;
@@ -23,6 +24,16 @@ class SituTextfieldInput extends HTMLElement {
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this.inputArea = this.shadowRoot.getElementById("textfield");
         this.inputArea.placeholder = this.placeholder;
+        if (this.size) {
+            this.inputArea.setAttribute("size", this.size);
+            // Size specifies character width, adjust style to allow sizing
+            this.inputArea.style.width = "auto";
+            const container = this.shadowRoot.querySelector(".situ-textfield-container");
+            if (container) {
+                container.style.width = "auto";
+                container.style.maxWidth = "none";
+            }
+        }
         this.statusIndicator = this.shadowRoot.querySelector("[data-ref='statusIndicator']");
 
         try {
