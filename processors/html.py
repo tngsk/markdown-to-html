@@ -106,6 +106,16 @@ class HTMLDocumentBuilder:
         connect_src_str = " ".join(filter(None, ["'self'", connect_src, ws_src]))
         csp_meta = f'<meta http-equiv="Content-Security-Policy" content="default-src \'self\' \'unsafe-inline\' data: https://cdnjs.cloudflare.com; connect-src {connect_src_str}; object-src \'none\';">'
 
+        meta_tags = []
+        if connect_src:
+            meta_tags.append(f'<meta name="situ-api-url" content="{connect_src}">')
+        if ws_src:
+            meta_tags.append(f'<meta name="situ-ws-url" content="{ws_src}">')
+
+        meta_tags_html = "\n".join(meta_tags)
+        if meta_tags_html:
+            csp_meta += f"\n        {meta_tags_html}"
+
         doc = template_content.replace("{TITLE}", safe_title)
         doc = doc.replace("{CSP_META}", csp_meta)
         doc = doc.replace("{CSS_BLOCK}", css_block)
@@ -113,47 +123,10 @@ class HTMLDocumentBuilder:
         doc = doc.replace("{CODE_BLOCK_CSS}", base_css)
         doc = doc.replace("{HIGHLIGHT_JS}", highlight_js)
 
-        if connect_src:
-            html_body += f'\n<script>window.SITU_API_URL = "{connect_src}";</script>'
-        if ws_src:
-            html_body += f'\n<script>window.SITU_WS_URL = "{ws_src}";</script>'
-
         if asset_store:
             asset_template = f'<template id="situ-asset-store">{json.dumps(asset_store)}</template>'
-            lazy_load_script = """
-            <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const storeEl = document.getElementById('situ-asset-store');
-                if (storeEl) {
-                    try {
-                        const assets = JSON.parse(storeEl.innerHTML);
-                        const elements = document.querySelectorAll('[data-lazy-src], [data-lazy-src-a], [data-lazy-src-b]');
-                        elements.forEach(el => {
-                            const src = el.getAttribute('data-lazy-src');
-                            if (src && assets[src]) {
-                                el.setAttribute('src', assets[src]);
-                                el.removeAttribute('data-lazy-src');
-                            }
-
-                            const srcA = el.getAttribute('data-lazy-src-a');
-                            if (srcA && assets[srcA]) {
-                                el.setAttribute('src-a', assets[srcA]);
-                                el.removeAttribute('data-lazy-src-a');
-                            }
-
-                            const srcB = el.getAttribute('data-lazy-src-b');
-                            if (srcB && assets[srcB]) {
-                                el.setAttribute('src-b', assets[srcB]);
-                                el.removeAttribute('data-lazy-src-b');
-                            }
-                        });
-                    } catch (e) {
-                        console.error('Failed to load lazy assets', e);
-                    }
-                }
-            });
-            </script>
-            """
+            lazy_load_js = self._load_lazy_load_script()
+            lazy_load_script = f"\n<script>\n{lazy_load_js}\n</script>\n" if lazy_load_js else ""
             html_body += f"\n{asset_template}\n{lazy_load_script}"
 
         # 既存の {COPY_BUTTON_JS} プレースホルダーにまとめて追記する
@@ -323,6 +296,18 @@ class HTMLDocumentBuilder:
     def _build_highlight_js_link(self) -> str:
         """Highlight.js CSSリンクタグを構築"""
         return f'<link rel="stylesheet" href="{HIGHLIGHT_JS_CDN_CSS}">'
+
+    def _load_lazy_load_script(self) -> str:
+        """lazy_load.js ファイルを読み込んで返す"""
+        js_file = TEMPLATES_DIR / "core" / "lazy_load.js"
+        try:
+            return js_file.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            self.logger.warning(f"lazy_load.js が見つかりません: {js_file}")
+            return ""
+        except Exception as e:
+            self.logger.warning(f"lazy_load.js の読み込みエラー: {e}")
+            return ""
 
     def _load_base_css(self) -> str:
         """base.css ファイルを読み込んで <style> タグで返す"""

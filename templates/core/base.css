@@ -183,6 +183,19 @@ th {
     border-bottom: 2px solid #222;
 }
 
-/* ============================================================================
+/* ============================================================================ */
 
 .nowrap { white-space: nowrap; display: inline; }
+
+/* Colab -------------------------------------------------- */
+.colab-badge {
+    vertical-align: middle;
+    margin-right: 6px;
+    height: 20px;
+    width: auto;
+    border-radius: 0;
+}
+
+.colab-link {
+    text-decoration: none;
+}
