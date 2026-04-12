@@ -12,8 +12,10 @@ import markdown
 from config import ConversionError
 from constants import (
     HTML_POLL_COMPONENT_TEMPLATE,
+    HTML_NOTEBOOK_COMPONENT_TEMPLATE,
     MARKDOWN_EXTENSIONS,
     MARKDOWN_POLL_PATTERN,
+    MARKDOWN_NOTEBOOK_PATTERN,
 )
 from handlers.file import FileHandler
 
@@ -49,6 +51,24 @@ class MarkdownProcessor:
             self.logger.debug("投票コンポーネント前処理完了: @[poll] → <situ-poll>")
         return result
 
+    def _preprocess_notebooks(self, markdown_content: str) -> str:
+        """
+        @[notebook-input](id) を <situ-notebook-input> に変換する
+        Markdownパーサーがリンクと誤認する前に前処理を行う。
+        """
+        pattern = re.compile(MARKDOWN_NOTEBOOK_PATTERN)
+
+        def replacer(match: re.Match) -> str:
+            input_id = match.group(1).strip()
+            # エスケープ
+            safe_id = input_id.replace('"', "&quot;")
+            return HTML_NOTEBOOK_COMPONENT_TEMPLATE.format(id=safe_id)
+
+        result = pattern.sub(replacer, markdown_content)
+        if markdown_content != result:
+            self.logger.debug("ノートブックコンポーネント前処理完了: @[notebook-input] → <situ-notebook-input>")
+        return result
+
     def convert_markdown_to_html(self, markdown_content: str) -> str:
         """
         MarkdownをHTMLに変換
@@ -64,6 +84,7 @@ class MarkdownProcessor:
         """
         try:
             markdown_content = self._preprocess_polls(markdown_content)
+            markdown_content = self._preprocess_notebooks(markdown_content)
             html = markdown.markdown(markdown_content, extensions=MARKDOWN_EXTENSIONS)
             self.logger.debug("Markdown → HTML 変換完了")
             return html
