@@ -42,7 +42,7 @@ Phase 2: Scaffolding, Polling & Universal A/B Test (✅ 実装完了)
 - ✅ `@[notebook-input](id)`：Local Storageに永続化されるユーザー用メモ欄。
 - ✅ 埋め込み戦略の具体化: CLIオプションによる「全メディアBase64一括埋め込み（デフォルト）」を基本としつつ、マークダウン上でURL（`http://` 等）を直接指定した場合は外部リンクとして扱うハイブリッド仕様とする。
 
-Phase 3: Sync & Collection (Experience Design 優先)
+Phase 3: Sync & Collection (Experience Design 優先) - ✅ 実装完了
 - Focus Sync (Visual First): 主催者の操作（スクロール、チャプター切り替え）を多数の参加者端末にリアルタイム同期（WebSocket）。
 - Data Recovery: ユーザーの入力データをJSONL形式で中央サーバー（FastAPI）へ送信。
 - Metadata: ISO8601タイムスタンプ、および環境コンテキストの付与。
@@ -67,8 +67,9 @@ Phase 4: Advanced Media & Visual Insight
 本プロジェクトを実装するAIは、以下のステップおよびルールで進めること：
 - 基盤(完了): クリーンアーキテクチャに基づく、画像・CSSを埋め込んだ単一HTMLジェネレータの構築。
 - 拡張(完了): 汎用対話コンポーネント群（汎用A/Bテスト、投票UI、メモ欄）の設計とメディアファイル参照形式（埋め込み/外部リンク）の選択機能の実装。
-- 継続(Next): 設定ファイル管理（config.toml）の導入。
-- 同期(Future): FastAPIを用いた同期プロトコルの最小実装（PoC）。
+- 継続(完了): 設定ファイル管理（config.toml）の導入。
+- 同期(完了): FastAPIを用いた同期プロトコルの最小実装（PoC）。
+- 発展(Next): 外部エクスポートモジュール（situ-export）の統合と高度なデータ可視化UIの実装。
 
 **【厳守ルール】**
 - **Gitの強制オプション（`git add -f`, `git push --force` 等）の使用は一切禁止する。** `.gitignore` に記載された非公開ファイルを強制追加してはならない。
