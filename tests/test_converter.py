@@ -164,6 +164,21 @@ class TestMarkdownToHTMLConverter(unittest.TestCase):
         self.assertTrue(result)
         self.assertTrue(any("✓ 除外タグ: script, iframe" in msg for msg in cm.output))
 
+    def test_convert_write_output_file_processing_error(self):
+        self.converter.file_handler.read_text.return_value = "# Test"
+        self.converter.markdown_processor.convert_markdown_to_html.return_value = "<h1>Test</h1>"
+        self.converter.media_embedder.embed_media_in_html.return_value = ("<h1>Test</h1>", 0, {})
+        self.converter.html_document_builder.extract_title_from_html.return_value = "Title"
+
+        from config import FileProcessingError
+        self.converter.file_handler.write_text.side_effect = FileProcessingError("Mock write error")
+
+        with self.assertLogs(self.logger, level='ERROR') as cm:
+            result = self.converter.convert()
+
+        self.assertFalse(result)
+        self.assertTrue(any("出力ファイル書き込み失敗" in msg for msg in cm.output))
+
     def test_write_output_file_processing_error(self):
         self.converter.file_handler.write_text.side_effect = FileProcessingError("Write failed")
 
@@ -172,11 +187,16 @@ class TestMarkdownToHTMLConverter(unittest.TestCase):
 
         self.assertEqual(str(context.exception), "出力ファイル書き込み失敗: Write failed")
 
-    def test_format_size_tb(self):
+    def test_format_size_units(self):
+        self.assertEqual(self.converter._format_size(500), "500.0 B")
+        self.assertEqual(self.converter._format_size(1024), "1.0 KB")
+        self.assertEqual(self.converter._format_size(1024 * 1024), "1.0 MB")
+        self.assertEqual(self.converter._format_size(1024 * 1024 * 1024), "1.0 GB")
+        self.assertEqual(self.converter._format_size(1024 * 1024 * 1024 * 1024), "1.0 TB")
+
         # 1.5 TB
         size_bytes = 1.5 * 1024**4
-        result = MarkdownToHTMLConverter._format_size(size_bytes)
-        self.assertEqual(result, "1.5 TB")
+        self.assertEqual(self.converter._format_size(size_bytes), "1.5 TB")
 
 if __name__ == '__main__':
     unittest.main()
