@@ -1,5 +1,6 @@
 import json
 import logging
+import aiofiles
 from typing import List
 
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
@@ -63,8 +64,8 @@ async def websocket_endpoint(websocket: WebSocket):
 async def receive_data(request: Request):
     try:
         data = await request.json()
-        with open("data.jsonl", "a", encoding="utf-8") as f:
-            f.write(json.dumps(data) + "\n")
+        async with aiofiles.open("data.jsonl", "a", encoding="utf-8") as f:
+            await f.write(json.dumps(data) + "\n")
         return {"status": "success"}
     except Exception as e:
         logger.error(f"Error saving data: {e}")
