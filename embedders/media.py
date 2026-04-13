@@ -26,11 +26,16 @@ class MediaEmbedder:
         self.logger = logger
         self.file_handler = file_handler
         self.mime_registry = MIMETypeRegistry()
+        self._base64_cache = {}
 
     def encode_media_to_base64(self, media_path: Path) -> str:
         """メディアファイルをBase64エンコード"""
         if not media_path.exists():
             raise ImageEmbeddingError(f"メディアファイルが見つかりません: {media_path}")
+
+        cache_key = str(media_path.resolve())
+        if cache_key in self._base64_cache:
+            return self._base64_cache[cache_key]
 
         try:
             media_data = self.file_handler.read_binary(media_path)
@@ -47,7 +52,9 @@ class MediaEmbedder:
                         f"WebP変換失敗 ({media_path}): {img_e}. オリジナルを使用します。"
                     )
 
-            return base64.b64encode(media_data).decode("utf-8")
+            encoded = base64.b64encode(media_data).decode("utf-8")
+            self._base64_cache[cache_key] = encoded
+            return encoded
         except FileProcessingError:
             raise
         except Exception as e:
