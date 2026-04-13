@@ -197,6 +197,24 @@ def test_embed_media_path_traversal(mock_resolve, media_embedder, mock_logger):
 
 
 @patch("embedders.media.Path.resolve")
+def test_embed_media_path_traversal(mock_resolve, media_embedder, mock_logger):
+    """Test embed_media_in_html rejects paths outside markdown directory"""
+    html_content = '<img src="../outside.png" alt="test">'
+    markdown_dir = Path("/path/to/markdown")
+
+    media_path = MagicMock()
+    media_path.is_relative_to.return_value = False
+    mock_resolve.return_value = media_path
+
+    result_html, media_count, asset_store = media_embedder.embed_media_in_html(html_content, markdown_dir)
+
+    assert result_html == html_content
+    assert media_count == 0
+    assert not asset_store
+    mock_logger.warning.assert_called_once_with("不正なメディアパス (ディレクトリトラバーサル): ../outside.png")
+
+
+@patch("embedders.media.Path.resolve")
 def test_embed_media_missing_file_fallback(mock_resolve, media_embedder, mock_logger):
     """Test embed_media_in_html logs warning and keeps original src for missing files"""
     html_content = '<img src="local_missing.jpg" alt="test">'
