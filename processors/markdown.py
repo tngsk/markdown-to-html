@@ -22,6 +22,11 @@ from constants import (
     MARKDOWN_AB_TEST_PATTERN,
     MARKDOWN_EXTENSIONS,
     MARKDOWN_GROUP_ASSIGNMENT_PATTERN,
+    MARKDOWN_LAYOUT_END_PATTERN,
+    MARKDOWN_LAYOUT_ROW_PATTERN,
+    MARKDOWN_LAYOUT_STACK_PATTERN,
+    MARKDOWN_COLUMN_START_PATTERN,
+    MARKDOWN_COLUMN_END_PATTERN,
     MARKDOWN_NOTEBOOK_PATTERN,
     MARKDOWN_POLL_PATTERN,
     MARKDOWN_REACTION_PATTERN,
@@ -29,6 +34,7 @@ from constants import (
     MARKDOWN_TEXTFIELD_PATTERN,
 )
 from handlers.file import FileHandler
+import markdown.util
 
 
 class MarkdownProcessor:
@@ -199,6 +205,45 @@ class MarkdownProcessor:
             )
         return result
 
+    def _preprocess_layout(self, markdown_content: str) -> str:
+        """
+        @[row], @[stack], @[end], :::column, ::: をレイアウトコンポーネントに変換する
+        """
+        # row
+        pattern = re.compile(MARKDOWN_LAYOUT_ROW_PATTERN)
+        def row_replacer(match: re.Match) -> str:
+            classes = match.group(1).strip() if match.group(1) else ""
+            if classes:
+                return f'<situ-layout type="row" class="{classes}" markdown="1">'
+            return '<situ-layout type="row" markdown="1">'
+        result = pattern.sub(row_replacer, markdown_content)
+
+        # stack
+        pattern = re.compile(MARKDOWN_LAYOUT_STACK_PATTERN)
+        def stack_replacer(match: re.Match) -> str:
+            classes = match.group(1).strip() if match.group(1) else ""
+            if classes:
+                return f'<situ-layout type="stack" class="{classes}" markdown="1">'
+            return '<situ-layout type="stack" markdown="1">'
+        result = pattern.sub(stack_replacer, result)
+
+        # end
+        pattern = re.compile(MARKDOWN_LAYOUT_END_PATTERN)
+        result = pattern.sub('</situ-layout>', result)
+
+        # column start
+        pattern = re.compile(MARKDOWN_COLUMN_START_PATTERN)
+        result = pattern.sub('<div class="column" markdown="1">', result)
+
+        # column end
+        pattern = re.compile(MARKDOWN_COLUMN_END_PATTERN)
+        result = pattern.sub('</div>', result)
+
+        if markdown_content != result:
+            self.logger.debug("レイアウトディレクティブ前処理完了")
+
+        return result
+
     def convert_markdown_to_html(self, markdown_content: str) -> str:
         """
         MarkdownをHTMLに変換
@@ -220,6 +265,14 @@ class MarkdownProcessor:
             markdown_content = self._preprocess_reactions(markdown_content)
             markdown_content = self._preprocess_session_join(markdown_content)
             markdown_content = self._preprocess_group_assignment(markdown_content)
+            markdown_content = self._preprocess_layout(markdown_content)
+
+            # Markdownパーサーにカスタムコンポーネントをブロックレベル要素として認識させる
+            if isinstance(markdown.util.BLOCK_LEVEL_ELEMENTS, list) and "situ-layout" not in markdown.util.BLOCK_LEVEL_ELEMENTS:
+                markdown.util.BLOCK_LEVEL_ELEMENTS.append("situ-layout")
+            elif hasattr(markdown.util.BLOCK_LEVEL_ELEMENTS, "add"):
+                markdown.util.BLOCK_LEVEL_ELEMENTS.add("situ-layout")
+
             html = markdown.markdown(markdown_content, extensions=MARKDOWN_EXTENSIONS)
             self.logger.debug("Markdown → HTML 変換完了")
             return html

@@ -94,6 +94,34 @@ class TestMarkdownProcessor(unittest.TestCase):
         result = self.processor._preprocess_group_assignment(md_content)
         self.assertEqual(result, expected_html)
 
+    def test_preprocess_layout(self):
+        md_content = (
+            "@[row: center gap-md]\n"
+            ":::column\n"
+            "A\n"
+            ":::\n"
+            "@[stack]\n"
+            ":::column\n"
+            "B\n"
+            ":::\n"
+            "@[end]\n"
+            "@[end]"
+        )
+        expected_html = (
+            '<situ-layout type="row" class="center gap-md" markdown="1">\n'
+            '<div class="column" markdown="1">\n'
+            "A\n"
+            "</div>\n"
+            '<situ-layout type="stack" markdown="1">\n'
+            '<div class="column" markdown="1">\n'
+            "B\n"
+            "</div>\n"
+            "</situ-layout>\n"
+            "</situ-layout>"
+        )
+        result = self.processor._preprocess_layout(md_content)
+        self.assertEqual(result, expected_html)
+
     @patch('processors.markdown.markdown')
     def test_convert_markdown_to_html_success(self, mock_markdown):
         mock_markdown.markdown.side_effect = None

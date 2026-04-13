@@ -1,0 +1,22 @@
+:host { display: block; width: 100%; margin: 1.5rem 0; }
+.layout-wrapper {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+}
+/* 方向制御 */
+:host([type="row"]) .layout-wrapper { flex-direction: row; flex-wrap: wrap; }
+:host([type="stack"]) .layout-wrapper { flex-direction: column; }
+
+/* モディファイア対応 (CSS変数で管理) */
+.layout-wrapper.center { justify-content: center; align-items: center; }
+.layout-wrapper.gap-md { gap: 1.5rem; }
+.layout-wrapper.gap-sm { gap: 0.5rem; }
+.layout-wrapper.gap-lg { gap: 3rem; }
+.layout-wrapper.start { justify-content: flex-start; align-items: flex-start; }
+.layout-wrapper.end { justify-content: flex-end; align-items: flex-end; }
+
+/* モバイルフォールバック */
+@media (max-width: 768px) {
+    :host([type="row"]) .layout-wrapper { flex-direction: column; }
+}
