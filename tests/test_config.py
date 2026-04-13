@@ -21,6 +21,19 @@ class TestCustomExceptions(unittest.TestCase):
         self.assertTrue(issubclass(CSSEmbeddingError, ConversionError))
 
 class TestConversionConfig(unittest.TestCase):
+    def test_conversion_config_defaults(self):
+        """Test ConversionConfig default values."""
+        config = ConversionConfig(
+            input_file=Path("test.md"),
+            output_file=None,
+            css_files=None
+        )
+        self.assertIsNone(config.template_path)
+        self.assertFalse(config.verbose)
+        self.assertIsNone(config.excluded_tags)
+        self.assertFalse(config.force)
+        self.assertFalse(config.enable_export)
+
     def test_post_init_success(self):
         """Test initialization when config.toml is loaded successfully."""
         mock_toml_data = {
@@ -103,6 +116,21 @@ class TestConversionStats(unittest.TestCase):
         self.assertEqual(stats.output_file_size, 0)
         self.assertIsNone(stats.markdown_file)
         self.assertIsNone(stats.output_file)
+
+    def test_custom_initialization(self):
+        """Test ConversionStats custom values."""
+        stats = ConversionStats(
+            images_embedded=5,
+            css_files_embedded=2,
+            output_file_size=1024,
+            markdown_file="test.md",
+            output_file="out.html"
+        )
+        self.assertEqual(stats.images_embedded, 5)
+        self.assertEqual(stats.css_files_embedded, 2)
+        self.assertEqual(stats.output_file_size, 1024)
+        self.assertEqual(stats.markdown_file, "test.md")
+        self.assertEqual(stats.output_file, "out.html")
 
 if __name__ == '__main__':
     unittest.main()
