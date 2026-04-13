@@ -44,8 +44,11 @@ class MarkdownProcessor:
         Markdownパーサーがリンクと誤認する前に前処理を行う。
         """
         pattern = re.compile(MARKDOWN_POLL_PATTERN)
+        counter = 0
 
         def replacer(match: re.Match) -> str:
+            nonlocal counter
+            counter += 1
             title = match.group(1).strip()
             options = match.group(2).strip()
 
@@ -54,7 +57,7 @@ class MarkdownProcessor:
             safe_options = html.escape(options)
 
             return HTML_POLL_COMPONENT_TEMPLATE.format(
-                title=safe_title, options=safe_options
+                id=f"poll-{counter}", title=safe_title, options=safe_options
             )
 
         result = pattern.sub(replacer, markdown_content)
@@ -67,8 +70,11 @@ class MarkdownProcessor:
         @[textfield: placeholder] または @[textfiled: placeholder] または @[textfield: size:X (placeholder)] を <situ-textfield-input> に変換する
         """
         pattern = re.compile(MARKDOWN_TEXTFIELD_PATTERN)
+        counter = 0
 
         def replacer(match: re.Match) -> str:
+            nonlocal counter
+            counter += 1
             content = match.group(1).strip()
 
             # Check for size:X (placeholder) format
@@ -86,6 +92,7 @@ class MarkdownProcessor:
 
             safe_placeholder = html.escape(placeholder)
             return HTML_TEXTFIELD_COMPONENT_TEMPLATE.format(
+                id=f"textfield-{counter}",
                 placeholder=safe_placeholder,
                 size_attr=size_attr
             )
@@ -123,8 +130,11 @@ class MarkdownProcessor:
         Markdownパーサーがリンクと誤認する前に前処理を行う。
         """
         pattern = re.compile(MARKDOWN_AB_TEST_PATTERN)
+        counter = 0
 
         def replacer(match: re.Match) -> str:
+            nonlocal counter
+            counter += 1
             title = match.group(1).strip()
             src_a = match.group(2).strip()
             src_b = match.group(3).strip()
@@ -135,7 +145,7 @@ class MarkdownProcessor:
             safe_src_b = html.escape(src_b)
 
             return HTML_AB_TEST_COMPONENT_TEMPLATE.format(
-                title=safe_title, src_a=safe_src_a, src_b=safe_src_b
+                id=f"abtest-{counter}", title=safe_title, src_a=safe_src_a, src_b=safe_src_b
             )
 
         result = pattern.sub(replacer, markdown_content)
@@ -145,11 +155,14 @@ class MarkdownProcessor:
 
     def _preprocess_reactions(self, markdown_content: str) -> str:
         pattern = re.compile(MARKDOWN_REACTION_PATTERN)
+        counter = 0
 
         def replacer(match: re.Match) -> str:
+            nonlocal counter
+            counter += 1
             options = match.group(1).strip()
             safe_options = html.escape(options)
-            return HTML_REACTION_COMPONENT_TEMPLATE.format(options=safe_options)
+            return HTML_REACTION_COMPONENT_TEMPLATE.format(id=f"reaction-{counter}", options=safe_options)
 
         result = pattern.sub(replacer, markdown_content)
         if markdown_content != result:

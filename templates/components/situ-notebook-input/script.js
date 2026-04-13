@@ -63,7 +63,7 @@ class SituNotebookInput extends HTMLElement {
     }
 
     getStorageKey() {
-        return `notebook-input::${this.getPageId()}::${this.inputId}`;
+        return `situ_notebook::${this.getPageId()}::${this.inputId}`;
     }
 
     restoreData() {

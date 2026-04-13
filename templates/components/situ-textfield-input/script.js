@@ -4,7 +4,7 @@ class SituTextfieldInput extends HTMLElement {
         this.attachShadow({ mode: "open" });
         this.placeholder = this.getAttribute("placeholder") || "";
         this.size = this.getAttribute("size");
-        this.inputId = `textfield-${Math.random().toString(36).substr(2, 9)}`;
+        this.inputId = this.getAttribute("id") || `textfield-${Math.random().toString(36).substr(2, 9)}`;
         this.debounceTimeout = null;
         this.storageUnavailable = false;
     }
@@ -58,7 +58,7 @@ class SituTextfieldInput extends HTMLElement {
 
     getStorageKey() {
         // Prefix must be situ_ for situ-export to pick it up
-        return `situ_textfield::${this.getPageId()}::${this.placeholder}`;
+        return `situ_textfield::${this.getPageId()}::${this.inputId}`;
     }
 
     restoreData() {

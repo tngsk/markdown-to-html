@@ -83,10 +83,10 @@ HTML_OPENING_TAG = r"<html[^>]*>"
 HTML_TAG_REMOVAL_PATTERN_TEMPLATE = r"<{tag}[^>]*>.*?</{tag}>"
 HTML_IPYNB_LINK_PATTERN = r'<a\s+([^>]*?)href="([^"]+\.ipynb)"([^>]*)>(.*?)</a>'
 HTML_POLL_COMPONENT_TEMPLATE = (
-    '<situ-poll title="{title}" options="{options}"></situ-poll>'
+    '<situ-poll id="{id}" title="{title}" options="{options}"></situ-poll>'
 )
 HTML_AB_TEST_COMPONENT_TEMPLATE = (
-    '<situ-ab-test title="{title}" src-a="{src_a}" src-b="{src_b}"></situ-ab-test>'
+    '<situ-ab-test id="{id}" title="{title}" src-a="{src_a}" src-b="{src_b}"></situ-ab-test>'
 )
 
 # 外部サービス URL
@@ -123,12 +123,12 @@ HTML_NOTEBOOK_COMPONENT_TEMPLATE = (
 # テキストフィールド入力コンポーネントの正規表現パターン
 MARKDOWN_TEXTFIELD_PATTERN = r"@\[(?:textfield|textfiled):\s*(.+?)\]"
 HTML_TEXTFIELD_COMPONENT_TEMPLATE = (
-    '<situ-textfield-input placeholder="{placeholder}"{size_attr}></situ-textfield-input>'
+    '<situ-textfield-input id="{id}" placeholder="{placeholder}"{size_attr}></situ-textfield-input>'
 )
 
 # リアクションコンポーネントの正規表現パターン
 MARKDOWN_REACTION_PATTERN = r"@\[reaction:\s*\"?(.*?)\"?\]"
-HTML_REACTION_COMPONENT_TEMPLATE = '<situ-reaction options="{options}"></situ-reaction>'
+HTML_REACTION_COMPONENT_TEMPLATE = '<situ-reaction id="{id}" options="{options}"></situ-reaction>'
 
 # セッション参加コンポーネントの正規表現パターン
 MARKDOWN_SESSION_JOIN_PATTERN = r"@\[session-join:\s*\"?(.*?)\"?\]"
