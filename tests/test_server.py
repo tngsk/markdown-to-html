@@ -62,6 +62,12 @@ async def test_connection_manager_broadcast():
 
 
 @pytest.mark.asyncio
+async def test_connection_manager_broadcast_empty():
+    test_manager = ConnectionManager()
+    # active_connections is empty
+    await test_manager.broadcast("should return early")
+
+@pytest.mark.asyncio
 async def test_connection_manager_broadcast_error(caplog):
     test_manager = ConnectionManager()
     ws = MockWebSocket()
@@ -104,6 +110,19 @@ def test_websocket_disconnect(client):
     # Once the context manager exits, the disconnect happens
     assert len(manager.active_connections) == 0
 
+def test_websocket_endpoint_general_error(client, caplog):
+    manager.active_connections.clear()
+
+    with patch.object(WebSocket, "receive_text", side_effect=Exception("General WS Error")):
+        # We catch the exception and assert on the log
+        try:
+            with client.websocket_connect("/ws/sync") as websocket:
+                pass
+        except Exception:
+            pass
+
+    assert "WebSocket Error: General WS Error" in caplog.text
+
 
 @patch("server.aiofiles.open")
 def test_receive_data_success(mock_file, client):
@@ -135,3 +154,23 @@ def test_receive_data_error(mock_file, client):
 
     assert response.status_code == 200
     assert response.json() == {"status": "error", "message": "Disk full"}
+
+
+@patch("server.tomllib.load")
+def test_get_allowed_origins_error(mock_toml_load, caplog):
+    from server import get_allowed_origins
+    mock_toml_load.side_effect = Exception("Toml load error")
+    origins = get_allowed_origins()
+    assert origins == ["http://localhost:8000", "http://127.0.0.1:8000"]
+    assert "Could not load CORS origins from config: Toml load error" in caplog.text
+
+
+@patch("uvicorn.run")
+def test_main_execution(mock_run):
+    import runpy
+    # Execute the server module as if it were run from the command line
+    runpy.run_module("server", run_name="__main__")
+
+    mock_run.assert_called_once()
+    assert mock_run.call_args[1]["host"] == "0.0.0.0"
+    assert mock_run.call_args[1]["port"] == 8000
