@@ -5,7 +5,8 @@ import pytest
 from fastapi.testclient import TestClient
 from fastapi import WebSocket
 
-from server import app, ConnectionManager, manager
+import runpy
+from server import app, ConnectionManager, manager, get_allowed_origins
 
 
 @pytest.fixture
@@ -23,6 +24,13 @@ class MockWebSocket:
 
     async def send_text(self, data: str):
         self.sent_messages.append(data)
+
+
+def test_get_allowed_origins_exception(caplog):
+    with patch("tomllib.load", side_effect=Exception("Mocked tomllib error")):
+        origins = get_allowed_origins()
+        assert origins == ["http://localhost:8000", "http://127.0.0.1:8000"]
+        assert "Could not load CORS origins from config" in caplog.text
 
 
 @pytest.mark.asyncio
@@ -44,6 +52,13 @@ async def test_connection_manager_disconnect():
 
     test_manager.disconnect(ws)
     assert ws not in test_manager.active_connections
+
+
+@pytest.mark.asyncio
+async def test_empty_broadcast():
+    test_manager = ConnectionManager()
+    # Should return early without raising error
+    await test_manager.broadcast("test message")
 
 
 @pytest.mark.asyncio
@@ -95,6 +110,14 @@ def test_websocket_sync_endpoint(client):
             assert data2 == "hello from 1"
 
 
+def test_websocket_exception(caplog, client):
+    manager.active_connections.clear()
+    with patch.object(WebSocket, "receive_text", side_effect=Exception("Generic WS error")):
+        with client.websocket_connect("/ws/sync") as websocket:
+            pass
+    assert "WebSocket Error: Generic WS error" in caplog.text
+
+
 def test_websocket_disconnect(client):
     manager.active_connections.clear()
 
@@ -135,3 +158,9 @@ def test_receive_data_error(mock_file, client):
 
     assert response.status_code == 200
     assert response.json() == {"status": "error", "message": "Disk full"}
+
+
+def test_main():
+    with patch("uvicorn.run") as mock_run:
+        runpy.run_module("server", run_name="__main__")
+        mock_run.assert_called_once()

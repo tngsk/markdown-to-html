@@ -10,6 +10,7 @@ dependencies = [
     "markdown>=3.10.2",
     "pillow>=12.2.0",
     "pytest>=9.0.3",
+    "pytest-cov>=7.1.0",
     "requests>=2.33.1",
     "uvicorn>=0.44.0",
     "websockets>=16.0",
