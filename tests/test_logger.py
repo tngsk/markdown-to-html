@@ -1,53 +1,52 @@
-import unittest
 import logging
 import sys
+import pytest
 
 from logger import configure_logging
 from constants import LOG_DATE_FORMAT, LOG_FORMAT
 
-class TestConfigureLogging(unittest.TestCase):
+@pytest.fixture(autouse=True)
+def reset_logger():
+    # Reset the logger before each test
+    logger = logging.getLogger("markdown_converter")
+    logger.handlers.clear()
+    logger.setLevel(logging.NOTSET)
+    yield
+    logger.handlers.clear()
+    logger.setLevel(logging.NOTSET)
 
-    def setUp(self):
-        # Reset the logger before each test
-        logger = logging.getLogger("markdown_converter")
-        logger.handlers.clear()
-        logger.setLevel(logging.NOTSET)
+def test_default_logging():
+    logger = configure_logging(verbose=False)
 
-    def test_default_logging(self):
-        logger = configure_logging(verbose=False)
+    assert logger.name == "markdown_converter"
+    assert logger.level == logging.INFO
+    assert len(logger.handlers) == 1
 
-        self.assertEqual(logger.name, "markdown_converter")
-        self.assertEqual(logger.level, logging.INFO)
-        self.assertEqual(len(logger.handlers), 1)
+    handler = logger.handlers[0]
+    assert isinstance(handler, logging.StreamHandler)
+    assert handler.stream == sys.stdout
+    assert handler.level == logging.INFO
 
-        handler = logger.handlers[0]
-        self.assertIsInstance(handler, logging.StreamHandler)
-        self.assertEqual(handler.stream, sys.stdout)
-        self.assertEqual(handler.level, logging.INFO)
+    formatter = handler.formatter
+    assert formatter is not None
+    assert formatter._fmt == LOG_FORMAT
+    assert formatter.datefmt == LOG_DATE_FORMAT
 
-        formatter = handler.formatter
-        self.assertIsNotNone(formatter)
-        self.assertEqual(formatter._fmt, LOG_FORMAT)
-        self.assertEqual(formatter.datefmt, LOG_DATE_FORMAT)
+def test_verbose_logging():
+    logger = configure_logging(verbose=True)
 
-    def test_verbose_logging(self):
-        logger = configure_logging(verbose=True)
+    assert logger.level == logging.DEBUG
+    assert len(logger.handlers) == 1
 
-        self.assertEqual(logger.level, logging.DEBUG)
-        self.assertEqual(len(logger.handlers), 1)
+    handler = logger.handlers[0]
+    assert handler.level == logging.DEBUG
 
-        handler = logger.handlers[0]
-        self.assertEqual(handler.level, logging.DEBUG)
+def test_handler_clear():
+    # First configuration
+    logger1 = configure_logging(verbose=False)
+    assert len(logger1.handlers) == 1
 
-    def test_handler_clear(self):
-        # First configuration
-        logger1 = configure_logging(verbose=False)
-        self.assertEqual(len(logger1.handlers), 1)
-
-        # Second configuration should clear the first handler and add a new one
-        logger2 = configure_logging(verbose=True)
-        self.assertEqual(len(logger2.handlers), 1)
-        self.assertEqual(logger1, logger2)  # Same logger instance
-
-if __name__ == '__main__':
-    unittest.main()
+    # Second configuration should clear the first handler and add a new one
+    logger2 = configure_logging(verbose=True)
+    assert len(logger2.handlers) == 1
+    assert logger1 is logger2  # Same logger instance
