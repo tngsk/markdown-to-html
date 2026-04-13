@@ -179,6 +179,24 @@ def test_embed_media_ab_test_tag_both_assets(mock_exists, mock_resolve, mock_enc
 
 
 @patch("embedders.media.Path.resolve")
+def test_embed_media_path_traversal(mock_resolve, media_embedder, mock_logger):
+    """Test embed_media_in_html rejects paths outside markdown directory"""
+    html_content = '<img src="../outside.png" alt="test">'
+    markdown_dir = Path("/path/to/markdown")
+
+    media_path = MagicMock()
+    media_path.is_relative_to.return_value = False
+    mock_resolve.return_value = media_path
+
+    result_html, media_count, asset_store = media_embedder.embed_media_in_html(html_content, markdown_dir)
+
+    assert result_html == html_content
+    assert media_count == 0
+    assert not asset_store
+    mock_logger.warning.assert_called_once_with("不正なメディアパス (ディレクトリトラバーサル): ../outside.png")
+
+
+@patch("embedders.media.Path.resolve")
 def test_embed_media_missing_file_fallback(mock_resolve, media_embedder, mock_logger):
     """Test embed_media_in_html logs warning and keeps original src for missing files"""
     html_content = '<img src="local_missing.jpg" alt="test">'
@@ -220,6 +238,32 @@ def test_embed_media_svg_inlining(mock_resolve, media_embedder, mock_file_handle
 @patch.object(MediaEmbedder, "encode_media_to_base64")
 @patch("embedders.media.Path.resolve")
 @patch("embedders.media.Path.exists")
+def test_embed_media_image_embedding_error(mock_exists, mock_resolve, mock_encode, media_embedder, mock_logger):
+    """Test embed_media_in_html catches ImageEmbeddingError and falls back to original source"""
+    html_content = '<img class="responsive" src="image.png" alt="test">'
+    markdown_dir = Path("/path/to/markdown")
+
+    mock_exists.return_value = True
+
+    media_path = MagicMock()
+    media_path.exists.return_value = True
+    media_path.suffix.lower.return_value = ".png"
+    media_path.name = "image.png"
+    mock_resolve.return_value = media_path
+
+    mock_encode.side_effect = ImageEmbeddingError("Test error")
+
+    result_html, media_count, asset_store = media_embedder.embed_media_in_html(html_content, markdown_dir)
+
+    assert result_html == html_content
+    assert media_count == 0
+    assert not asset_store
+    mock_logger.error.assert_called_once_with("メディア埋め込み失敗: Test error")
+
+
+@patch.object(MediaEmbedder, "encode_media_to_base64")
+@patch("embedders.media.Path.resolve")
+@patch("embedders.media.Path.exists")
 def test_embed_media_valid_image(mock_exists, mock_resolve, mock_encode, media_embedder):
     """Test embed_media_in_html encodes valid images and uses transparent placeholders"""
     html_content = '<img class="responsive" src="image.png" alt="test">'
@@ -251,7 +295,40 @@ def test_embed_media_valid_image(mock_exists, mock_resolve, mock_encode, media_e
 @patch("embedders.media.Path.exists")
 def test_embed_media_ab_test_tag(mock_exists, mock_resolve, mock_encode, media_embedder):
     """Test embed_media_in_html replaces src-a and src-b in situ-ab-test tags"""
-    html_content = '<situ-ab-test title="Test" src-a="imageA.png" src-b="https://example.com/imageB.png"></situ-ab-test>'
+    html_content = '<situ-ab-test title="Test" src-a="imageA.png" src-b="imageB.png"></situ-ab-test>'
+    markdown_dir = Path("/path/to/markdown")
+
+    mock_exists.return_value = True
+
+    def mock_resolve_side_effect():
+        media_path = MagicMock()
+        media_path.exists.return_value = True
+        media_path.suffix.lower.return_value = ".png"
+        return media_path
+
+    mock_resolve.side_effect = mock_resolve_side_effect
+
+    # We'll use a sequence for encode results
+    mock_encode.side_effect = ["base64_data_A", "base64_data_B"]
+
+    result_html, media_count, asset_store = media_embedder.embed_media_in_html(html_content, markdown_dir)
+
+    # Both should be converted to assets
+    assert 'data-lazy-src-a="asset-1"' in result_html
+    assert 'data-lazy-src-b="asset-2"' in result_html
+    assert media_count == 2
+    assert "asset-1" in asset_store
+    assert "asset-2" in asset_store
+    assert asset_store["asset-1"] == "data:image/webp;base64,base64_data_A"
+    assert asset_store["asset-2"] == "data:image/webp;base64,base64_data_B"
+
+
+@patch.object(MediaEmbedder, "encode_media_to_base64")
+@patch("embedders.media.Path.resolve")
+@patch("embedders.media.Path.exists")
+def test_embed_media_ab_test_tag_mixed(mock_exists, mock_resolve, mock_encode, media_embedder):
+    """Test embed_media_in_html handles mixed local/external src in situ-ab-test tags"""
+    html_content = '<situ-ab-test title="Test" src-a="https://example.com/imageA.png" src-b="imageB.png"></situ-ab-test>'
     markdown_dir = Path("/path/to/markdown")
 
     mock_exists.return_value = True
@@ -259,21 +336,19 @@ def test_embed_media_ab_test_tag(mock_exists, mock_resolve, mock_encode, media_e
     media_path = MagicMock()
     media_path.exists.return_value = True
     media_path.suffix.lower.return_value = ".png"
-    media_path.name = "imageA.png"
+    media_path.name = "imageB.png"
     mock_resolve.return_value = media_path
 
-    mock_encode.return_value = "base64_data_A"
+    mock_encode.return_value = "base64_data_B"
 
     result_html, media_count, asset_store = media_embedder.embed_media_in_html(html_content, markdown_dir)
 
-    # imageA.png should be converted to asset-1
-    # https://example.com/imageB.png should be unchanged
-    assert 'data-lazy-src-a="asset-1"' in result_html
-    assert 'src-b="https://example.com/imageB.png"' in result_html
-    assert 'data-lazy-src-b' not in result_html
+    assert 'src-a="https://example.com/imageA.png"' in result_html
+    assert 'data-lazy-src-a' not in result_html
+    assert 'data-lazy-src-b="asset-1"' in result_html
     assert media_count == 1
     assert "asset-1" in asset_store
-    assert asset_store["asset-1"] == "data:image/webp;base64,base64_data_A"
+    assert asset_store["asset-1"] == "data:image/webp;base64,base64_data_B"
 
 @patch("embedders.media.Path.resolve")
 def test_resolve_and_encode_path_traversal(mock_resolve, media_embedder, mock_logger):
