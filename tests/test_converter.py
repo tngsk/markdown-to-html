@@ -2,21 +2,29 @@ import unittest
 from unittest.mock import MagicMock, patch
 import sys
 
-# Mocking missing dependencies before they are imported by converter.py
-mock_markdown = MagicMock()
-mock_pil = MagicMock()
-mock_requests = MagicMock()
-mock_fastapi = MagicMock()
-mock_uvicorn = MagicMock()
-mock_websockets = MagicMock()
+# Mocking missing dependencies only if they are not installed
+try:
+    import markdown
+    import PIL
+    import requests
+    import fastapi
+    import uvicorn
+    import websockets
+except ImportError:
+    mock_markdown = MagicMock()
+    mock_pil = MagicMock()
+    mock_requests = MagicMock()
+    mock_fastapi = MagicMock()
+    mock_uvicorn = MagicMock()
+    mock_websockets = MagicMock()
 
-sys.modules['markdown'] = mock_markdown
-sys.modules['PIL'] = mock_pil
-sys.modules['PIL.Image'] = mock_pil.Image
-sys.modules['requests'] = mock_requests
-sys.modules['fastapi'] = mock_fastapi
-sys.modules['uvicorn'] = mock_uvicorn
-sys.modules['websockets'] = mock_websockets
+    sys.modules['markdown'] = mock_markdown
+    sys.modules['PIL'] = mock_pil
+    sys.modules['PIL.Image'] = mock_pil.Image
+    sys.modules['requests'] = mock_requests
+    sys.modules['fastapi'] = mock_fastapi
+    sys.modules['uvicorn'] = mock_uvicorn
+    sys.modules['websockets'] = mock_websockets
 
 from pathlib import Path
 import logging
