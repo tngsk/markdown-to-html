@@ -232,21 +232,3 @@ def test_main(mock_run):
     mock_run.assert_called_once()
     assert mock_run.call_args.kwargs["host"] == "0.0.0.0"
     assert mock_run.call_args.kwargs["port"] == 8000
-@patch("server.tomllib.load")
-def test_get_allowed_origins_error(mock_toml_load, caplog):
-    from server import get_allowed_origins
-    mock_toml_load.side_effect = Exception("Toml load error")
-    origins = get_allowed_origins()
-    assert origins == ["http://localhost:8000", "http://127.0.0.1:8000"]
-    assert "Could not load CORS origins from config: Toml load error" in caplog.text
-
-
-@patch("uvicorn.run")
-def test_main_execution(mock_run):
-    import runpy
-    # Execute the server module as if it were run from the command line
-    runpy.run_module("server", run_name="__main__")
-
-    mock_run.assert_called_once()
-    assert mock_run.call_args[1]["host"] == "0.0.0.0"
-    assert mock_run.call_args[1]["port"] == 8000

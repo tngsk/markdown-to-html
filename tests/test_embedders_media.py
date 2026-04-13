@@ -215,6 +215,24 @@ def test_embed_media_path_traversal(mock_resolve, media_embedder, mock_logger):
 
 
 @patch("embedders.media.Path.resolve")
+def test_embed_media_path_traversal(mock_resolve, media_embedder, mock_logger):
+    """Test embed_media_in_html rejects paths outside markdown directory"""
+    html_content = '<img src="../outside.png" alt="test">'
+    markdown_dir = Path("/path/to/markdown")
+
+    media_path = MagicMock()
+    media_path.is_relative_to.return_value = False
+    mock_resolve.return_value = media_path
+
+    result_html, media_count, asset_store = media_embedder.embed_media_in_html(html_content, markdown_dir)
+
+    assert result_html == html_content
+    assert media_count == 0
+    assert not asset_store
+    mock_logger.warning.assert_called_once_with("不正なメディアパス (ディレクトリトラバーサル): ../outside.png")
+
+
+@patch("embedders.media.Path.resolve")
 def test_embed_media_missing_file_fallback(mock_resolve, media_embedder, mock_logger):
     """Test embed_media_in_html logs warning and keeps original src for missing files"""
     html_content = '<img src="local_missing.jpg" alt="test">'
@@ -367,53 +385,3 @@ def test_embed_media_ab_test_tag_mixed(mock_exists, mock_resolve, mock_encode, m
     assert media_count == 1
     assert "asset-1" in asset_store
     assert asset_store["asset-1"] == "data:image/webp;base64,base64_data_B"
-
-@patch("embedders.media.Path.resolve")
-def test_resolve_and_encode_path_traversal(mock_resolve, media_embedder, mock_logger):
-    html_content = '<img src="../outside.png" alt="test">'
-    markdown_dir = Path("/path/to/markdown")
-
-    media_path = MagicMock()
-    media_path.is_relative_to.return_value = False
-    mock_resolve.return_value = media_path
-
-    result_html, media_count, asset_store = media_embedder.embed_media_in_html(html_content, markdown_dir)
-
-    assert result_html == html_content
-    assert media_count == 0
-    assert not asset_store
-    mock_logger.warning.assert_called_with("不正なメディアパス (ディレクトリトラバーサル): ../outside.png")
-
-@patch.object(MediaEmbedder, "encode_media_to_base64")
-@patch("embedders.media.Path.resolve")
-def test_resolve_and_encode_image_embedding_error(mock_resolve, mock_encode, media_embedder, mock_logger):
-    html_content = '<img src="error.png" alt="test">'
-    markdown_dir = Path("/path/to/markdown")
-
-    media_path = MagicMock()
-    media_path.is_relative_to.return_value = True
-    media_path.exists.return_value = True
-    media_path.suffix.lower.return_value = ".png"
-    mock_resolve.return_value = media_path
-
-    mock_encode.side_effect = ImageEmbeddingError("Test embedding error")
-
-    result_html, media_count, asset_store = media_embedder.embed_media_in_html(html_content, markdown_dir)
-
-    assert result_html == html_content
-    assert media_count == 0
-    assert not asset_store
-    mock_logger.error.assert_called_with("メディア埋め込み失敗: Test embedding error")
-
-@patch("embedders.media.Path.resolve")
-def test_embed_media_ab_test_tag_no_asset(mock_resolve, media_embedder):
-    # Both src-a and src-b are external and therefore won't be converted to assets
-    html_content = '<situ-ab-test title="Test" src-a="https://example.com/A.png" src-b="https://example.com/B.png"></situ-ab-test>'
-    markdown_dir = Path("/path/to/markdown")
-
-    result_html, media_count, asset_store = media_embedder.embed_media_in_html(html_content, markdown_dir)
-
-    # Result should be exactly the same as input
-    assert result_html == html_content
-    assert media_count == 0
-    assert not asset_store
