@@ -1,11 +1,12 @@
 import json
-from unittest.mock import patch, mock_open, AsyncMock
+import logging
+from unittest.mock import patch, mock_open, AsyncMock, MagicMock
 
 import pytest
 from fastapi.testclient import TestClient
-from fastapi import WebSocket
+from fastapi import WebSocket, WebSocketDisconnect
 
-from server import app, ConnectionManager, manager
+from server import app, ConnectionManager, manager, get_allowed_origins, websocket_endpoint
 
 
 @pytest.fixture
@@ -46,6 +47,24 @@ async def test_connection_manager_disconnect():
     assert ws not in test_manager.active_connections
 
 
+def test_get_allowed_origins_exception(caplog):
+    with patch("builtins.open", side_effect=Exception("Test open error")):
+        with caplog.at_level(logging.WARNING):
+            origins = get_allowed_origins()
+
+    assert origins == ["http://localhost:8000", "http://127.0.0.1:8000"]
+    assert "Could not load CORS origins from config: Test open error" in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_connection_manager_broadcast_empty():
+    test_manager = ConnectionManager()
+    test_manager.active_connections = []
+
+    # Should just return and not raise an error
+    await test_manager.broadcast("test")
+
+
 @pytest.mark.asyncio
 async def test_connection_manager_broadcast():
     test_manager = ConnectionManager()
@@ -75,6 +94,21 @@ async def test_connection_manager_broadcast_error(caplog):
 
     await test_manager.broadcast("test message")
     assert "Error broadcasting: Test broadcast error" in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_websocket_endpoint_exception(caplog):
+    class ErrorWebSocket(MockWebSocket):
+        async def receive_text(self):
+            raise Exception("Test generic socket error")
+
+    ws = ErrorWebSocket()
+    # It should not raise, just log the error and disconnect
+    with caplog.at_level(logging.ERROR):
+        await websocket_endpoint(ws)
+
+    assert "WebSocket Error: Test generic socket error" in caplog.text
+    assert ws not in manager.active_connections
 
 
 def test_websocket_sync_endpoint(client):
@@ -135,3 +169,16 @@ def test_receive_data_error(mock_file, client):
 
     assert response.status_code == 200
     assert response.json() == {"status": "error", "message": "Disk full"}
+
+
+@patch("uvicorn.run")
+def test_main(mock_run):
+    import runpy
+    # Run the server module as __main__ to hit the if __name__ == "__main__": block
+    runpy.run_module("server", run_name="__main__")
+    # assert_called_once checks that it was called once.
+    # The actual app instance differs because runpy loads a new instance of the module,
+    # so we just assert the host and port kwargs.
+    mock_run.assert_called_once()
+    assert mock_run.call_args.kwargs["host"] == "0.0.0.0"
+    assert mock_run.call_args.kwargs["port"] == 8000
