@@ -147,6 +147,72 @@ def test_embed_media_external_urls(media_embedder):
     assert media_count == 0
     assert not asset_store
 
+@patch.object(MediaEmbedder, "encode_media_to_base64")
+@patch("embedders.media.Path.resolve")
+@patch("embedders.media.Path.exists")
+def test_embed_media_ab_test_tag_both_assets(mock_exists, mock_resolve, mock_encode, media_embedder):
+    html_content = '<situ-ab-test title="Test" src-a="imageA.png" src-b="imageB.png"></situ-ab-test>'
+    markdown_dir = Path("/path/to/markdown")
+
+    mock_exists.return_value = True
+
+    media_path_a = MagicMock()
+    media_path_a.exists.return_value = True
+    media_path_a.suffix.lower.return_value = ".png"
+    media_path_a.name = "imageA.png"
+
+    media_path_b = MagicMock()
+    media_path_b.exists.return_value = True
+    media_path_b.suffix.lower.return_value = ".png"
+    media_path_b.name = "imageB.png"
+
+    # Sequence of resolves: first for A (relative check then real check), then for B
+    mock_resolve.side_effect = [media_path_a, media_path_a, media_path_b, media_path_b, media_path_a, media_path_b, media_path_a, media_path_b]
+
+    mock_encode.side_effect = ["base64_data_A", "base64_data_B"]
+
+    result_html, media_count, asset_store = media_embedder.embed_media_in_html(html_content, markdown_dir)
+
+    assert 'data-lazy-src-a="asset-1"' in result_html
+    assert 'data-lazy-src-b="asset-2"' in result_html
+    assert media_count == 2
+
+
+@patch("embedders.media.Path.resolve")
+def test_embed_media_path_traversal(mock_resolve, media_embedder, mock_logger):
+    """Test embed_media_in_html rejects paths outside markdown directory"""
+    html_content = '<img src="../outside.png" alt="test">'
+    markdown_dir = Path("/path/to/markdown")
+
+    media_path = MagicMock()
+    media_path.is_relative_to.return_value = False
+    mock_resolve.return_value = media_path
+
+    result_html, media_count, asset_store = media_embedder.embed_media_in_html(html_content, markdown_dir)
+
+    assert result_html == html_content
+    assert media_count == 0
+    assert not asset_store
+    mock_logger.warning.assert_called_once_with("不正なメディアパス (ディレクトリトラバーサル): ../outside.png")
+
+
+@patch("embedders.media.Path.resolve")
+def test_embed_media_path_traversal(mock_resolve, media_embedder, mock_logger):
+    """Test embed_media_in_html rejects paths outside markdown directory"""
+    html_content = '<img src="../outside.png" alt="test">'
+    markdown_dir = Path("/path/to/markdown")
+
+    media_path = MagicMock()
+    media_path.is_relative_to.return_value = False
+    mock_resolve.return_value = media_path
+
+    result_html, media_count, asset_store = media_embedder.embed_media_in_html(html_content, markdown_dir)
+
+    assert result_html == html_content
+    assert media_count == 0
+    assert not asset_store
+    mock_logger.warning.assert_called_once_with("不正なメディアパス (ディレクトリトラバーサル): ../outside.png")
+
 
 @patch("embedders.media.Path.resolve")
 def test_embed_media_path_traversal(mock_resolve, media_embedder, mock_logger):

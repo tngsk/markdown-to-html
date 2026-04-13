@@ -99,6 +99,12 @@ async def test_connection_manager_broadcast():
 
 
 @pytest.mark.asyncio
+async def test_connection_manager_broadcast_empty():
+    test_manager = ConnectionManager()
+    # active_connections is empty
+    await test_manager.broadcast("should return early")
+
+@pytest.mark.asyncio
 async def test_connection_manager_broadcast_error(caplog):
     test_manager = ConnectionManager()
     ws = MockWebSocket()
@@ -168,6 +174,19 @@ def test_websocket_disconnect(client):
 
     # Once the context manager exits, the disconnect happens
     assert len(manager.active_connections) == 0
+
+def test_websocket_endpoint_general_error(client, caplog):
+    manager.active_connections.clear()
+
+    with patch.object(WebSocket, "receive_text", side_effect=Exception("General WS Error")):
+        # We catch the exception and assert on the log
+        try:
+            with client.websocket_connect("/ws/sync") as websocket:
+                pass
+        except Exception:
+            pass
+
+    assert "WebSocket Error: General WS Error" in caplog.text
 
 
 @patch("server.aiofiles.open")
