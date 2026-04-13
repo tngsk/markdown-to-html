@@ -187,6 +187,13 @@ th {
 
 .nowrap { white-space: nowrap; display: inline; }
 
+/* レイアウト ---------------------------------------------- */
+.column {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
 /* Colab -------------------------------------------------- */
 .colab-badge {
     vertical-align: middle;

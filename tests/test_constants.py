@@ -65,6 +65,7 @@ class TestConstants(unittest.TestCase):
         self.assertIn("tables", constants.MARKDOWN_EXTENSIONS)
         self.assertIn("nl2br", constants.MARKDOWN_EXTENSIONS)
         self.assertIn("toc", constants.MARKDOWN_EXTENSIONS)
+        self.assertIn("md_in_html", constants.MARKDOWN_EXTENSIONS)
 
         self.assertIsInstance(constants.MARKDOWN_POLL_PATTERN, str)
         self.assertIsInstance(constants.MARKDOWN_AB_TEST_PATTERN, str)
@@ -78,6 +79,11 @@ class TestConstants(unittest.TestCase):
         self.assertIsInstance(constants.HTML_SESSION_JOIN_COMPONENT_TEMPLATE, str)
         self.assertIsInstance(constants.MARKDOWN_GROUP_ASSIGNMENT_PATTERN, str)
         self.assertIsInstance(constants.HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE, str)
+        self.assertIsInstance(constants.MARKDOWN_LAYOUT_ROW_PATTERN, str)
+        self.assertIsInstance(constants.MARKDOWN_LAYOUT_STACK_PATTERN, str)
+        self.assertIsInstance(constants.MARKDOWN_LAYOUT_END_PATTERN, str)
+        self.assertIsInstance(constants.MARKDOWN_COLUMN_START_PATTERN, str)
+        self.assertIsInstance(constants.MARKDOWN_COLUMN_END_PATTERN, str)
 
     def test_size_formatting(self):
         """Test Size Formatting constants"""

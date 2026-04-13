@@ -106,7 +106,7 @@ REGEX_FLAG_IGNORECASE = "IGNORECASE"
 # ============================================================================
 
 # Markdownの拡張機能リスト
-MARKDOWN_EXTENSIONS = ["fenced_code", "tables", "nl2br", "toc"]
+MARKDOWN_EXTENSIONS = ["fenced_code", "tables", "nl2br", "toc", "md_in_html"]
 
 # 投票コンポーネント（Live Polling）の正規表現パターン
 MARKDOWN_POLL_PATTERN = r"@\[poll:\s*(.+?)\]\((.+?)\)"
@@ -141,6 +141,13 @@ MARKDOWN_GROUP_ASSIGNMENT_PATTERN = r"@\[group-assignment:\s*\"?(.*?)\"?\]"
 HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE = (
     '<situ-group-assignment title="{title}"></situ-group-assignment>'
 )
+
+# レイアウトコンポーネントの正規表現パターン
+MARKDOWN_LAYOUT_ROW_PATTERN = r"@\[row(?::\s*(.+?))?\]"
+MARKDOWN_LAYOUT_STACK_PATTERN = r"@\[stack(?::\s*(.+?))?\]"
+MARKDOWN_LAYOUT_END_PATTERN = r"@\[end\]"
+MARKDOWN_COLUMN_START_PATTERN = r":::column"
+MARKDOWN_COLUMN_END_PATTERN = r":::(?!\S)"
 
 
 # ============================================================================
