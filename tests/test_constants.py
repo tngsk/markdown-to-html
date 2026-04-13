@@ -34,11 +34,29 @@ class TestConstants(unittest.TestCase):
 
         self.assertEqual(constants.DEFAULT_MIME_TYPE, "application/octet-stream")
 
+    def test_file_io_encoding(self):
+        """Test File I/O Encoding constants"""
+        self.assertEqual(constants.DEFAULT_TEXT_ENCODING, "utf-8")
+
     def test_html_processing(self):
         """Test HTML Processing constants"""
+        self.assertIsInstance(constants.LOG_FORMAT, str)
+        self.assertIsInstance(constants.LOG_DATE_FORMAT, str)
         self.assertIsInstance(constants.HTML_OPENING_TAG, str)
+        self.assertIsInstance(constants.HTML_HEAD_CLOSING_TAG, str)
         self.assertIsInstance(constants.HTML_IMG_TAG_PATTERN, str)
+        self.assertIsInstance(constants.HTML_SCRIPT_TAG_PATTERN, str)
+        self.assertIsInstance(constants.HTML_TABLE_STYLE_PATTERN, str)
+        self.assertIsInstance(constants.HTML_TAG_REMOVAL_PATTERN_TEMPLATE, str)
+        self.assertIsInstance(constants.HTML_IPYNB_LINK_PATTERN, str)
+        self.assertIsInstance(constants.HTML_POLL_COMPONENT_TEMPLATE, str)
+        self.assertIsInstance(constants.HTML_AB_TEST_COMPONENT_TEMPLATE, str)
         self.assertIn("github.com", constants.GITHUB_BASE_URL)
+        self.assertIn("github", constants.COLAB_GITHUB_BASE_URL)
+        self.assertIn("colab-badge.svg", constants.COLAB_BADGE_URL)
+        self.assertIsInstance(constants.HTML_COLAB_BADGE_IMG, str)
+        self.assertIsInstance(constants.HTML_COLAB_LINK_TEMPLATE, str)
+        self.assertEqual(constants.REGEX_FLAG_IGNORECASE, "IGNORECASE")
 
     def test_markdown_processing(self):
         """Test Markdown Processing constants"""
@@ -50,11 +68,26 @@ class TestConstants(unittest.TestCase):
 
         self.assertIsInstance(constants.MARKDOWN_POLL_PATTERN, str)
         self.assertIsInstance(constants.MARKDOWN_AB_TEST_PATTERN, str)
+        self.assertIsInstance(constants.MARKDOWN_NOTEBOOK_PATTERN, str)
+        self.assertIsInstance(constants.HTML_NOTEBOOK_COMPONENT_TEMPLATE, str)
+        self.assertIsInstance(constants.MARKDOWN_TEXTFIELD_PATTERN, str)
+        self.assertIsInstance(constants.HTML_TEXTFIELD_COMPONENT_TEMPLATE, str)
+        self.assertIsInstance(constants.MARKDOWN_REACTION_PATTERN, str)
+        self.assertIsInstance(constants.HTML_REACTION_COMPONENT_TEMPLATE, str)
+        self.assertIsInstance(constants.MARKDOWN_SESSION_JOIN_PATTERN, str)
+        self.assertIsInstance(constants.HTML_SESSION_JOIN_COMPONENT_TEMPLATE, str)
+        self.assertIsInstance(constants.MARKDOWN_GROUP_ASSIGNMENT_PATTERN, str)
+        self.assertIsInstance(constants.HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE, str)
 
     def test_size_formatting(self):
         """Test Size Formatting constants"""
         self.assertEqual(constants.SIZE_UNITS, ("B", "KB", "MB", "GB", "TB"))
         self.assertEqual(constants.SIZE_UNIT_THRESHOLD, 1024)
+
+    def test_cli_and_output(self):
+        """Test CLI & Output constants"""
+        self.assertIsInstance(constants.HEADER_TEXT, str)
+        self.assertIn("Markdown to Single-File HTML Converter", constants.HEADER_TEXT)
 
 if __name__ == '__main__':
     unittest.main()
