@@ -33,12 +33,18 @@ class ConnectionManager:
             self.active_connections.remove(websocket)
             logger.info(f"Client disconnected. Active: {len(self.active_connections)}")
 
+    async def _send_to_connection(self, connection: WebSocket, message: str):
+        try:
+            await connection.send_text(message)
+        except Exception as e:
+            logger.error(f"Error broadcasting: {e}")
+
     async def broadcast(self, message: str):
-        for connection in self.active_connections:
-            try:
-                await connection.send_text(message)
-            except Exception as e:
-                logger.error(f"Error broadcasting: {e}")
+        import asyncio
+        if not self.active_connections:
+            return
+        tasks = [self._send_to_connection(conn, message) for conn in self.active_connections]
+        await asyncio.gather(*tasks)
 
 
 manager = ConnectionManager()
