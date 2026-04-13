@@ -56,6 +56,14 @@ class TestMarkdownProcessor(unittest.TestCase):
         result_typo = processor3._preprocess_textfield(md_content_typo)
         self.assertEqual(result_typo, expected_html_typo)
 
+    def test_preprocess_textfield_size_without_placeholder(self):
+        # Test size without placeholder
+        md_content_size_no_placeholder = "Input with size no placeholder: @[textfield: size:30]"
+        expected_html_size_no_placeholder = 'Input with size no placeholder: <situ-textfield-input id="textfield-1" placeholder="" size="30"></situ-textfield-input>'
+        processor = MarkdownProcessor(self.logger, self.file_handler)
+        result_size_no_placeholder = processor._preprocess_textfield(md_content_size_no_placeholder)
+        self.assertEqual(result_size_no_placeholder, expected_html_size_no_placeholder)
+
     def test_preprocess_notebooks(self):
         md_content = "Notebook link: @[notebook-input](my-notebook-id)"
         expected_html = 'Notebook link: <situ-notebook-input id="my-notebook-id"></situ-notebook-input>'
