@@ -82,6 +82,7 @@ async def websocket_endpoint(websocket: WebSocket):
 async def receive_data(request: Request):
     try:
         data = await request.json()
+        # Use aiofiles for asynchronous file I/O to avoid blocking the event loop
         async with aiofiles.open("data.jsonl", "a", encoding="utf-8") as f:
             await f.write(json.dumps(data) + "\n")
         return {"status": "success"}
