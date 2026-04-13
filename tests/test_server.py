@@ -26,6 +26,13 @@ class MockWebSocket:
         self.sent_messages.append(data)
 
 
+def test_get_allowed_origins_exception(caplog):
+    with patch("tomllib.load", side_effect=Exception("Mocked tomllib error")):
+        origins = get_allowed_origins()
+        assert origins == ["http://localhost:8000", "http://127.0.0.1:8000"]
+        assert "Could not load CORS origins from config" in caplog.text
+
+
 @pytest.mark.asyncio
 async def test_connection_manager_connect():
     test_manager = ConnectionManager()
@@ -63,6 +70,13 @@ async def test_connection_manager_broadcast_empty():
 
     # Should just return and not raise an error
     await test_manager.broadcast("test")
+
+
+@pytest.mark.asyncio
+async def test_empty_broadcast():
+    test_manager = ConnectionManager()
+    # Should return early without raising error
+    await test_manager.broadcast("test message")
 
 
 @pytest.mark.asyncio
@@ -136,6 +150,14 @@ def test_websocket_sync_endpoint(client):
             # Client 2 should also receive it
             data2 = websocket2.receive_text()
             assert data2 == "hello from 1"
+
+
+def test_websocket_exception(caplog, client):
+    manager.active_connections.clear()
+    with patch.object(WebSocket, "receive_text", side_effect=Exception("Generic WS error")):
+        with client.websocket_connect("/ws/sync") as websocket:
+            pass
+    assert "WebSocket Error: Generic WS error" in caplog.text
 
 
 def test_websocket_disconnect(client):
