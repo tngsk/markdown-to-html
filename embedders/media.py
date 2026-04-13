@@ -84,6 +84,12 @@ class MediaEmbedder:
                 return src_value
 
             media_path = (markdown_dir / src_value).resolve()
+
+            # Security fix: prevent path traversal attacks
+            if not media_path.is_relative_to(markdown_dir.resolve()):
+                self.logger.warning(f"不正なメディアパス (ディレクトリトラバーサル): {src_value}")
+                return src_value
+
             if not media_path.exists():
                 self.logger.warning(f"メディアファイルが見つかりません: {src_value}")
                 return src_value

@@ -1,6 +1,7 @@
 import json
 import logging
 import aiofiles
+import tomllib
 from typing import List
 
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
@@ -9,11 +10,22 @@ from fastapi.middleware.cors import CORSMiddleware
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+def get_allowed_origins() -> List[str]:
+    origins = ["http://localhost:8000", "http://127.0.0.1:8000"]
+    try:
+        with open("config.toml", "rb") as f:
+            config_data = tomllib.load(f)
+            if "security" in config_data and "cors-allowed-origins" in config_data["security"]:
+                origins = config_data["security"]["cors-allowed-origins"]
+    except Exception as e:
+        logger.warning(f"Could not load CORS origins from config: {e}")
+    return origins
+
 app = FastAPI(title="Interactive-MD Sync Server")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=get_allowed_origins(),
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
