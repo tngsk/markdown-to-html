@@ -57,6 +57,10 @@ async def test_connection_manager_broadcast():
 
     await test_manager.broadcast("test message")
 
+    # Since tasks are created in the background, we need to yield to the event loop
+    import asyncio
+    await asyncio.sleep(0)
+
     assert "test message" in ws1.sent_messages
     assert "test message" in ws2.sent_messages
 
@@ -74,6 +78,11 @@ async def test_connection_manager_broadcast_error(caplog):
     ws.send_text = mock_send_text
 
     await test_manager.broadcast("test message")
+
+    # Since tasks are created in the background, we need to yield to the event loop
+    import asyncio
+    await asyncio.sleep(0)
+
     assert "Error broadcasting: Test broadcast error" in caplog.text
 
 

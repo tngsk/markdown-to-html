@@ -35,6 +35,7 @@ app.add_middleware(
 class ConnectionManager:
     def __init__(self):
         self.active_connections: List[WebSocket] = []
+        self.bg_tasks = set()
 
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
@@ -56,8 +57,11 @@ class ConnectionManager:
         import asyncio
         if not self.active_connections:
             return
-        tasks = [self._send_to_connection(conn, message) for conn in self.active_connections]
-        await asyncio.gather(*tasks)
+
+        for conn in self.active_connections:
+            task = asyncio.create_task(self._send_to_connection(conn, message))
+            self.bg_tasks.add(task)
+            task.add_done_callback(self.bg_tasks.discard)
 
 
 manager = ConnectionManager()
