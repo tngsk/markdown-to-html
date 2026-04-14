@@ -91,6 +91,7 @@ HTML_AB_TEST_COMPONENT_TEMPLATE = (
 
 # 外部サービス URL
 GITHUB_BASE_URL = "https://github.com/"
+MATERIAL_SYMBOLS_URL = "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
 COLAB_GITHUB_BASE_URL = "https://colab.research.google.com/github/"
 COLAB_BADGE_URL = "https://colab.research.google.com/assets/colab-badge.svg"
 
@@ -119,6 +120,12 @@ MARKDOWN_POLL_PATTERN = r"@\[poll:\s*(.+?)\]\((.+?)\)"
 
 # A/Bテストコンポーネントの正規表現パターン
 MARKDOWN_AB_TEST_PATTERN = r"@\[ab-test:\s*(.+?)\]\((.+?),\s*(.+?)\)"
+
+# アイコンコンポーネントの正規表現パターン
+MARKDOWN_ICON_PATTERN = r"@\[icon:\s*([^\]]+)\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+HTML_ICON_COMPONENT_TEMPLATE = (
+    '<situ-icon name="{name}"{size_attr}{color_attr}{display_attr}></situ-icon>'
+)
 
 # ノートブック入力コンポーネントの正規表現パターン
 MARKDOWN_NOTEBOOK_PATTERN = r"@\[notebook-input\]\((.+?)\)"

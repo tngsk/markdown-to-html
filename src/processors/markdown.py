@@ -14,6 +14,7 @@ from src.config import ConversionError
 from src.constants import (
     HTML_AB_TEST_COMPONENT_TEMPLATE,
     HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE,
+    HTML_ICON_COMPONENT_TEMPLATE,
     HTML_NOTEBOOK_COMPONENT_TEMPLATE,
     HTML_POLL_COMPONENT_TEMPLATE,
     HTML_REACTION_COMPONENT_TEMPLATE,
@@ -23,6 +24,7 @@ from src.constants import (
     MARKDOWN_AB_TEST_PATTERN,
     MARKDOWN_EXTENSIONS,
     MARKDOWN_GROUP_ASSIGNMENT_PATTERN,
+    MARKDOWN_ICON_PATTERN,
     MARKDOWN_LAYOUT_END_PATTERN,
     MARKDOWN_LAYOUT_ROW_PATTERN,
     MARKDOWN_LAYOUT_STACK_PATTERN,
@@ -308,6 +310,7 @@ class MarkdownProcessor:
             ConversionError: 変換に失敗した場合
         """
         try:
+            markdown_content = self._preprocess_icon(markdown_content)
             markdown_content = self._preprocess_sound(markdown_content)
             markdown_content = self._preprocess_polls(markdown_content)
             markdown_content = self._preprocess_ab_tests(markdown_content)

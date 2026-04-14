@@ -23,6 +23,7 @@ from src.constants import (
     HTML_COLAB_LINK_TEMPLATE,
     HTML_IPYNB_LINK_PATTERN,
     HTML_TABLE_STYLE_PATTERN,
+    MATERIAL_SYMBOLS_URL,
     TEMPLATES_DIR,
 )
 
@@ -115,7 +116,7 @@ class HTMLDocumentBuilder:
         component_templates = self._load_component_templates(used_component_dirs)
 
         connect_src_str = " ".join(filter(None, ["'self'", connect_src, ws_src]))
-        csp_meta = f"<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self' 'unsafe-inline' data: https://cdnjs.cloudflare.com; img-src 'self' data: https://colab.research.google.com; connect-src {connect_src_str}; object-src 'none';\">"
+        csp_meta = f"<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self' 'unsafe-inline' data: https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: https://colab.research.google.com; connect-src {connect_src_str}; object-src 'none'; font-src 'self' https://fonts.gstatic.com;\">"
 
         meta_tags = []
         if connect_src:
@@ -127,8 +128,13 @@ class HTMLDocumentBuilder:
         if meta_tags_html:
             csp_meta += f"\n        {meta_tags_html}"
 
+        # アイコンが使われている場合はGoogle Fontsのリンクを追加
+        fonts_link = ""
+        if "<situ-icon" in html_body:
+            fonts_link = f'\n        <link rel="stylesheet" href="{MATERIAL_SYMBOLS_URL}" />'
+
         doc = template_content.replace("{TITLE}", safe_title)
-        doc = doc.replace("{CSP_META}", csp_meta)
+        doc = doc.replace("{CSP_META}", csp_meta + fonts_link)
         doc = doc.replace("{CSS_BLOCK}", css_block)
         doc = doc.replace("{HIGHLIGHT_JS_CSS}", highlight_js_css)
         doc = doc.replace("{CODE_BLOCK_CSS}", base_css)

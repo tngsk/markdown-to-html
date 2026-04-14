@@ -38,6 +38,18 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
                 self.builder.build_document(html_body="<p>test</p>")
             self.assertIn("テンプレート読み込みエラー: Read error", str(context.exception))
 
+    @patch("pathlib.Path.read_text")
+    def test_build_document_icon_fonts_injection(self, mock_read_text):
+        """<situ-icon>が存在する場合にGoogle Fontsが注入されることをテスト"""
+        mock_read_text.return_value = "<!doctype html><html><head>{CSP_META}</head><body>{BODY}</body></html>"
+        html_body = "<situ-icon name=\"search\"></situ-icon>"
+
+        result = self.builder.build_document(html_body=html_body)
+
+        self.assertIn("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined", result)
+        self.assertIn("https://fonts.googleapis.com", result)
+        self.assertIn("https://fonts.gstatic.com", result)
+
     @patch('pathlib.Path.read_text')
     def test_build_document_export_and_interactive(self, mock_read_text):
         mock_read_text.return_value = "{BODY}{COPY_BUTTON_JS}"
