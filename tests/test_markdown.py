@@ -19,6 +19,25 @@ class TestMarkdownProcessor(unittest.TestCase):
         self.file_handler = MagicMock()
         self.processor = MarkdownProcessor(self.logger, self.file_handler)
 
+    def test_preprocess_icon(self):
+        """アイコンコンポーネントの前処理をテスト"""
+        cases = [
+            ("@[icon: search]", '<situ-icon name="search"></situ-icon>'),
+            ("@[icon: search]()", '<situ-icon name="search"></situ-icon>'),
+            ("@[icon: search](24px)", '<situ-icon name="search" size="24px"></situ-icon>'),
+            ("@[icon: search](24px, red)", '<situ-icon name="search" size="24px" color="red"></situ-icon>'),
+            ("@[icon: search](24px, #FF0000, block)", '<situ-icon name="search" size="24px" color="#FF0000" display="block"></situ-icon>'),
+            ("@[icon: search](24px, rgba(255, 0, 0, 0.5), block)", '<situ-icon name="search" size="24px" color="rgba(255, 0, 0, 0.5)" display="block"></situ-icon>'),
+            ("@[icon: search](, blue)", '<situ-icon name="search" color="blue"></situ-icon>'),
+            ("@[icon: search](,, inline)", '<situ-icon name="search" display="inline"></situ-icon>'),
+            ('@[icon: "quotes" test]', '<situ-icon name="&quot;quotes&quot; test"></situ-icon>'),
+        ]
+
+        for markdown_text, expected_html in cases:
+            with self.subTest(markdown_text=markdown_text):
+                result = self.processor._preprocess_icon(markdown_text)
+                self.assertEqual(result, expected_html)
+
     def test_preprocess_sound(self):
         # Test basic and no-label replacements
         md_content = "Here is @[sound: UI1](test.mp3) and @[sound](test.wav)."

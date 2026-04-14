@@ -14,6 +14,7 @@ from src.config import ConversionError
 from src.constants import (
     HTML_AB_TEST_COMPONENT_TEMPLATE,
     HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE,
+    HTML_ICON_COMPONENT_TEMPLATE,
     HTML_NOTEBOOK_COMPONENT_TEMPLATE,
     HTML_POLL_COMPONENT_TEMPLATE,
     HTML_REACTION_COMPONENT_TEMPLATE,
@@ -23,6 +24,7 @@ from src.constants import (
     MARKDOWN_AB_TEST_PATTERN,
     MARKDOWN_EXTENSIONS,
     MARKDOWN_GROUP_ASSIGNMENT_PATTERN,
+    MARKDOWN_ICON_PATTERN,
     MARKDOWN_LAYOUT_END_PATTERN,
     MARKDOWN_LAYOUT_ROW_PATTERN,
     MARKDOWN_LAYOUT_STACK_PATTERN,
@@ -232,6 +234,62 @@ class MarkdownProcessor:
             )
         return result
 
+    def _preprocess_icon(self, markdown_content: str) -> str:
+        """
+        @[icon: name](size, color, display) を <situ-icon> に変換する
+        """
+        pattern = re.compile(MARKDOWN_ICON_PATTERN)
+
+        def replacer(match: re.Match) -> str:
+            name = match.group(1).strip()
+            args_str = match.group(2)
+
+            size = ""
+            color = ""
+            display = ""
+
+            if args_str:
+                parts = []
+                current_part = ""
+                paren_count = 0
+
+                for char in args_str:
+                    if char == '(':
+                        paren_count += 1
+                        current_part += char
+                    elif char == ')':
+                        paren_count -= 1
+                        current_part += char
+                    elif char == ',' and paren_count == 0:
+                        parts.append(current_part.strip())
+                        current_part = ""
+                    else:
+                        current_part += char
+
+                if current_part or args_str.endswith(','):
+                    parts.append(current_part.strip())
+
+                if len(parts) > 0 and parts[0]: size = parts[0]
+                if len(parts) > 1 and parts[1]: color = parts[1]
+                if len(parts) > 2 and parts[2]: display = parts[2]
+
+            safe_name = html.escape(name)
+            size_attr = f' size="{html.escape(size)}"' if size else ""
+            color_attr = f' color="{html.escape(color)}"' if color else ""
+            display_attr = f' display="{html.escape(display)}"' if display else ""
+
+            return HTML_ICON_COMPONENT_TEMPLATE.format(
+                name=safe_name,
+                size_attr=size_attr,
+                color_attr=color_attr,
+                display_attr=display_attr
+            )
+
+        result = pattern.sub(replacer, markdown_content)
+        if markdown_content != result:
+            self.logger.debug("アイコン前処理完了: @[icon] → <situ-icon>")
+        return result
+
     def _preprocess_layout(self, markdown_content: str) -> str:
         """
         @[row], @[stack], @[end], :::column, ::: をレイアウトコンポーネントに変換する
@@ -285,6 +343,7 @@ class MarkdownProcessor:
             ConversionError: 変換に失敗した場合
         """
         try:
+            markdown_content = self._preprocess_icon(markdown_content)
             markdown_content = self._preprocess_sound(markdown_content)
             markdown_content = self._preprocess_polls(markdown_content)
             markdown_content = self._preprocess_ab_tests(markdown_content)
