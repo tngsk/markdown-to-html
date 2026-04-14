@@ -26,28 +26,28 @@ def create_argument_parser() -> argparse.ArgumentParser:
         epilog="""
 使用例:
   # 基本的な変換
-  python -m src.main document.md
+  python main.py document.md
 
   # CSSを埋め込み
-  python -m src.main document.md -c style.css
+  python main.py document.md -c style.css
 
   # 複数のCSSを埋め込み
-  python -m src.main document.md -c style.css theme.css
+  python main.py document.md -c style.css theme.css
 
   # 出力ファイルを指定
-  python -m src.main document.md -o output.html -c style.css
+  python main.py document.md -o output.html -c style.css
 
   # 詳細ログを表示
-  python -m src.main document.md -v
+  python main.py document.md -v
 
   # カスタムテンプレートを使用
-  python -m src.main document.md -t custom_template.html
+  python main.py document.md -t custom_template.html
 
   # 除外タグを指定
-  python -m src.main document.md -e hr div
+  python main.py document.md -e hr div
 
   # 全オプション組み合わせ
-  python -m src.main document.md -o output.html -c style.css -e hr -v
+  python main.py document.md -o output.html -c style.css -e hr -v
         """,
     )
 
