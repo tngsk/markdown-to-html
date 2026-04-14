@@ -210,3 +210,4 @@ __marimo__/
 docs_internal/
 TASKS.md
 tasks.sh
+.DS_Store
