@@ -148,6 +148,10 @@ HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE = (
     '<situ-group-assignment title="{title}"></situ-group-assignment>'
 )
 
+# スペーサーコンポーネントの正規表現パターン
+MARKDOWN_SPACER_PATTERN = r"@\[spacer\]\((.+?)\)"
+HTML_SPACER_COMPONENT_TEMPLATE = '<situ-spacer width="{width}" height="{height}"></situ-spacer>'
+
 # レイアウトコンポーネントの正規表現パターン
 MARKDOWN_LAYOUT_ROW_PATTERN = r"@\[row(?::\s*(.+?))?\]"
 MARKDOWN_LAYOUT_STACK_PATTERN = r"@\[stack(?::\s*(.+?))?\]"
