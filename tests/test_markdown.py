@@ -121,6 +121,17 @@ class TestMarkdownProcessor(unittest.TestCase):
         result = self.processor._preprocess_group_assignment(md_content)
         self.assertEqual(result, expected_html)
 
+    def test_preprocess_spacer(self):
+        md_content_single = "Text before @[spacer](20px) text after."
+        expected_html_single = 'Text before <situ-spacer width="20px" height="20px"></situ-spacer> text after.'
+        result_single = self.processor._preprocess_spacer(md_content_single)
+        self.assertEqual(result_single, expected_html_single)
+
+        md_content_double = "Text before @[spacer](10px, 20px) text after."
+        expected_html_double = 'Text before <situ-spacer width="10px" height="20px"></situ-spacer> text after.'
+        result_double = self.processor._preprocess_spacer(md_content_double)
+        self.assertEqual(result_double, expected_html_double)
+
     def test_preprocess_layout(self):
         md_content = (
             "@[row: center gap-md]\n"

@@ -36,6 +36,8 @@ from src.constants import (
     MARKDOWN_SESSION_JOIN_PATTERN,
     MARKDOWN_SOUND_PATTERN,
     MARKDOWN_TEXTFIELD_PATTERN,
+    MARKDOWN_SPACER_PATTERN,
+    HTML_SPACER_COMPONENT_TEMPLATE,
 )
 from src.handlers.file import FileHandler
 import markdown.util
@@ -234,60 +236,25 @@ class MarkdownProcessor:
             )
         return result
 
-    def _preprocess_icon(self, markdown_content: str) -> str:
+    def _preprocess_spacer(self, markdown_content: str) -> str:
         """
-        @[icon: name](size, color, display) を <situ-icon> に変換する
+        @[spacer](width, height) または @[spacer](size) を <situ-spacer> に変換する
         """
-        pattern = re.compile(MARKDOWN_ICON_PATTERN)
+        pattern = re.compile(MARKDOWN_SPACER_PATTERN)
 
         def replacer(match: re.Match) -> str:
-            name = match.group(1).strip()
-            args_str = match.group(2)
+            args = match.group(1).split(",")
+            width = args[0].strip()
+            height = args[1].strip() if len(args) > 1 else width
 
-            size = ""
-            color = ""
-            display = ""
+            safe_width = html.escape(width)
+            safe_height = html.escape(height)
 
-            if args_str:
-                parts = []
-                current_part = ""
-                paren_count = 0
-
-                for char in args_str:
-                    if char == '(':
-                        paren_count += 1
-                        current_part += char
-                    elif char == ')':
-                        paren_count -= 1
-                        current_part += char
-                    elif char == ',' and paren_count == 0:
-                        parts.append(current_part.strip())
-                        current_part = ""
-                    else:
-                        current_part += char
-
-                if current_part or args_str.endswith(','):
-                    parts.append(current_part.strip())
-
-                if len(parts) > 0 and parts[0]: size = parts[0]
-                if len(parts) > 1 and parts[1]: color = parts[1]
-                if len(parts) > 2 and parts[2]: display = parts[2]
-
-            safe_name = html.escape(name)
-            size_attr = f' size="{html.escape(size)}"' if size else ""
-            color_attr = f' color="{html.escape(color)}"' if color else ""
-            display_attr = f' display="{html.escape(display)}"' if display else ""
-
-            return HTML_ICON_COMPONENT_TEMPLATE.format(
-                name=safe_name,
-                size_attr=size_attr,
-                color_attr=color_attr,
-                display_attr=display_attr
-            )
+            return HTML_SPACER_COMPONENT_TEMPLATE.format(width=safe_width, height=safe_height)
 
         result = pattern.sub(replacer, markdown_content)
         if markdown_content != result:
-            self.logger.debug("アイコン前処理完了: @[icon] → <situ-icon>")
+            self.logger.debug("スペーサー前処理完了: @[spacer] → <situ-spacer>")
         return result
 
     def _preprocess_layout(self, markdown_content: str) -> str:
@@ -352,6 +319,7 @@ class MarkdownProcessor:
             markdown_content = self._preprocess_reactions(markdown_content)
             markdown_content = self._preprocess_session_join(markdown_content)
             markdown_content = self._preprocess_group_assignment(markdown_content)
+            markdown_content = self._preprocess_spacer(markdown_content)
             markdown_content = self._preprocess_layout(markdown_content)
 
             # Markdownパーサーにカスタムコンポーネントをブロックレベル要素として認識させる
