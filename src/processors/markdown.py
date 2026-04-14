@@ -34,6 +34,8 @@ from src.constants import (
     MARKDOWN_SESSION_JOIN_PATTERN,
     MARKDOWN_SOUND_PATTERN,
     MARKDOWN_TEXTFIELD_PATTERN,
+    MARKDOWN_SPACER_PATTERN,
+    HTML_SPACER_COMPONENT_TEMPLATE,
 )
 from src.handlers.file import FileHandler
 import markdown.util
@@ -232,6 +234,27 @@ class MarkdownProcessor:
             )
         return result
 
+    def _preprocess_spacer(self, markdown_content: str) -> str:
+        """
+        @[spacer](width, height) または @[spacer](size) を <situ-spacer> に変換する
+        """
+        pattern = re.compile(MARKDOWN_SPACER_PATTERN)
+
+        def replacer(match: re.Match) -> str:
+            args = match.group(1).split(",")
+            width = args[0].strip()
+            height = args[1].strip() if len(args) > 1 else width
+
+            safe_width = html.escape(width)
+            safe_height = html.escape(height)
+
+            return HTML_SPACER_COMPONENT_TEMPLATE.format(width=safe_width, height=safe_height)
+
+        result = pattern.sub(replacer, markdown_content)
+        if markdown_content != result:
+            self.logger.debug("スペーサー前処理完了: @[spacer] → <situ-spacer>")
+        return result
+
     def _preprocess_layout(self, markdown_content: str) -> str:
         """
         @[row], @[stack], @[end], :::column, ::: をレイアウトコンポーネントに変換する
@@ -293,6 +316,7 @@ class MarkdownProcessor:
             markdown_content = self._preprocess_reactions(markdown_content)
             markdown_content = self._preprocess_session_join(markdown_content)
             markdown_content = self._preprocess_group_assignment(markdown_content)
+            markdown_content = self._preprocess_spacer(markdown_content)
             markdown_content = self._preprocess_layout(markdown_content)
 
             # Markdownパーサーにカスタムコンポーネントをブロックレベル要素として認識させる
