@@ -115,7 +115,7 @@ class HTMLDocumentBuilder:
         component_templates = self._load_component_templates(used_component_dirs)
 
         connect_src_str = " ".join(filter(None, ["'self'", connect_src, ws_src]))
-        csp_meta = f"<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self' 'unsafe-inline' data: https://cdnjs.cloudflare.com; connect-src {connect_src_str}; object-src 'none';\">"
+        csp_meta = f"<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self' 'unsafe-inline' data: https://cdnjs.cloudflare.com; img-src 'self' data: https://colab.research.google.com; connect-src {connect_src_str}; object-src 'none';\">"
 
         meta_tags = []
         if connect_src:
