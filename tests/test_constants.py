@@ -2,7 +2,7 @@ import unittest
 from pathlib import Path
 
 # Import the module to test
-import constants
+import src.constants as constants
 
 class TestConstants(unittest.TestCase):
     def test_file_paths_and_directories(self):

@@ -13,10 +13,10 @@ from typing import Tuple
 
 from PIL import Image
 
-from config import FileProcessingError, ImageEmbeddingError
-from constants import HTML_IMG_TAG_PATTERN
-from handlers.file import FileHandler
-from handlers.mime import MIMETypeRegistry
+from src.config import FileProcessingError, ImageEmbeddingError
+from src.constants import HTML_IMG_TAG_PATTERN
+from src.handlers.file import FileHandler
+from src.handlers.mime import MIMETypeRegistry
 
 
 class MediaEmbedder:

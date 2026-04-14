@@ -10,8 +10,8 @@ import re
 
 import markdown
 
-from config import ConversionError
-from constants import (
+from src.config import ConversionError
+from src.constants import (
     HTML_AB_TEST_COMPONENT_TEMPLATE,
     HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE,
     HTML_NOTEBOOK_COMPONENT_TEMPLATE,
@@ -33,7 +33,7 @@ from constants import (
     MARKDOWN_SESSION_JOIN_PATTERN,
     MARKDOWN_TEXTFIELD_PATTERN,
 )
-from handlers.file import FileHandler
+from src.handlers.file import FileHandler
 import markdown.util
 
 

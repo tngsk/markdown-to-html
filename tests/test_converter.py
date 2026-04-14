@@ -29,8 +29,8 @@ except ImportError:
 from pathlib import Path
 import logging
 
-from converter import MarkdownToHTMLConverter
-from config import ConversionConfig, ConversionError, FileProcessingError
+from src.converter import MarkdownToHTMLConverter
+from src.config import ConversionConfig, ConversionError, FileProcessingError
 
 class TestMarkdownToHTMLConverter(unittest.TestCase):
     def setUp(self):
@@ -170,7 +170,7 @@ class TestMarkdownToHTMLConverter(unittest.TestCase):
         self.converter.media_embedder.embed_media_in_html.return_value = ("<h1>Test</h1>", 0, {})
         self.converter.html_document_builder.extract_title_from_html.return_value = "Title"
 
-        from config import FileProcessingError
+        from src.config import FileProcessingError
         self.converter.file_handler.write_text.side_effect = FileProcessingError("Mock write error")
 
         with self.assertLogs(self.logger, level='ERROR') as cm:

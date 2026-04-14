@@ -27,49 +27,49 @@ uv sync
 入力ファイル名に基づいて `document.html` が生成されます。
 
 ```bash
-uv run main.py document.md
+uv run python -m src.main document.md
 ```
 
 ### カスタムCSSを埋め込む
 複数のCSSファイルを指定して埋め込むことができます。
 
 ```bash
-uv run main.py document.md -c style.css theme.css
+uv run python -m src.main document.md -c style.css theme.css
 ```
 
 ### 出力ファイルの指定と詳細ログ
 `-o` で出力先を指定し、`-v` で変換プロセスの詳細なログを確認します。
 
 ```bash
-uv run main.py document.md -o docs/index.html -v
+uv run python -m src.main document.md -o docs/index.html -v
 ```
 
 ### HTMLタグの除外処理
 指定したタグ（およびその中身）を出力HTMLから削除します。
 
 ```bash
-uv run main.py document.md -e hr div
+uv run python -m src.main document.md -e hr div
 ```
 
 ### カスタムテンプレートを使用する
 カスタムのHTMLテンプレートを指定して変換します。
 
 ```bash
-uv run main.py document.md -t custom_template.html
+uv run python -m src.main document.md -t custom_template.html
 ```
 
 ### ファイルサイズ制限をバイパスする
 出力HTMLが30MBを超える場合、デフォルトではエラーになりますが `--force` で強制的に保存できます。
 
 ```bash
-uv run main.py document.md --force
+uv run python -m src.main document.md --force
 ```
 
 ### 同期・データ収集サーバーの起動
 同期機能（スクロール同期など）やデータ収集（投票結果など）を使用する場合は、付属のFastAPIサーバーを起動します。
 
 ```bash
-uv run server.py
+uv run python -m src.server
 ```
 サーバーはデフォルトで `http://0.0.0.0:8000` で起動し、WebSocket (`/ws/sync`) とデータ収集API (`/api/data`) を提供します。
 
@@ -78,5 +78,5 @@ uv run server.py
 すべてのオプションを確認するにはヘルプを参照してください：
 
 ```bash
-uv run main.py --help
+uv run python -m src.main --help
 ```

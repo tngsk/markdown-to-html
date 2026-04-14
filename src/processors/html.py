@@ -10,8 +10,8 @@ import re
 from pathlib import Path
 from typing import List, Optional
 
-from config import ConversionError
-from constants import (
+from src.config import ConversionError
+from src.constants import (
     BASE_CSS_FILE,
     COLAB_BADGE_URL,
     COLAB_GITHUB_BASE_URL,

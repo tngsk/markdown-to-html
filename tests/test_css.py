@@ -3,9 +3,9 @@ import logging
 from unittest.mock import MagicMock, patch
 from pathlib import Path
 
-from embedders.css import CSSEmbedder
-from handlers.file import FileHandler
-from config import FileProcessingError
+from src.embedders.css import CSSEmbedder
+from src.handlers.file import FileHandler
+from src.config import FileProcessingError
 
 
 class TestCSSEmbedder(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestCSSEmbedder(unittest.TestCase):
             file_handler=self.mock_file_handler
         )
 
-    @patch('embedders.css.Path.exists')
+    @patch('src.embedders.css.Path.exists')
     def test_load_css_files_success(self, mock_exists):
         mock_exists.return_value = True
 
@@ -43,7 +43,7 @@ class TestCSSEmbedder(unittest.TestCase):
         self.assertEqual(result, expected)
         self.assertEqual(self.mock_file_handler.read_text.call_count, 2)
 
-    @patch('embedders.css.Path.exists')
+    @patch('src.embedders.css.Path.exists')
     def test_load_css_files_missing_file(self, mock_exists):
         # Setup a mock path that exists and one that doesn't
         path_exists = Path("exists.css")
@@ -61,7 +61,7 @@ class TestCSSEmbedder(unittest.TestCase):
         self.mock_logger.warning.assert_called_once()
         self.assertEqual(self.mock_file_handler.read_text.call_count, 1)
 
-    @patch('embedders.css.Path.exists')
+    @patch('src.embedders.css.Path.exists')
     def test_load_css_files_processing_error(self, mock_exists):
         mock_exists.return_value = True
 

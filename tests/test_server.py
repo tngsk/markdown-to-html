@@ -6,7 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 from fastapi import WebSocket, WebSocketDisconnect
 
-from server import app, ConnectionManager, manager, get_allowed_origins, websocket_endpoint
+from src.server import app, ConnectionManager, manager, get_allowed_origins, websocket_endpoint
 
 
 @pytest.fixture
@@ -189,7 +189,7 @@ def test_websocket_endpoint_general_error(client, caplog):
     assert "WebSocket Error: General WS Error" in caplog.text
 
 
-@patch("server.aiofiles.open")
+@patch("src.server.aiofiles.open")
 def test_receive_data_success(mock_file, client):
     # Mock the asynchronous context manager returned by aiofiles.open
     mock_file_instance = AsyncMock()
@@ -208,7 +208,7 @@ def test_receive_data_success(mock_file, client):
     assert written_data == test_data
 
 
-@patch("server.aiofiles.open")
+@patch("src.server.aiofiles.open")
 def test_receive_data_error(mock_file, client):
     mock_file_instance = AsyncMock()
     mock_file.return_value.__aenter__.return_value = mock_file_instance
@@ -225,7 +225,7 @@ def test_receive_data_error(mock_file, client):
 def test_main(mock_run):
     import runpy
     # Run the server module as __main__ to hit the if __name__ == "__main__": block
-    runpy.run_module("server", run_name="__main__")
+    runpy.run_module("src.server", run_name="__main__")
     # assert_called_once checks that it was called once.
     # The actual app instance differs because runpy loads a new instance of the module,
     # so we just assert the host and port kwargs.

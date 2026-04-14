@@ -3,8 +3,8 @@ from unittest.mock import patch
 from pathlib import Path
 import logging
 
-from processors.html import HTMLDocumentBuilder
-from config import ConversionError
+from src.processors.html import HTMLDocumentBuilder
+from src.config import ConversionError
 
 class TestHTMLDocumentBuilder(unittest.TestCase):
     def setUp(self):
@@ -169,12 +169,12 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         self.assertEqual(self.builder._replace_custom_nowrap(html_input), expected)
 
     def test_build_highlight_js_link(self):
-        from constants import HIGHLIGHT_JS_CDN_CSS
+        from src.constants import HIGHLIGHT_JS_CDN_CSS
         result = self.builder._build_highlight_js_link()
         self.assertEqual(result, f'<link rel="stylesheet" href="{HIGHLIGHT_JS_CDN_CSS}">')
 
     def test_load_highlight_js_script(self):
-        from constants import HIGHLIGHT_JS_CDN_JS
+        from src.constants import HIGHLIGHT_JS_CDN_JS
         result = self.builder._load_highlight_js_script()
         self.assertEqual(result, f'<script src="{HIGHLIGHT_JS_CDN_JS}"></script>')
 

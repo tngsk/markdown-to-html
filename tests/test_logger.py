@@ -2,8 +2,8 @@ import logging
 import sys
 import pytest
 
-from logger import configure_logging
-from constants import LOG_DATE_FORMAT, LOG_FORMAT
+from src.logger import configure_logging
+from src.constants import LOG_DATE_FORMAT, LOG_FORMAT
 
 @pytest.fixture(autouse=True)
 def reset_logger():

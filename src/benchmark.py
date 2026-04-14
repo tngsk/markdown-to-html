@@ -2,7 +2,7 @@ import asyncio
 import time
 import sys
 
-from server import ConnectionManager
+from src.server import ConnectionManager
 
 class MockConnection:
     def __init__(self, delay=0.01):

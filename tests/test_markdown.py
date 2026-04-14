@@ -9,9 +9,9 @@ except ImportError:
     # Fallback to mock if the dependency is missing in the test environment
     sys.modules['markdown'] = MagicMock()
 
-from processors.markdown import MarkdownProcessor
-from config import ConversionError
-from constants import MARKDOWN_EXTENSIONS
+from src.processors.markdown import MarkdownProcessor
+from src.config import ConversionError
+from src.constants import MARKDOWN_EXTENSIONS
 
 class TestMarkdownProcessor(unittest.TestCase):
     def setUp(self):
@@ -122,7 +122,7 @@ class TestMarkdownProcessor(unittest.TestCase):
         result = self.processor._preprocess_layout(md_content)
         self.assertEqual(result, expected_html)
 
-    @patch('processors.markdown.markdown')
+    @patch('src.processors.markdown.markdown')
     def test_convert_markdown_to_html_success(self, mock_markdown):
         mock_markdown.markdown.side_effect = None
         mock_markdown.markdown.return_value = "<h1>Processed</h1>"
@@ -136,7 +136,7 @@ class TestMarkdownProcessor(unittest.TestCase):
         expected_preprocessed = '# Title\n<situ-poll id="poll-1" title="Title" options="A, B"></situ-poll>'
         mock_markdown.markdown.assert_any_call(expected_preprocessed, extensions=MARKDOWN_EXTENSIONS)
 
-    @patch('processors.markdown.markdown')
+    @patch('src.processors.markdown.markdown')
     def test_convert_markdown_to_html_error(self, mock_markdown):
         mock_markdown.markdown.side_effect = Exception("Markdown parsing failed")
 
