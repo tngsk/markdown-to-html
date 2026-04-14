@@ -211,6 +211,11 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         mock_sync.is_dir.return_value = True
         mock_sync.__lt__.side_effect = lambda other: mock_sync.name < other.name
 
+        mock_brush = MagicMock()
+        mock_brush.name = 'situ-brush'
+        mock_brush.is_dir.return_value = True
+        mock_brush.__lt__.side_effect = lambda other: mock_brush.name < other.name
+
         mock_export = MagicMock()
         mock_export.name = 'situ-export'
         mock_export.is_dir.return_value = True
@@ -231,12 +236,13 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         mock_not_dir.is_dir.return_value = False
         mock_not_dir.__lt__.side_effect = lambda other: mock_not_dir.name < other.name
 
-        mock_iterdir.return_value = [mock_sync, mock_export, mock_poll, mock_unknown, mock_not_dir]
+        mock_iterdir.return_value = [mock_sync, mock_brush, mock_export, mock_poll, mock_unknown, mock_not_dir]
 
         # Test 1: enable_export=False, html_body has <situ-poll>
         result1 = self.builder._get_used_component_dirs(html_body="<situ-poll></situ-poll>", should_enable_export=False)
         names1 = [p.name for p in result1]
         self.assertIn('situ-sync', names1)  # Always included
+        self.assertIn('situ-brush', names1) # Always included
         self.assertIn('situ-poll', names1)  # Found in HTML
         self.assertNotIn('situ-export', names1) # Export not enabled
         self.assertNotIn('situ-unknown', names1) # Not found in HTML
@@ -246,6 +252,7 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         result2 = self.builder._get_used_component_dirs(html_body="<p>test</p>", should_enable_export=True)
         names2 = [p.name for p in result2]
         self.assertIn('situ-sync', names2)
+        self.assertIn('situ-brush', names2)
         self.assertIn('situ-export', names2) # Export enabled
         self.assertNotIn('situ-poll', names2)
 
