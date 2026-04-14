@@ -3,7 +3,7 @@ from unittest.mock import patch, mock_open
 from pathlib import Path
 import tomllib
 
-from config import (
+from src.config import (
     ConversionError,
     FileProcessingError,
     ImageEmbeddingError,

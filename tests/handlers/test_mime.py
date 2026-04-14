@@ -1,8 +1,8 @@
 import pytest
 from pathlib import Path
 
-from handlers.mime import MIMETypeRegistry
-from constants import DEFAULT_MIME_TYPE, MIME_TYPE_REGISTRY
+from src.handlers.mime import MIMETypeRegistry
+from src.constants import DEFAULT_MIME_TYPE, MIME_TYPE_REGISTRY
 
 
 @pytest.fixture

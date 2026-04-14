@@ -7,9 +7,9 @@ from unittest.mock import MagicMock, patch
 import pytest
 from PIL import Image
 
-from config import FileProcessingError, ImageEmbeddingError
-from embedders.media import MediaEmbedder
-from handlers.file import FileHandler
+from src.config import FileProcessingError, ImageEmbeddingError
+from src.embedders.media import MediaEmbedder
+from src.handlers.file import FileHandler
 
 
 @pytest.fixture
@@ -66,7 +66,7 @@ def test_encode_media_standard_file(media_embedder, mock_file_handler):
     assert media_embedder._base64_cache["/path/to/file.svg"] == expected_base64
 
 
-@patch("embedders.media.Image.open")
+@patch("src.embedders.media.Image.open")
 def test_encode_media_webp_conversion(mock_image_open, media_embedder, mock_file_handler):
     """Test encode_media_to_base64 converts supported images to WebP"""
     media_path = MagicMock(spec=Path)
@@ -92,7 +92,7 @@ def test_encode_media_webp_conversion(mock_image_open, media_embedder, mock_file
     assert media_embedder._base64_cache["/path/to/image.png"] == expected_base64
 
 
-@patch("embedders.media.Image.open")
+@patch("src.embedders.media.Image.open")
 def test_encode_media_webp_conversion_fallback(mock_image_open, media_embedder, mock_file_handler, mock_logger):
     """Test encode_media_to_base64 falls back to original data if WebP conversion fails"""
     media_path = MagicMock(spec=Path)
@@ -148,8 +148,8 @@ def test_embed_media_external_urls(media_embedder):
     assert not asset_store
 
 @patch.object(MediaEmbedder, "encode_media_to_base64")
-@patch("embedders.media.Path.resolve")
-@patch("embedders.media.Path.exists")
+@patch("src.embedders.media.Path.resolve")
+@patch("src.embedders.media.Path.exists")
 def test_embed_media_ab_test_tag_both_assets(mock_exists, mock_resolve, mock_encode, media_embedder):
     html_content = '<situ-ab-test title="Test" src-a="imageA.png" src-b="imageB.png"></situ-ab-test>'
     markdown_dir = Path("/path/to/markdown")
@@ -178,7 +178,7 @@ def test_embed_media_ab_test_tag_both_assets(mock_exists, mock_resolve, mock_enc
     assert media_count == 2
 
 
-@patch("embedders.media.Path.resolve")
+@patch("src.embedders.media.Path.resolve")
 def test_embed_media_path_traversal(mock_resolve, media_embedder, mock_logger):
     """Test embed_media_in_html rejects paths outside markdown directory"""
     html_content = '<img src="../outside.png" alt="test">'
@@ -196,7 +196,7 @@ def test_embed_media_path_traversal(mock_resolve, media_embedder, mock_logger):
     mock_logger.warning.assert_called_once_with("不正なメディアパス (ディレクトリトラバーサル): ../outside.png")
 
 
-@patch("embedders.media.Path.resolve")
+@patch("src.embedders.media.Path.resolve")
 def test_embed_media_path_traversal(mock_resolve, media_embedder, mock_logger):
     """Test embed_media_in_html rejects paths outside markdown directory"""
     html_content = '<img src="../outside.png" alt="test">'
@@ -214,7 +214,7 @@ def test_embed_media_path_traversal(mock_resolve, media_embedder, mock_logger):
     mock_logger.warning.assert_called_once_with("不正なメディアパス (ディレクトリトラバーサル): ../outside.png")
 
 
-@patch("embedders.media.Path.resolve")
+@patch("src.embedders.media.Path.resolve")
 def test_embed_media_path_traversal(mock_resolve, media_embedder, mock_logger):
     """Test embed_media_in_html rejects paths outside markdown directory"""
     html_content = '<img src="../outside.png" alt="test">'
@@ -232,7 +232,7 @@ def test_embed_media_path_traversal(mock_resolve, media_embedder, mock_logger):
     mock_logger.warning.assert_called_once_with("不正なメディアパス (ディレクトリトラバーサル): ../outside.png")
 
 
-@patch("embedders.media.Path.resolve")
+@patch("src.embedders.media.Path.resolve")
 def test_embed_media_missing_file_fallback(mock_resolve, media_embedder, mock_logger):
     """Test embed_media_in_html logs warning and keeps original src for missing files"""
     html_content = '<img src="local_missing.jpg" alt="test">'
@@ -250,7 +250,7 @@ def test_embed_media_missing_file_fallback(mock_resolve, media_embedder, mock_lo
     mock_logger.warning.assert_called_once_with("メディアファイルが見つかりません: local_missing.jpg")
 
 
-@patch("embedders.media.Path.resolve")
+@patch("src.embedders.media.Path.resolve")
 def test_embed_media_svg_inlining(mock_resolve, media_embedder, mock_file_handler):
     """Test embed_media_in_html inlines SVG files"""
     html_content = '<img class="icon" src="icon.svg">'
@@ -272,8 +272,8 @@ def test_embed_media_svg_inlining(mock_resolve, media_embedder, mock_file_handle
 
 
 @patch.object(MediaEmbedder, "encode_media_to_base64")
-@patch("embedders.media.Path.resolve")
-@patch("embedders.media.Path.exists")
+@patch("src.embedders.media.Path.resolve")
+@patch("src.embedders.media.Path.exists")
 def test_embed_media_image_embedding_error(mock_exists, mock_resolve, mock_encode, media_embedder, mock_logger):
     """Test embed_media_in_html catches ImageEmbeddingError and falls back to original source"""
     html_content = '<img class="responsive" src="image.png" alt="test">'
@@ -298,8 +298,8 @@ def test_embed_media_image_embedding_error(mock_exists, mock_resolve, mock_encod
 
 
 @patch.object(MediaEmbedder, "encode_media_to_base64")
-@patch("embedders.media.Path.resolve")
-@patch("embedders.media.Path.exists")
+@patch("src.embedders.media.Path.resolve")
+@patch("src.embedders.media.Path.exists")
 def test_embed_media_valid_image(mock_exists, mock_resolve, mock_encode, media_embedder):
     """Test embed_media_in_html encodes valid images and uses transparent placeholders"""
     html_content = '<img class="responsive" src="image.png" alt="test">'
@@ -327,8 +327,8 @@ def test_embed_media_valid_image(mock_exists, mock_resolve, mock_encode, media_e
 
 
 @patch.object(MediaEmbedder, "encode_media_to_base64")
-@patch("embedders.media.Path.resolve")
-@patch("embedders.media.Path.exists")
+@patch("src.embedders.media.Path.resolve")
+@patch("src.embedders.media.Path.exists")
 def test_embed_media_ab_test_tag(mock_exists, mock_resolve, mock_encode, media_embedder):
     """Test embed_media_in_html replaces src-a and src-b in situ-ab-test tags"""
     html_content = '<situ-ab-test title="Test" src-a="imageA.png" src-b="imageB.png"></situ-ab-test>'
@@ -360,8 +360,8 @@ def test_embed_media_ab_test_tag(mock_exists, mock_resolve, mock_encode, media_e
 
 
 @patch.object(MediaEmbedder, "encode_media_to_base64")
-@patch("embedders.media.Path.resolve")
-@patch("embedders.media.Path.exists")
+@patch("src.embedders.media.Path.resolve")
+@patch("src.embedders.media.Path.exists")
 def test_embed_media_ab_test_tag_mixed(mock_exists, mock_resolve, mock_encode, media_embedder):
     """Test embed_media_in_html handles mixed local/external src in situ-ab-test tags"""
     html_content = '<situ-ab-test title="Test" src-a="https://example.com/imageA.png" src-b="imageB.png"></situ-ab-test>'

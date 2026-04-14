@@ -7,7 +7,7 @@ Centralized logging setup for the Markdown to HTML converter.
 import logging
 import sys
 
-from constants import LOG_DATE_FORMAT, LOG_FORMAT
+from src.constants import LOG_DATE_FORMAT, LOG_FORMAT
 
 
 def configure_logging(verbose: bool = False) -> logging.Logger:

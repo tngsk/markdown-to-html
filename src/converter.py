@@ -7,17 +7,17 @@ Main orchestrator that coordinates all conversion components.
 import logging
 from pathlib import Path
 
-from config import (
+from src.config import (
     ConversionConfig,
     ConversionError,
     ConversionStats,
     FileProcessingError,
 )
-from embedders.css import CSSEmbedder
-from embedders.media import MediaEmbedder
-from handlers.file import FileHandler
-from processors.html import HTMLDocumentBuilder
-from processors.markdown import MarkdownProcessor
+from src.embedders.css import CSSEmbedder
+from src.embedders.media import MediaEmbedder
+from src.handlers.file import FileHandler
+from src.processors.html import HTMLDocumentBuilder
+from src.processors.markdown import MarkdownProcessor
 
 
 class MarkdownToHTMLConverter:

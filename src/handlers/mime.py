@@ -7,7 +7,7 @@ Manages file extension to MIME type mappings.
 from pathlib import Path
 from typing import Dict, Optional
 
-from constants import DEFAULT_MIME_TYPE, MIME_TYPE_REGISTRY
+from src.constants import DEFAULT_MIME_TYPE, MIME_TYPE_REGISTRY
 
 
 class MIMETypeRegistry:

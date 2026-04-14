@@ -7,8 +7,8 @@ Manages file I/O operations (read/write text and binary files).
 import logging
 from pathlib import Path
 
-from config import FileProcessingError
-from constants import DEFAULT_TEXT_ENCODING
+from src.config import FileProcessingError
+from src.constants import DEFAULT_TEXT_ENCODING
 
 
 class FileHandler:

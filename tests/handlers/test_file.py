@@ -3,9 +3,9 @@ from unittest.mock import MagicMock, patch
 from pathlib import Path
 import logging
 
-from handlers.file import FileHandler
-from config import FileProcessingError
-from constants import DEFAULT_TEXT_ENCODING
+from src.handlers.file import FileHandler
+from src.config import FileProcessingError
+from src.constants import DEFAULT_TEXT_ENCODING
 
 
 class TestFileHandler(unittest.TestCase):

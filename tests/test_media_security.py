@@ -9,7 +9,7 @@ mock_pil = MagicMock()
 sys.modules['PIL'] = mock_pil
 sys.modules['PIL.Image'] = mock_pil.Image
 
-from embedders.media import MediaEmbedder
+from src.embedders.media import MediaEmbedder
 
 class TestMediaEmbedderSecurity(unittest.TestCase):
     def setUp(self):
