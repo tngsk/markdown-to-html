@@ -18,6 +18,7 @@ from src.constants import (
     HTML_POLL_COMPONENT_TEMPLATE,
     HTML_REACTION_COMPONENT_TEMPLATE,
     HTML_SESSION_JOIN_COMPONENT_TEMPLATE,
+    HTML_SOUND_COMPONENT_TEMPLATE,
     HTML_TEXTFIELD_COMPONENT_TEMPLATE,
     MARKDOWN_AB_TEST_PATTERN,
     MARKDOWN_EXTENSIONS,
@@ -31,6 +32,7 @@ from src.constants import (
     MARKDOWN_POLL_PATTERN,
     MARKDOWN_REACTION_PATTERN,
     MARKDOWN_SESSION_JOIN_PATTERN,
+    MARKDOWN_SOUND_PATTERN,
     MARKDOWN_TEXTFIELD_PATTERN,
 )
 from src.handlers.file import FileHandler
@@ -43,6 +45,31 @@ class MarkdownProcessor:
     def __init__(self, logger: logging.Logger, file_handler: FileHandler):
         self.logger = logger
         self.file_handler = file_handler
+
+    def _preprocess_sound(self, markdown_content: str) -> str:
+        """
+        @[sound: ラベル](file) または @[sound](file) を <situ-sound> に変換する
+        """
+        pattern = re.compile(MARKDOWN_SOUND_PATTERN)
+        counter = 0
+
+        def replacer(match: re.Match) -> str:
+            nonlocal counter
+            counter += 1
+            label = match.group(1)
+            src = match.group(2).strip()
+
+            safe_label = html.escape(label.strip()) if label else ""
+            safe_src = html.escape(src)
+
+            return HTML_SOUND_COMPONENT_TEMPLATE.format(
+                id=f"sound-{counter}", label=safe_label, src=safe_src
+            )
+
+        result = pattern.sub(replacer, markdown_content)
+        if markdown_content != result:
+            self.logger.debug("効果音コンポーネント前処理完了: @[sound] → <situ-sound>")
+        return result
 
     def _preprocess_polls(self, markdown_content: str) -> str:
         """
@@ -258,6 +285,7 @@ class MarkdownProcessor:
             ConversionError: 変換に失敗した場合
         """
         try:
+            markdown_content = self._preprocess_sound(markdown_content)
             markdown_content = self._preprocess_polls(markdown_content)
             markdown_content = self._preprocess_ab_tests(markdown_content)
             markdown_content = self._preprocess_notebooks(markdown_content)

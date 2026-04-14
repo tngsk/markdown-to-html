@@ -143,7 +143,31 @@ class MediaEmbedder:
 
         html_content = img_pattern.sub(img_replacer, html_content)
 
-        # 2. <situ-ab-test> タグの処理
+        # 2. <situ-sound> タグの処理
+        # format: <situ-sound id="..." label="..." src="..."></situ-sound>
+        sound_pattern = re.compile(
+            r'(<situ-sound\s+[^>]*?src=")([^"]+)("[^>]*></situ-sound>)',
+            re.IGNORECASE,
+        )
+
+        def sound_replacer(match: re.Match) -> str:
+            part1 = match.group(1)
+            src = match.group(2)
+            part3 = match.group(3)
+
+            new_src = resolve_and_encode(src)
+
+            # 音声は通常lazy loadingにしないか、audioタグのpreload=none等で対応するため、
+            # そのままsrc属性として埋め込む（Base64の場合は直接記述されるか、asset_store経由で解決）
+            # ここでは<img>や<situ-ab-test>と異なり、フロントエンド側のJSが読み込みを制御するので、そのまま置換する。
+            if new_src.startswith("asset-"):
+                # Component script will handle asset- prefix and fetch from situ-asset-store
+                pass
+            return f"{part1}{new_src}{part3}"
+
+        html_content = sound_pattern.sub(sound_replacer, html_content)
+
+        # 3. <situ-ab-test> タグの処理
         # format: <situ-ab-test title="..." src-a="..." src-b="..."></situ-ab-test>
         ab_test_pattern = re.compile(
             r'(<situ-ab-test\s+[^>]*?src-a=")([^"]+)(".*?src-b=")([^"]+)("[^>]*></situ-ab-test>)',

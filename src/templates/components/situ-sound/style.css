@@ -1,0 +1,59 @@
+.situ-sound-container {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--code-bg, #f5f5f5);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin: 4px;
+  gap: 8px;
+  font-family: inherit;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .situ-sound-container {
+    background-color: var(--code-bg-dark, #2d2d2d);
+    border-color: var(--border-color-dark, #444);
+  }
+}
+
+.situ-sound-play-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color, #333);
+  transition: opacity 0.2s;
+}
+
+@media (prefers-color-scheme: dark) {
+  .situ-sound-play-btn {
+    color: var(--text-color-dark, #eee);
+  }
+}
+
+.situ-sound-play-btn:hover {
+  opacity: 0.7;
+}
+
+.situ-sound-label {
+  font-size: 0.9em;
+  font-weight: 500;
+  color: var(--text-color, #333);
+}
+
+@media (prefers-color-scheme: dark) {
+  .situ-sound-label {
+    color: var(--text-color-dark, #eee);
+  }
+}
+
+/* Hide if empty */
+.situ-sound-label:empty {
+  display: none;
+}
