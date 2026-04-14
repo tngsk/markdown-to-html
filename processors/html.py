@@ -357,7 +357,7 @@ class HTMLDocumentBuilder:
             name = component_dir.name
 
             # 常に含めるコンポーネント
-            if name == "situ-sync":
+            if name in ["situ-sync", "situ-brush"]:
                 used_dirs.append(component_dir)
                 continue
 
