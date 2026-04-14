@@ -108,6 +108,12 @@ REGEX_FLAG_IGNORECASE = "IGNORECASE"
 # Markdownの拡張機能リスト
 MARKDOWN_EXTENSIONS = ["fenced_code", "tables", "nl2br", "toc", "md_in_html"]
 
+# 効果音コンポーネントの正規表現パターン
+MARKDOWN_SOUND_PATTERN = r"@\[sound(?::\s*(.*?))?\]\((.+?)\)"
+HTML_SOUND_COMPONENT_TEMPLATE = (
+    '<situ-sound id="{id}" label="{label}" src="{src}"></situ-sound>'
+)
+
 # 投票コンポーネント（Live Polling）の正規表現パターン
 MARKDOWN_POLL_PATTERN = r"@\[poll:\s*(.+?)\]\((.+?)\)"
 

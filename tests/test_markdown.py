@@ -19,6 +19,14 @@ class TestMarkdownProcessor(unittest.TestCase):
         self.file_handler = MagicMock()
         self.processor = MarkdownProcessor(self.logger, self.file_handler)
 
+    def test_preprocess_sound(self):
+        # Test basic and no-label replacements
+        md_content = "Here is @[sound: UI1](test.mp3) and @[sound](test.wav)."
+        result = self.processor._preprocess_sound(md_content)
+
+        self.assertIn('<situ-sound id="sound-1" label="UI1" src="test.mp3"></situ-sound>', result)
+        self.assertIn('<situ-sound id="sound-2" label="" src="test.wav"></situ-sound>', result)
+
     def test_preprocess_polls(self):
         # Test basic replacement
         md_content = "Some text @[poll: My Title](Option A, Option B)"
