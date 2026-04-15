@@ -91,19 +91,19 @@ class HTMLDocumentBuilder:
         has_interactive_components = any(
             tag in html_body
             for tag in [
-                "<situ-poll",
-                "<situ-ab-test",
-                "<situ-notebook",
-                "<situ-textfield-input",
-                "<situ-reaction",
-                "<situ-session-join",
-                "<situ-group-assignment",
+                "<mono-poll",
+                "<mono-ab-test",
+                "<mono-notebook",
+                "<mono-textfield-input",
+                "<mono-reaction",
+                "<mono-session-join",
+                "<mono-group-assignment",
             ]
         )
         should_enable_export = enable_export or has_interactive_components
 
         if should_enable_export:
-            html_body += "\n<situ-export></situ-export>"
+            html_body += "\n<mono-export></mono-export>"
 
         # 使用されているコンポーネントを特定
         used_component_dirs = self._get_used_component_dirs(html_body, should_enable_export)
@@ -112,7 +112,7 @@ class HTMLDocumentBuilder:
         highlight_js_css = self._build_highlight_js_link()
         base_css = self._load_base_css()
         highlight_js = self._load_highlight_js_script()
-        situ_components_js = self._load_situ_components_script(used_component_dirs)
+        mono_components_js = self._load_mono_components_script(used_component_dirs)
         component_templates = self._load_component_templates(used_component_dirs)
 
         connect_src_str = " ".join(filter(None, ["'self'", connect_src, ws_src]))
@@ -120,9 +120,9 @@ class HTMLDocumentBuilder:
 
         meta_tags = []
         if connect_src:
-            meta_tags.append(f'<meta name="situ-api-url" content="{connect_src}">')
+            meta_tags.append(f'<meta name="mono-api-url" content="{connect_src}">')
         if ws_src:
-            meta_tags.append(f'<meta name="situ-ws-url" content="{ws_src}">')
+            meta_tags.append(f'<meta name="mono-ws-url" content="{ws_src}">')
 
         meta_tags_html = "\n".join(meta_tags)
         if meta_tags_html:
@@ -130,7 +130,7 @@ class HTMLDocumentBuilder:
 
         # アイコンが使われている場合はGoogle Fontsのリンクを追加
         fonts_link = ""
-        if "<situ-icon" in html_body:
+        if "<mono-icon" in html_body:
             fonts_link = f'\n        <link rel="stylesheet" href="{MATERIAL_SYMBOLS_URL}" />'
 
         doc = template_content.replace("{TITLE}", safe_title)
@@ -142,7 +142,7 @@ class HTMLDocumentBuilder:
 
         if asset_store:
             asset_template = (
-                f'<template id="situ-asset-store">{json.dumps(asset_store)}</template>'
+                f'<template id="mono-asset-store">{json.dumps(asset_store)}</template>'
             )
             lazy_load_js = self._load_lazy_load_script()
             lazy_load_script = (
@@ -151,7 +151,7 @@ class HTMLDocumentBuilder:
             html_body += f"\n{asset_template}\n{lazy_load_script}"
 
         # 既存の {COPY_BUTTON_JS} プレースホルダーにまとめて追記する
-        combined_js = f"{component_templates}\n{situ_components_js}"
+        combined_js = f"{component_templates}\n{mono_components_js}"
         doc = doc.replace("{COPY_BUTTON_JS}", combined_js)
         doc = doc.replace(
             "{BODY}", html_body
@@ -217,7 +217,7 @@ class HTMLDocumentBuilder:
                     language = lang_match.group(1)
 
             # コードブロックの新しい構造を構築
-            enhanced = f'<situ-code-block language="{language}">\n{original_block}\n</situ-code-block>'
+            enhanced = f'<mono-code-block language="{language}">\n{original_block}\n</mono-code-block>'
             return enhanced
 
         result = pattern.sub(replacer, html_content)
@@ -363,12 +363,12 @@ class HTMLDocumentBuilder:
             name = component_dir.name
 
             # 常に含めるコンポーネント
-            if name in ["situ-sync", "situ-brush"]:
+            if name in ["mono-sync", "mono-brush"]:
                 used_dirs.append(component_dir)
                 continue
 
             # エクスポートコンポーネント
-            if name == "situ-export":
+            if name == "mono-export":
                 if should_enable_export:
                     used_dirs.append(component_dir)
                 continue
@@ -379,7 +379,7 @@ class HTMLDocumentBuilder:
 
         return used_dirs
 
-    def _load_situ_components_script(self, used_component_dirs: List[Path]) -> str:
+    def _load_mono_components_script(self, used_component_dirs: List[Path]) -> str:
         """指定されたコンポーネントの script.js を読み込んで <script> タグで返す"""
         if not used_component_dirs:
             return ""

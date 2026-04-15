@@ -35,7 +35,7 @@ class MarkdownProcessor:
 
     def _preprocess_icon(self, markdown_content: str) -> str:
         """
-        @[icon: name](size, color, display) を <situ-icon> に変換する
+        @[icon: name](size, color, display) を <mono-icon> に変換する
         """
         pattern = re.compile(MARKDOWN_ICON_PATTERN)
 
@@ -84,7 +84,7 @@ class MarkdownProcessor:
 
         result = pattern.sub(replacer, markdown_content)
         if markdown_content != result:
-            self.logger.debug("アイコンコンポーネント前処理完了: @[icon] → <situ-icon>")
+            self.logger.debug("アイコンコンポーネント前処理完了: @[icon] → <mono-icon>")
         return result
 
     def _load_component_parsers(self):
@@ -142,7 +142,7 @@ class MarkdownProcessor:
 
     def _preprocess_sound(self, markdown_content: str) -> str:
         """
-        @[sound: ラベル](file) または @[sound](file) を <situ-sound> に変換する
+        @[sound: ラベル](file) または @[sound](file) を <mono-sound> に変換する
         """
         pattern = re.compile(MARKDOWN_SOUND_PATTERN)
         counter = 0
@@ -162,7 +162,7 @@ class MarkdownProcessor:
 
         result = pattern.sub(replacer, markdown_content)
         if markdown_content != result:
-            self.logger.debug("効果音コンポーネント前処理完了: @[sound] → <situ-sound>")
+            self.logger.debug("効果音コンポーネント前処理完了: @[sound] → <mono-sound>")
         return result
 
     def _protect_code_blocks(self, markdown_content: str) -> tuple[str, dict[str, str]]:
@@ -233,14 +233,14 @@ class MarkdownProcessor:
             # Markdownパーサーにカスタムコンポーネントをブロックレベル要素として認識させる
             block_level = markdown.util.BLOCK_LEVEL_ELEMENTS
             if isinstance(block_level, list):
-                if "situ-layout" not in block_level:
-                    block_level.append("situ-layout")
+                if "mono-layout" not in block_level:
+                    block_level.append("mono-layout")
             elif isinstance(block_level, set):
-                block_level.add("situ-layout")
+                block_level.add("mono-layout")
             else:
                 add_fn = getattr(block_level, "add", None)
                 if callable(add_fn):
-                    add_fn("situ-layout")
+                    add_fn("mono-layout")
 
             html = markdown.markdown(markdown_content, extensions=MARKDOWN_EXTENSIONS)
             self.logger.debug("Markdown → HTML 変換完了")

@@ -107,7 +107,7 @@ def create_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--export",
         action="store_true",
-        help="外部エクスポートモジュール（situ-export）を強制的に有効にする",
+        help="外部エクスポートモジュール（mono-export）を強制的に有効にする",
     )
 
     return parser

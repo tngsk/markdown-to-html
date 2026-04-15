@@ -199,36 +199,36 @@ th {
     </head>
     <body>
         <p><img alt="test SVG" src="../colab-badge.svg" /></p>
-<situ-export></situ-export>
-<script>window.SITU_API_URL = "https://your-render-api.com";</script> <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script> <!-- Interactive-MD Web Component Template: situ-ab-test -->
-<template id="situ-ab-test-template">
+<mono-export></mono-export>
+<script>window.MONO_API_URL = "https://your-render-api.com";</script> <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script> <!-- Mono Web Component Template: mono-ab-test -->
+<template id="mono-ab-test-template">
     <style>
         /* CSS is injected dynamically by the Python builder */
-        /* Web Components CSS for Interactive-MD: situ-ab-test */
+        /* Web Components CSS for Mono: mono-ab-test */
 
 :host {
     display: block;
     margin: 2rem 0;
-    font-family: var(--situ-font-family, system-ui, -apple-system, sans-serif);
+    font-family: var(--mono-font-family, system-ui, -apple-system, sans-serif);
     outline: none;
 }
 
 :host(:focus-visible) .ab-test-wrapper,
 :host(:focus-within) .ab-test-wrapper {
-    border-color: var(--situ-primary-color, #00ffcc);
+    border-color: var(--mono-primary-color, #00ffcc);
     box-shadow:
-        0 0 0 1px var(--situ-primary-color, #00ffcc),
+        0 0 0 1px var(--mono-primary-color, #00ffcc),
         inset 0 0 12px rgba(0, 255, 204, 0.1);
 }
 
 .ab-test-wrapper {
     position: relative;
-    background: var(--situ-ab-bg, #1e1e1e);
+    background: var(--mono-ab-bg, #1e1e1e);
     border-radius: 8px;
     padding: 1.5rem;
-    color: var(--situ-ab-text, #e5e5e5);
+    color: var(--mono-ab-text, #e5e5e5);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-    border: 1px solid var(--situ-ab-border, #333);
+    border: 1px solid var(--mono-ab-border, #333);
     overflow: hidden;
     user-select: none; /* Prevent accidental text selection during fast clicks */
     transition:
@@ -239,7 +239,7 @@ th {
 /* Fallback for light mode */
 @media (prefers-color-scheme: light) {
     .ab-test-wrapper {
-        background: var(--situ-ab-bg, #2b2b2b);
+        background: var(--mono-ab-bg, #2b2b2b);
         border-color: transparent;
     }
 }
@@ -272,15 +272,15 @@ th {
 
 :host(:focus-within) .status-led,
 :host(:focus-visible) .status-led {
-    background: var(--situ-primary-color, #00ffcc);
+    background: var(--mono-primary-color, #00ffcc);
     box-shadow:
-        0 0 8px var(--situ-primary-color, #00ffcc),
+        0 0 8px var(--mono-primary-color, #00ffcc),
         inset 0 0 2px #fff;
 }
 
 :host(:focus-within) .status-led::after,
 :host(:focus-visible) .status-led::after {
-    color: var(--situ-primary-color, #00ffcc);
+    color: var(--mono-primary-color, #00ffcc);
     opacity: 1;
 }
 
@@ -289,9 +289,9 @@ th {
     margin-bottom: 1rem;
     font-size: 1.1rem;
     font-weight: 600;
-    color: var(--situ-ab-title, #ffffff);
+    color: var(--mono-ab-title, #ffffff);
     letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--situ-ab-border, #444);
+    border-bottom: 1px solid var(--mono-ab-border, #444);
     padding-bottom: 0.75rem;
     padding-right: 4rem; /* Make room for LED */
 }
@@ -317,7 +317,7 @@ th {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--situ-ab-controls-bg, #18181b);
+    background: var(--mono-ab-controls-bg, #18181b);
     padding: 1rem;
     border-radius: 6px;
     margin-bottom: 1rem;
@@ -402,7 +402,7 @@ th {
 }
 
 .btn-switch.active {
-    background: var(--situ-primary-color, #3b82f6);
+    background: var(--mono-primary-color, #3b82f6);
     color: #ffffff;
     box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
 }
@@ -424,7 +424,7 @@ th {
 .progress-bar {
     height: 100%;
     width: 0%;
-    background: var(--situ-primary-color, #3b82f6);
+    background: var(--mono-primary-color, #3b82f6);
     border-radius: 4px;
     transition: width 0.1s linear;
 }
@@ -474,8 +474,8 @@ th {
 }
 
 .btn-vote.selected {
-    background: var(--situ-success-color, #10b981);
-    border-color: var(--situ-success-color, #10b981);
+    background: var(--mono-success-color, #10b981);
+    border-color: var(--mono-success-color, #10b981);
     color: #ffffff;
 }
 
@@ -490,7 +490,7 @@ th {
 .voted-message {
     margin-top: 1rem;
     font-size: 0.95rem;
-    color: var(--situ-success-color, #10b981);
+    color: var(--mono-success-color, #10b981);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -529,7 +529,7 @@ th {
     height: 40px;
     border: 3px solid rgba(255, 255, 255, 0.1);
     border-radius: 50%;
-    border-top-color: var(--situ-primary-color, #3b82f6);
+    border-top-color: var(--mono-primary-color, #3b82f6);
     animation: spin 1s ease-in-out infinite;
     margin-bottom: 1rem;
 }
@@ -700,26 +700,26 @@ th {
 </template>
 
 
-<!-- Interactive-MD Web Component Template: situ-code-block -->
-<template id="situ-code-block-template">
+<!-- Mono Web Component Template: mono-code-block -->
+<template id="mono-code-block-template">
     <style>
         /* CSS is injected dynamically by the Python builder */
-        /* Web Components CSS for situ-code-block */
+        /* Web Components CSS for mono-code-block */
 
 :host {
     display: block;
     margin: 1em 0;
-    font-family: var(--situ-font-family, system-ui, -apple-system, sans-serif);
+    font-family: var(--mono-font-family, system-ui, -apple-system, sans-serif);
 }
 
 .code-block-wrapper {
     position: relative;
-    background: var(--situ-code-bg, #282c34);
+    background: var(--mono-code-bg, #282c34);
     border-radius: 8px;
     overflow: hidden;
     /* Optional: shadow and border can be provided via theme variables,
        but default to the original minimal look without shadow */
-    border: 1px solid var(--situ-border-color, transparent);
+    border: 1px solid var(--mono-border-color, transparent);
 }
 
 .code-block-header {
@@ -727,10 +727,10 @@ th {
     justify-content: space-between;
     align-items: center;
     padding: 0.5em 1em;
-    background: var(--situ-code-header-bg, #21252b);
-    border-bottom: 1px solid var(--situ-code-header-border, #444);
+    background: var(--mono-code-header-bg, #21252b);
+    border-bottom: 1px solid var(--mono-code-header-border, #444);
     font-size: 0.85em;
-    color: var(--situ-code-lang-color, #abb2bf);
+    color: var(--mono-code-lang-color, #abb2bf);
 }
 
 .code-language {
@@ -742,9 +742,9 @@ th {
 
 .copy-button {
     padding: 0.4em 0.8em;
-    background: var(--situ-code-btn-bg, #3e4451);
-    color: var(--situ-code-btn-color, #61afef);
-    border: 1px solid var(--situ-code-btn-border, #555);
+    background: var(--mono-code-btn-bg, #3e4451);
+    color: var(--mono-code-btn-color, #61afef);
+    border: 1px solid var(--mono-code-btn-border, #555);
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9em;
@@ -756,9 +756,9 @@ th {
 }
 
 .copy-button:hover {
-    background: var(--situ-code-btn-hover-bg, #61afef);
-    color: var(--situ-code-btn-hover-color, #282c34);
-    border-color: var(--situ-code-btn-hover-border, #61afef);
+    background: var(--mono-code-btn-hover-bg, #61afef);
+    color: var(--mono-code-btn-hover-color, #282c34);
+    border-color: var(--mono-code-btn-hover-border, #61afef);
 }
 
 .copy-button:active {
@@ -766,9 +766,9 @@ th {
 }
 
 .copy-button.copied {
-    background: var(--situ-success-color, #98c379);
-    color: var(--situ-success-text, #282c34);
-    border-color: var(--situ-success-color, #98c379);
+    background: var(--mono-success-color, #98c379);
+    color: var(--mono-success-text, #282c34);
+    border-color: var(--mono-success-color, #98c379);
 }
 
 /* Style the projected/slotted <pre> and <code> content */
@@ -778,7 +778,7 @@ th {
     padding: 1em !important;
     overflow-x: auto;
     background: transparent !important;
-    color: var(--situ-code-text, #abb2bf);
+    color: var(--mono-code-text, #abb2bf);
     line-height: 1.5;
 }
 
@@ -881,18 +881,18 @@ th {
 </template>
 
 
-<div class="situ-export-container">
-    <button id="situ-export-fab" class="fab">
+<div class="mono-export-container">
+    <button id="mono-export-fab" class="fab">
         <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V9h2v7zm4 0h-2V9h2v7z"/></svg>
     </button>
-    <div id="situ-export-menu" class="menu hidden">
-        <button id="situ-export-download">Download JSON</button>
-        <button id="situ-export-sync">Sync to Server</button>
+    <div id="mono-export-menu" class="menu hidden">
+        <button id="mono-export-download">Download JSON</button>
+        <button id="mono-export-sync">Sync to Server</button>
     </div>
 </div>
 
-<!-- Interactive-MD Web Component Template: situ-notebook-input -->
-<template id="situ-notebook-input-template">
+<!-- Mono Web Component Template: mono-notebook-input -->
+<template id="mono-notebook-input-template">
     <style>
         :host {
             display: block;
@@ -992,19 +992,19 @@ th {
 </template>
 
 
-<!-- Interactive-MD Web Component Template: situ-poll -->
-<template id="situ-poll-template">
+<!-- Mono Web Component Template: mono-poll -->
+<template id="mono-poll-template">
     <style>
         /* CSS is injected dynamically by the Python builder */
-        /* Web Components CSS for Interactive-MD */
+        /* Web Components CSS for Mono */
 
 :host {
     display: block;
     margin: 1.5rem 0;
-    font-family: var(--situ-font-family, system-ui, -apple-system, sans-serif);
-    color: var(--situ-text-color, #333);
-    background: var(--situ-bg-color, #f9f9f9);
-    border: 1px solid var(--situ-border-color, #e0e0e0);
+    font-family: var(--mono-font-family, system-ui, -apple-system, sans-serif);
+    color: var(--mono-text-color, #333);
+    background: var(--mono-bg-color, #f9f9f9);
+    border: 1px solid var(--mono-border-color, #e0e0e0);
     border-radius: 8px;
     padding: 1.5rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -1029,7 +1029,7 @@ th {
     display: flex;
     align-items: center;
     padding: 0.75rem 1rem;
-    border: 1px solid var(--situ-border-color, #d1d5db);
+    border: 1px solid var(--mono-border-color, #d1d5db);
     border-radius: 6px;
     background: white;
     cursor: pointer;
@@ -1037,12 +1037,12 @@ th {
 }
 
 .option-label:hover:not(.voted) {
-    background: var(--situ-hover-bg, #f3f4f6);
+    background: var(--mono-hover-bg, #f3f4f6);
 }
 
 .option-label.selected {
-    border-color: var(--situ-primary-color, #3b82f6);
-    background: var(--situ-primary-light, #eff6ff);
+    border-color: var(--mono-primary-color, #3b82f6);
+    background: var(--mono-primary-light, #eff6ff);
 }
 
 input[type="radio"] {
@@ -1054,7 +1054,7 @@ input[type="radio"] {
 button.submit-btn {
     margin-top: 1.5rem;
     padding: 0.5rem 1.5rem;
-    background-color: var(--situ-primary-color, #3b82f6);
+    background-color: var(--mono-primary-color, #3b82f6);
     color: white;
     border: none;
     border-radius: 6px;
@@ -1068,18 +1068,18 @@ button.submit-btn {
 }
 
 button.submit-btn:hover:not(:disabled) {
-    background-color: var(--situ-primary-dark, #2563eb);
+    background-color: var(--mono-primary-dark, #2563eb);
 }
 
 button.submit-btn:disabled {
-    background-color: var(--situ-disabled-color, #9ca3af);
+    background-color: var(--mono-disabled-color, #9ca3af);
     cursor: not-allowed;
 }
 
 .voted-message {
     margin-top: 1rem;
     font-size: 0.9rem;
-    color: var(--situ-success-color, #059669);
+    color: var(--mono-success-color, #059669);
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -1108,7 +1108,7 @@ button.submit-btn:disabled {
 </template>
 
 <!-- Template for an individual option item -->
-<template id="situ-poll-option-template">
+<template id="mono-poll-option-template">
     <label class="option-label" data-ref="label">
         <input type="radio" name="poll-option" data-ref="radio">
         <span class="option-text" data-ref="text"></span>
@@ -1117,14 +1117,14 @@ button.submit-btn:disabled {
 
 <script>
 /**
- * Interactive-MD Components
+ * Mono Components
  *
  * Vanilla JS Web Component for Universal A/B Testing.
  * Uses Web Audio API with crossfading for seamless, pop-free switching.
  * Implements "Lab-Gear Aesthetic" and strict event-driven architecture.
  */
 
-class SituABTest extends HTMLElement {
+class MonoABTest extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -1271,9 +1271,9 @@ class SituABTest extends HTMLElement {
   // ============================================================================
 
   mountTemplate() {
-    const template = document.getElementById("situ-ab-test-template");
+    const template = document.getElementById("mono-ab-test-template");
     if (!template) {
-      console.error("Template #situ-ab-test-template not found.");
+      console.error("Template #mono-ab-test-template not found.");
       return;
     }
     this.shadowRoot.appendChild(template.content.cloneNode(true));
@@ -1290,7 +1290,7 @@ class SituABTest extends HTMLElement {
 
   checkPreviousVote() {
     try {
-      const savedData = localStorage.getItem(`situ_abtest_${this.componentId}`);
+      const savedData = localStorage.getItem(`mono_abtest_${this.componentId}`);
       if (savedData) {
         const data = JSON.parse(savedData);
         this.hasVoted = true;
@@ -1622,7 +1622,7 @@ if (this.mediaType === "image") {
     };
 
     // Dispatch Custom Event (Phase 3 Compatibility)
-    const event = new CustomEvent("situ:vote", {
+    const event = new CustomEvent("mono:vote", {
       detail: payload,
       bubbles: true,
       composed: true,
@@ -1632,7 +1632,7 @@ if (this.mediaType === "image") {
     // Local Storage Mock Persistence (Phase 2)
     try {
       localStorage.setItem(
-        `situ_abtest_${this.componentId}`,
+        `mono_abtest_${this.componentId}`,
         JSON.stringify(payload),
       );
       this.hasVoted = true;
@@ -1663,13 +1663,13 @@ if (this.mediaType === "image") {
 }
 
 // Register the custom element
-if (!customElements.get("situ-ab-test")) {
-  customElements.define("situ-ab-test", SituABTest);
+if (!customElements.get("mono-ab-test")) {
+  customElements.define("mono-ab-test", MonoABTest);
 }
 
 
 /**
- * Interactive-MD Components
+ * Mono Components
  *
  * Vanilla JS Web Component for code blocks.
  * Implements "Light DOM" enhancement strategy: Wraps the original Markdown
@@ -1677,7 +1677,7 @@ if (!customElements.get("situ-ab-test")) {
  * a copy button and syntax highlighting functionality.
  */
 
-class SituCodeBlock extends HTMLElement {
+class MonoCodeBlock extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -1694,9 +1694,9 @@ class SituCodeBlock extends HTMLElement {
   }
 
   mountTemplate() {
-    const template = document.getElementById("situ-code-block-template");
+    const template = document.getElementById("mono-code-block-template");
     if (!template) {
-      console.error("Template #situ-code-block-template not found.");
+      console.error("Template #mono-code-block-template not found.");
       return;
     }
     this.shadowRoot.appendChild(template.content.cloneNode(true));
@@ -1730,7 +1730,7 @@ class SituCodeBlock extends HTMLElement {
   }
 
   handleCopyClick() {
-    // Look for the <code> element within the Light DOM (children of <situ-code-block>)
+    // Look for the <code> element within the Light DOM (children of <mono-code-block>)
     const codeElement = this.querySelector("code");
     if (!codeElement) return;
 
@@ -1794,12 +1794,12 @@ class SituCodeBlock extends HTMLElement {
 }
 
 // Register the custom element
-if (!customElements.get("situ-code-block")) {
-  customElements.define("situ-code-block", SituCodeBlock);
+if (!customElements.get("mono-code-block")) {
+  customElements.define("mono-code-block", MonoCodeBlock);
 }
 
 
-class SituExport extends HTMLElement {
+class MonoExport extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
@@ -1817,13 +1817,13 @@ class SituExport extends HTMLElement {
 
         const container = document.createElement("div");
         container.innerHTML = `
-        <div class="situ-export-container">
-            <button id="situ-export-fab" class="fab" title="Export Data">
+        <div class="mono-export-container">
+            <button id="mono-export-fab" class="fab" title="Export Data">
                 <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
             </button>
-            <div id="situ-export-menu" class="menu hidden">
-                <button id="situ-export-download">Download JSON</button>
-                <button id="situ-export-sync">Sync to Server</button>
+            <div id="mono-export-menu" class="menu hidden">
+                <button id="mono-export-download">Download JSON</button>
+                <button id="mono-export-sync">Sync to Server</button>
             </div>
         </div>
         `;
@@ -1834,7 +1834,7 @@ class SituExport extends HTMLElement {
         const data = {};
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
-            if (key && key.startsWith("situ_")) {
+            if (key && key.startsWith("mono_")) {
                 try {
                     data[key] = JSON.parse(localStorage.getItem(key));
                 } catch (e) {
@@ -1846,10 +1846,10 @@ class SituExport extends HTMLElement {
     }
 
     setupEventListeners() {
-        const fab = this.shadowRoot.getElementById("situ-export-fab");
-        const menu = this.shadowRoot.getElementById("situ-export-menu");
-        const btnDownload = this.shadowRoot.getElementById("situ-export-download");
-        const btnSync = this.shadowRoot.getElementById("situ-export-sync");
+        const fab = this.shadowRoot.getElementById("mono-export-fab");
+        const menu = this.shadowRoot.getElementById("mono-export-menu");
+        const btnDownload = this.shadowRoot.getElementById("mono-export-download");
+        const btnSync = this.shadowRoot.getElementById("mono-export-sync");
 
         fab.addEventListener("click", () => {
             menu.classList.toggle("hidden");
@@ -1871,7 +1871,7 @@ class SituExport extends HTMLElement {
 
         btnSync.addEventListener("click", async () => {
             const data = this.collectData();
-            const apiUrl = window.SITU_API_URL;
+            const apiUrl = window.MONO_API_URL;
             if (!apiUrl) {
                 alert("API URL (connect_src) is not configured.");
                 return;
@@ -1898,19 +1898,19 @@ class SituExport extends HTMLElement {
     }
 }
 
-if (!customElements.get("situ-export")) {
-    customElements.define("situ-export", SituExport);
+if (!customElements.get("mono-export")) {
+    customElements.define("mono-export", MonoExport);
 }
 
 /**
- * Interactive-MD Components
+ * Mono Components
  *
  * Vanilla JS Web Component for a notebook input area.
  * It provides a simple text area for users to take notes and
  * persists the content automatically to Local Storage.
  */
 
-class SituNotebookInput extends HTMLElement {
+class MonoNotebookInput extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
@@ -1927,9 +1927,9 @@ class SituNotebookInput extends HTMLElement {
     }
 
     mountTemplate() {
-        const template = document.getElementById("situ-notebook-input-template");
+        const template = document.getElementById("mono-notebook-input-template");
         if (!template) {
-            console.error("Template #situ-notebook-input-template not found.");
+            console.error("Template #mono-notebook-input-template not found.");
             return;
         }
 
@@ -2033,20 +2033,20 @@ class SituNotebookInput extends HTMLElement {
 }
 
 // Register the custom element
-if (!customElements.get("situ-notebook-input")) {
-    customElements.define("situ-notebook-input", SituNotebookInput);
+if (!customElements.get("mono-notebook-input")) {
+    customElements.define("mono-notebook-input", MonoNotebookInput);
 }
 
 
 /**
- * Interactive-MD Components
+ * Mono Components
  *
  * Vanilla JS Web Components for educational and research acoustic systems.
  * Designed with a clean, readable aesthetic.
  * This file relies on HTML templates injected into the main document.
  */
 
-class SituPoll extends HTMLElement {
+class MonoPoll extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -2077,7 +2077,7 @@ class SituPoll extends HTMLElement {
 
   checkPreviousVote() {
     try {
-      const savedData = localStorage.getItem(`situ_poll_${this.componentId}`);
+      const savedData = localStorage.getItem(`mono_poll_${this.componentId}`);
       if (savedData) {
         const data = JSON.parse(savedData);
         this.hasVoted = true;
@@ -2098,7 +2098,7 @@ class SituPoll extends HTMLElement {
     };
 
     // Phase 3 Compatibility: Dispatch custom event for future backend integration
-    const event = new CustomEvent("situ:vote", {
+    const event = new CustomEvent("mono:vote", {
       detail: payload,
       bubbles: true,
       composed: true,
@@ -2108,7 +2108,7 @@ class SituPoll extends HTMLElement {
     // Mock Persistence (Phase 2)
     try {
       localStorage.setItem(
-        `situ_poll_${this.componentId}`,
+        `mono_poll_${this.componentId}`,
         JSON.stringify(payload),
       );
       this.hasVoted = true;
@@ -2122,9 +2122,9 @@ class SituPoll extends HTMLElement {
 
   mountTemplate() {
     // 1. Clone main layout template
-    const template = document.getElementById("situ-poll-template");
+    const template = document.getElementById("mono-poll-template");
     if (!template) {
-      console.error("Template #situ-poll-template not found.");
+      console.error("Template #mono-poll-template not found.");
       return;
     }
     this.shadowRoot.appendChild(template.content.cloneNode(true));
@@ -2140,7 +2140,7 @@ class SituPoll extends HTMLElement {
     }
 
     // 4. Render options dynamically
-    const optionTemplate = document.getElementById("situ-poll-option-template");
+    const optionTemplate = document.getElementById("mono-poll-option-template");
     if (!optionTemplate || !this.refs.optionsContainer) return;
 
     this.options.forEach((opt) => {
@@ -2234,8 +2234,8 @@ class SituPoll extends HTMLElement {
 }
 
 // Register the custom element
-if (!customElements.get("situ-poll")) {
-  customElements.define("situ-poll", SituPoll);
+if (!customElements.get("mono-poll")) {
+  customElements.define("mono-poll", MonoPoll);
 }
 
 </script>

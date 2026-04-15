@@ -21,7 +21,7 @@ def get_allowed_origins() -> List[str]:
         logger.warning(f"Could not load CORS origins from config: {e}")
     return origins
 
-app = FastAPI(title="Interactive-MD Sync Server")
+app = FastAPI(title="Mono Sync Server")
 
 app.add_middleware(
     CORSMiddleware,
