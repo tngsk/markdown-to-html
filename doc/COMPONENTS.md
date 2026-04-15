@@ -17,6 +17,11 @@ Used to present an A/B test between two media sources (images or audio).
 *   `src_a`: Path or URL to the first media source.
 *   `src_b`: Path or URL to the second media source.
 
+Result:
+@[ab-test: <title>](<src_a>, <src_b>)
+
+---
+
 ### Sound (`situ-sound`)
 Used to embed a playable sound file.
 
@@ -27,11 +32,15 @@ Used to embed a playable sound file.
 *   `label`: (Optional) Text label to display.
 *   `src`: Path or URL to the audio file.
 
+Result:
+@[sound: <label>](<src>)
+
 Alternative syntax without a label:
 ```markdown
 @[sound](<src>)
 ```
 
+---
 ### Icon (`situ-icon`)
 Used to display Google Material Symbols.
 
@@ -45,10 +54,15 @@ Used to display Google Material Symbols.
     *   `color`: CSS color value (e.g., `red`, `rgba(255, 0, 0, 0.5)`).
     *   `display`: CSS display value (e.g., `inline-block`).
 
+Result:
+@[icon: "home"](size: 64px)
+
 Alternative syntax:
 ```markdown
 @[icon: <name>]
 ```
+
+---
 
 ### Clock (`situ-clock`)
 Used to embed a real-time clock.
@@ -60,6 +74,9 @@ Used to embed a real-time clock.
 *   The arguments in parentheses are optional:
     *   `format`: Time format string.
     *   `display`: CSS display value.
+
+Result:
+@[clock]
 
 Alternative syntax:
 ```markdown

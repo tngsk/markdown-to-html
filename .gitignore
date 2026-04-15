@@ -207,9 +207,9 @@ marimo/_lsp/
 __marimo__/
 
 # Ignore internal documentation directory
-docs_internal/
 TASKS.md
 tasks.sh
 .DS_Store
 demo/*.html
+doc/*.html
 /watch_and_run.sh
