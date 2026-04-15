@@ -5,21 +5,25 @@ Converts Markdown content to intermediate HTML.
 """
 
 import html
+import importlib.util
 import logging
 import re
+import sys
+from pathlib import Path
 
 import markdown
+import markdown.util
 
 from src.config import ConversionError
 from src.constants import (
+    HTML_ICON_COMPONENT_TEMPLATE,
+    HTML_SOUND_COMPONENT_TEMPLATE,
     MARKDOWN_EXTENSIONS,
+    MARKDOWN_ICON_PATTERN,
+    MARKDOWN_SOUND_PATTERN,
     TEMPLATES_DIR,
 )
 from src.handlers.file import FileHandler
-import markdown.util
-import importlib.util
-import sys
-from pathlib import Path
 
 
 class MarkdownProcessor:
@@ -50,13 +54,13 @@ class MarkdownProcessor:
                 current = ""
                 depth = 0
                 for char in args_str:
-                    if char == '(':
+                    if char == "(":
                         depth += 1
                         current += char
-                    elif char == ')':
+                    elif char == ")":
                         depth -= 1
                         current += char
-                    elif char == ',' and depth == 0:
+                    elif char == "," and depth == 0:
                         parts.append(current.strip())
                         current = ""
                     else:
@@ -76,7 +80,7 @@ class MarkdownProcessor:
                 name=safe_name,
                 size_attr=size_attr,
                 color_attr=color_attr,
-                display_attr=display_attr
+                display_attr=display_attr,
             )
 
         result = pattern.sub(replacer, markdown_content)
@@ -84,7 +88,7 @@ class MarkdownProcessor:
             self.logger.debug("アイコンコンポーネント前処理完了: @[icon] → <situ-icon>")
         return result
 
-    def _preprocess_sound(self, markdown_content: str) -> str:
+    def _load_component_parsers(self):
         """
         src/templates/components/ 配下の各コンポーネントディレクトリにある
         parser.py を動的に読み込み、インスタンス化してリストで返す
@@ -92,7 +96,9 @@ class MarkdownProcessor:
         parsers = []
         components_dir = TEMPLATES_DIR / "components"
         if not components_dir.exists() or not components_dir.is_dir():
-            self.logger.warning(f"コンポーネントディレクトリが見つかりません: {components_dir}")
+            self.logger.warning(
+                f"コンポーネントディレクトリが見つかりません: {components_dir}"
+            )
             return parsers
 
         for component_dir in sorted(components_dir.iterdir()):
@@ -102,8 +108,12 @@ class MarkdownProcessor:
             parser_file = component_dir / "parser.py"
             if parser_file.exists():
                 try:
-                    module_name = f"src.templates.components.{component_dir.name}.parser"
-                    spec = importlib.util.spec_from_file_location(module_name, parser_file)
+                    module_name = (
+                        f"src.templates.components.{component_dir.name}.parser"
+                    )
+                    spec = importlib.util.spec_from_file_location(
+                        module_name, parser_file
+                    )
                     module = importlib.util.module_from_spec(spec)
                     sys.modules[module_name] = module
                     spec.loader.exec_module(module)
@@ -111,11 +121,40 @@ class MarkdownProcessor:
                     if hasattr(module, "Parser"):
                         parser_instance = module.Parser()
                         parsers.append(parser_instance)
-                        self.logger.debug(f"パーサーをロードしました: {component_dir.name}")
+                        self.logger.debug(
+                            f"パーサーをロードしました: {component_dir.name}"
+                        )
                 except Exception as e:
-                    self.logger.warning(f"パーサーのロードに失敗しました ({parser_file}): {e}")
+                    self.logger.warning(
+                        f"パーサーのロードに失敗しました ({parser_file}): {e}"
+                    )
 
         return parsers
+
+    def _preprocess_sound(self, markdown_content: str) -> str:
+        """
+        @[sound: ラベル](file) または @[sound](file) を <situ-sound> に変換する
+        """
+        pattern = re.compile(MARKDOWN_SOUND_PATTERN)
+        counter = 0
+
+        def replacer(match: re.Match) -> str:
+            nonlocal counter
+            counter += 1
+            label = match.group(1)
+            src = match.group(2).strip()
+
+            safe_label = html.escape(label.strip()) if label else ""
+            safe_src = html.escape(src)
+
+            return HTML_SOUND_COMPONENT_TEMPLATE.format(
+                id=f"sound-{counter}", label=safe_label, src=safe_src
+            )
+
+        result = pattern.sub(replacer, markdown_content)
+        if markdown_content != result:
+            self.logger.debug("効果音コンポーネント前処理完了: @[sound] → <situ-sound>")
+        return result
 
     def convert_markdown_to_html(self, markdown_content: str) -> str:
         """
@@ -138,7 +177,10 @@ class MarkdownProcessor:
                     self.logger.warning(f"コンポーネントパース処理でエラー: {e}")
 
             # Markdownパーサーにカスタムコンポーネントをブロックレベル要素として認識させる
-            if isinstance(markdown.util.BLOCK_LEVEL_ELEMENTS, list) and "situ-layout" not in markdown.util.BLOCK_LEVEL_ELEMENTS:
+            if (
+                isinstance(markdown.util.BLOCK_LEVEL_ELEMENTS, list)
+                and "situ-layout" not in markdown.util.BLOCK_LEVEL_ELEMENTS
+            ):
                 markdown.util.BLOCK_LEVEL_ELEMENTS.append("situ-layout")
             elif hasattr(markdown.util.BLOCK_LEVEL_ELEMENTS, "add"):
                 markdown.util.BLOCK_LEVEL_ELEMENTS.add("situ-layout")
