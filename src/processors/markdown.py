@@ -9,7 +9,6 @@ import importlib.util
 import logging
 import re
 import sys
-from pathlib import Path
 
 import markdown
 import markdown.util
@@ -114,7 +113,17 @@ class MarkdownProcessor:
                     spec = importlib.util.spec_from_file_location(
                         module_name, parser_file
                     )
+                    if spec is None or spec.loader is None:
+                        self.logger.warning(
+                            f"パーサーモジュールのロードに失敗しました（spec不在）: {parser_file}"
+                        )
+                        continue
                     module = importlib.util.module_from_spec(spec)
+                    if module is None:
+                        self.logger.warning(
+                            f"module_from_spec が None を返しました: {parser_file}"
+                        )
+                        continue
                     sys.modules[module_name] = module
                     spec.loader.exec_module(module)
 
@@ -177,13 +186,16 @@ class MarkdownProcessor:
                     self.logger.warning(f"コンポーネントパース処理でエラー: {e}")
 
             # Markdownパーサーにカスタムコンポーネントをブロックレベル要素として認識させる
-            if (
-                isinstance(markdown.util.BLOCK_LEVEL_ELEMENTS, list)
-                and "situ-layout" not in markdown.util.BLOCK_LEVEL_ELEMENTS
-            ):
-                markdown.util.BLOCK_LEVEL_ELEMENTS.append("situ-layout")
-            elif hasattr(markdown.util.BLOCK_LEVEL_ELEMENTS, "add"):
-                markdown.util.BLOCK_LEVEL_ELEMENTS.add("situ-layout")
+            block_level = markdown.util.BLOCK_LEVEL_ELEMENTS
+            if isinstance(block_level, list):
+                if "situ-layout" not in block_level:
+                    block_level.append("situ-layout")
+            elif isinstance(block_level, set):
+                block_level.add("situ-layout")
+            else:
+                add_fn = getattr(block_level, "add", None)
+                if callable(add_fn):
+                    add_fn("situ-layout")
 
             html = markdown.markdown(markdown_content, extensions=MARKDOWN_EXTENSIONS)
             self.logger.debug("Markdown → HTML 変換完了")
