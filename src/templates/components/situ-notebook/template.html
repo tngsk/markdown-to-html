@@ -1,10 +1,21 @@
 <!-- Interactive-MD Web Component Template: situ-notebook-input -->
-<template id="situ-notebook-input-template">
+<template id="situ-notebook-template">
     <style>
         :host {
             display: block;
             margin: 1.5rem 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-family:
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Oxygen,
+                Ubuntu,
+                Cantarell,
+                "Open Sans",
+                "Helvetica Neue",
+                sans-serif;
         }
 
         .notebook-container {
@@ -13,7 +24,9 @@
             background-color: #f8fafc;
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition:
+                border-color 0.2s,
+                box-shadow 0.2s;
         }
 
         .notebook-container:focus-within {
@@ -87,7 +100,9 @@
     <div class="notebook-container">
         <div class="notebook-header">
             <span class="notebook-label">Notebook</span>
-            <span class="notebook-status" data-ref="statusIndicator">✓ Saved</span>
+            <span class="notebook-status" data-ref="statusIndicator"
+                >✓ Saved</span
+            >
         </div>
         <textarea
             class="notebook-textarea"
