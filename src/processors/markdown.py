@@ -165,6 +165,45 @@ class MarkdownProcessor:
             self.logger.debug("効果音コンポーネント前処理完了: @[sound] → <situ-sound>")
         return result
 
+    def _protect_code_blocks(self, markdown_content: str) -> tuple[str, dict[str, str]]:
+        """
+        コードブロック（フェンスおよびインライン）を保護するための一時的なプレースホルダーに置換する。
+        """
+        blocks = {}
+        counter = 0
+
+        def replace_fenced(match: re.Match) -> str:
+            nonlocal counter
+            placeholder = f"@@FENCED_CODE_BLOCK_{counter}@@"
+            blocks[placeholder] = match.group(0)
+            counter += 1
+            return placeholder
+
+        # 複数行のコードブロックを保護 (``` または ~~~)
+        fenced_pattern = re.compile(r'(?s)(^[ \t]*(`{3,}|~{3,}).*?\n[ \t]*\2[ \t]*(?=\n|$))', re.MULTILINE)
+        processed = fenced_pattern.sub(replace_fenced, markdown_content)
+
+        def replace_inline(match: re.Match) -> str:
+            nonlocal counter
+            placeholder = f"@@INLINE_CODE_BLOCK_{counter}@@"
+            blocks[placeholder] = match.group(0)
+            counter += 1
+            return placeholder
+
+        # インラインのコードブロックを保護
+        inline_pattern = re.compile(r'(`+)(.*?)\1')
+        processed = inline_pattern.sub(replace_inline, processed)
+
+        return processed, blocks
+
+    def _restore_code_blocks(self, processed_content: str, blocks: dict[str, str]) -> str:
+        """
+        保護されたプレースホルダーを元のコードブロックに戻す。
+        """
+        for placeholder, original in blocks.items():
+            processed_content = processed_content.replace(placeholder, original)
+        return processed_content
+
     def convert_markdown_to_html(self, markdown_content: str) -> str:
         """
         MarkdownをHTMLに変換
@@ -179,11 +218,17 @@ class MarkdownProcessor:
             ConversionError: 変換に失敗した場合
         """
         try:
+            # コンポーネントパース前にコードブロックを保護
+            protected_content, blocks = self._protect_code_blocks(markdown_content)
+
             for parser in self.parsers:
                 try:
-                    markdown_content = parser.process(markdown_content)
+                    protected_content = parser.process(protected_content)
                 except Exception as e:
                     self.logger.warning(f"コンポーネントパース処理でエラー: {e}")
+
+            # コードブロックを復元
+            markdown_content = self._restore_code_blocks(protected_content, blocks)
 
             # Markdownパーサーにカスタムコンポーネントをブロックレベル要素として認識させる
             block_level = markdown.util.BLOCK_LEVEL_ELEMENTS
