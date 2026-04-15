@@ -38,6 +38,9 @@ class TestMarkdownProcessor(unittest.TestCase):
             ("@[icon: search](color: blue)", '<situ-icon name="search" color="blue"></situ-icon>'),
             ("@[icon: search](display: inline)", '<situ-icon name="search" display="inline"></situ-icon>'),
             ('@[icon: "quotes" test]', '<situ-icon name="&quot;quotes&quot; test"></situ-icon>'),
+            ('@[icon: "search"]', '<situ-icon name="search"></situ-icon>'),
+            ("@[icon: 'search with space']", '<situ-icon name="search with space"></situ-icon>'),
+            ('@[icon: "search with space"](size: 24px)', '<situ-icon name="search with space" size="24px"></situ-icon>'),
         ]
 
         for markdown_text, expected_html in cases:
