@@ -4,10 +4,13 @@ Configuration and Exception Classes
 Centralized definitions for conversion configuration and error handling.
 """
 
+import logging
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
+
+logger = logging.getLogger("markdown_converter")
 
 # ============================================================================
 # Custom Exceptions
@@ -64,8 +67,12 @@ class ConversionConfig:
                 config_data = tomllib.load(f)
                 self.connect_src = config_data.get("security", {}).get("connect-src", "")
                 self.ws_src = config_data.get("security", {}).get("ws-src", "")
-        except Exception:
-            pass
+        except FileNotFoundError:
+            logger.debug("config.toml not found, using defaults.")
+        except tomllib.TOMLDecodeError as e:
+            logger.error(f"Failed to decode config.toml: {e}")
+        except Exception as e:
+            logger.error(f"Unexpected error loading config.toml: {e}")
 
     def resolve_output_file(self) -> Path:
         """出力ファイルパスを決定する（未指定時は入力ファイル名から生成）"""

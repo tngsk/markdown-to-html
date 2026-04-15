@@ -78,16 +78,40 @@ class TestConversionConfig(unittest.TestCase):
 
     def test_post_init_toml_decode_error(self):
         """Test exception handling during initialization (TOML decode error)."""
-        with patch('builtins.open', mock_open(read_data=b"invalid toml")):
-            with patch('tomllib.load', side_effect=tomllib.TOMLDecodeError("Error", "doc", 0)):
+        with patch("builtins.open", mock_open(read_data=b"invalid toml")):
+            with patch("tomllib.load", side_effect=tomllib.TOMLDecodeError("Error", "doc", 0)):
+                with self.assertLogs("markdown_converter", level="ERROR") as cm:
+                    config = ConversionConfig(
+                        input_file=Path("test.md"),
+                        output_file=None,
+                        css_files=None
+                    )
+                    # Default values should be preserved
+                    self.assertEqual(config.connect_src, "")
+                    self.assertEqual(config.ws_src, "")
+                    self.assertTrue(any("Failed to decode config.toml" in output for output in cm.output))
+
+    def test_post_init_file_not_found_logging(self):
+        """Test that FileNotFoundError is logged at DEBUG level."""
+        with patch("builtins.open", side_effect=FileNotFoundError):
+            with self.assertLogs("markdown_converter", level="DEBUG") as cm:
                 config = ConversionConfig(
                     input_file=Path("test.md"),
                     output_file=None,
                     css_files=None
                 )
-                # Default values should be preserved
-                self.assertEqual(config.connect_src, "")
-                self.assertEqual(config.ws_src, "")
+                self.assertTrue(any("config.toml not found" in output for output in cm.output))
+
+    def test_post_init_unexpected_exception_logging(self):
+        """Test that unexpected exceptions are logged at ERROR level."""
+        with patch("builtins.open", side_effect=RuntimeError("Unexpected")):
+            with self.assertLogs("markdown_converter", level="ERROR") as cm:
+                config = ConversionConfig(
+                    input_file=Path("test.md"),
+                    output_file=None,
+                    css_files=None
+                )
+                self.assertTrue(any("Unexpected error loading config.toml" in output for output in cm.output))
 
     def test_resolve_output_file_provided(self):
         """Test resolving output file when explicitly provided."""
