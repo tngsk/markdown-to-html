@@ -6,7 +6,7 @@ Below is the documentation for the available custom directives and their syntax.
 
 ## Interactive & Media Components
 
-### A/B Test (`situ-ab-test`)
+### A/B Test (`mono-ab-test`)
 Used to present an A/B test between two media sources (images or audio).
 
 **Syntax:**
@@ -22,7 +22,7 @@ Result:
 
 ---
 
-### Sound (`situ-sound`)
+### Sound (`mono-sound`)
 Used to embed a playable sound file.
 
 **Syntax:**
@@ -41,7 +41,7 @@ Alternative syntax without a label:
 ```
 
 ---
-### Icon (`situ-icon`)
+### Icon (`mono-icon`)
 Used to display Google Material Symbols.
 
 **Syntax:**
@@ -64,7 +64,7 @@ Alternative syntax:
 
 ---
 
-### Clock (`situ-clock`)
+### Clock (`mono-clock`)
 Used to embed a real-time clock.
 
 **Syntax:**
@@ -85,7 +85,7 @@ Alternative syntax:
 
 ## Form & Input Components
 
-### TextField Input (`situ-textfield-input`)
+### TextField Input (`mono-textfield-input`)
 Used to create a single-line text input field.
 
 **Syntax:**
@@ -101,7 +101,7 @@ Alternative syntax without explicit size:
 ```
 *(Also supports misspelled directive `@[textfiled: ...]`).*
 
-### Notebook Input (`situ-notebook-input`)
+### Notebook Input (`mono-notebook-input`)
 Used to create a multi-line notebook-style input area.
 
 **Syntax:**
@@ -112,7 +112,7 @@ Used to create a multi-line notebook-style input area.
 *   `id`: The unique identifier for this input block.
 *   `placeholder`: (Optional) The placeholder text to display in the input area.
 
-### Poll (`situ-poll`)
+### Poll (`mono-poll`)
 Used to create a polling interface with multiple options.
 
 **Syntax:**
@@ -122,7 +122,7 @@ Used to create a polling interface with multiple options.
 *   `title`: The question or title of the poll.
 *   `options`: Comma-separated list of poll options.
 
-### Reaction (`situ-reaction`)
+### Reaction (`mono-reaction`)
 Used to embed interactive reaction buttons.
 
 **Syntax:**
@@ -133,7 +133,7 @@ Used to embed interactive reaction buttons.
 
 ## Classroom & Session Components
 
-### Group Assignment (`situ-group-assignment`)
+### Group Assignment (`mono-group-assignment`)
 Used to designate group assignments.
 
 **Syntax:**
@@ -142,7 +142,7 @@ Used to designate group assignments.
 ```
 *   `title`: Title for the group assignment block. Quotes around the title are optional.
 
-### Session Join (`situ-session-join`)
+### Session Join (`mono-session-join`)
 Used to display a session join component.
 
 **Syntax:**
@@ -153,7 +153,7 @@ Used to display a session join component.
 
 ## Layout & Formatting Components
 
-### Layout (`situ-layout`)
+### Layout (`mono-layout`)
 Used to create flexbox-based layouts such as rows and stacks (columns).
 
 **Row Syntax:**
@@ -185,7 +185,7 @@ Content for column 2
 :::
 ```
 
-### Spacer (`situ-spacer`)
+### Spacer (`mono-spacer`)
 Used to insert empty space (horizontal or vertical) in the layout.
 
 **Syntax:**
@@ -202,4 +202,4 @@ Alternative syntax:
 
 ---
 
-*Note: Some components (like `situ-brush`, `situ-code-block`, `situ-export`, and `situ-sync`) are system-level or injected automatically and do not require custom Markdown directives to be manually written in the text.*
+*Note: Some components (like `mono-brush`, `mono-code-block`, `mono-export`, and `mono-sync`) are system-level or injected automatically and do not require custom Markdown directives to be manually written in the text.*

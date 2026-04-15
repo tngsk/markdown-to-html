@@ -66,7 +66,7 @@ class MediaEmbedder:
         self, html_content: str, markdown_dir: Path
     ) -> Tuple[str, int, dict]:
         """
-        HTMLの<img>タグおよび<situ-ab-test>のメディアをBase64データに置換
+        HTMLの<img>タグおよび<mono-ab-test>のメディアをBase64データに置換
 
         Args:
             html_content: 変換対象のHTML文字列
@@ -143,10 +143,10 @@ class MediaEmbedder:
 
         html_content = img_pattern.sub(img_replacer, html_content)
 
-        # 2. <situ-sound> タグの処理
-        # format: <situ-sound id="..." label="..." src="..."></situ-sound>
+        # 2. <mono-sound> タグの処理
+        # format: <mono-sound id="..." label="..." src="..."></mono-sound>
         sound_pattern = re.compile(
-            r'(<situ-sound\s+[^>]*?src=")([^"]+)("[^>]*></situ-sound>)',
+            r'(<mono-sound\s+[^>]*?src=")([^"]+)("[^>]*></mono-sound>)',
             re.IGNORECASE,
         )
 
@@ -159,18 +159,18 @@ class MediaEmbedder:
 
             # 音声は通常lazy loadingにしないか、audioタグのpreload=none等で対応するため、
             # そのままsrc属性として埋め込む（Base64の場合は直接記述されるか、asset_store経由で解決）
-            # ここでは<img>や<situ-ab-test>と異なり、フロントエンド側のJSが読み込みを制御するので、そのまま置換する。
+            # ここでは<img>や<mono-ab-test>と異なり、フロントエンド側のJSが読み込みを制御するので、そのまま置換する。
             if new_src.startswith("asset-"):
-                # Component script will handle asset- prefix and fetch from situ-asset-store
+                # Component script will handle asset- prefix and fetch from mono-asset-store
                 pass
             return f"{part1}{new_src}{part3}"
 
         html_content = sound_pattern.sub(sound_replacer, html_content)
 
-        # 3. <situ-ab-test> タグの処理
-        # format: <situ-ab-test title="..." src-a="..." src-b="..."></situ-ab-test>
+        # 3. <mono-ab-test> タグの処理
+        # format: <mono-ab-test title="..." src-a="..." src-b="..."></mono-ab-test>
         ab_test_pattern = re.compile(
-            r'(<situ-ab-test\s+[^>]*?src-a=")([^"]+)(".*?src-b=")([^"]+)("[^>]*></situ-ab-test>)',
+            r'(<mono-ab-test\s+[^>]*?src-a=")([^"]+)(".*?src-b=")([^"]+)("[^>]*></mono-ab-test>)',
             re.IGNORECASE,
         )
 

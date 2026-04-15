@@ -1,0 +1,164 @@
+/* Web Components CSS for mono-code-block */
+
+:host {
+    display: block;
+    margin: 1em 0;
+    font-family: var(--mono-font-family, system-ui, -apple-system, sans-serif);
+}
+
+.code-block-wrapper {
+    position: relative;
+    background: var(--mono-code-bg, #282c34);
+    border-radius: 8px;
+    overflow: hidden;
+    /* Optional: shadow and border can be provided via theme variables,
+       but default to the original minimal look without shadow */
+    border: 1px solid var(--mono-border-color, transparent);
+}
+
+.code-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5em 1em;
+    background: var(--mono-code-header-bg, #21252b);
+    border-bottom: 1px solid var(--mono-code-header-border, #444);
+    font-size: 0.85em;
+    color: var(--mono-code-lang-color, #abb2bf);
+}
+
+.code-language {
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    /* The user explicitly wanted capitalization and specific font size maintained here */
+    text-transform: capitalize;
+}
+
+.copy-button {
+    padding: 0.4em 0.8em;
+    background: var(--mono-code-btn-bg, #3e4451);
+    color: var(--mono-code-btn-color, #61afef);
+    border: 1px solid var(--mono-code-btn-border, #555);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+}
+
+.copy-button:hover {
+    background: var(--mono-code-btn-hover-bg, #61afef);
+    color: var(--mono-code-btn-hover-color, #282c34);
+    border-color: var(--mono-code-btn-hover-border, #61afef);
+}
+
+.copy-button:active {
+    transform: scale(0.98);
+}
+
+.copy-button.copied {
+    background: var(--mono-success-color, #98c379);
+    color: var(--mono-success-text, #282c34);
+    border-color: var(--mono-success-color, #98c379);
+}
+
+/* Style the projected/slotted <pre> and <code> content */
+::slotted(pre),
+.code-content-slot pre {
+    margin: 0 !important;
+    padding: 1em !important;
+    overflow-x: auto;
+    background: transparent !important;
+    color: var(--mono-code-text, #abb2bf);
+    line-height: 1.5;
+}
+
+::slotted(code),
+.code-content-slot code {
+    font-family: "Courier New", Courier, monospace !important;
+    font-size: 0.95em !important;
+    line-height: 1.5 !important;
+}
+
+/* Highlight.js theme overrides - matching original user design exactly */
+::slotted(.hljs),
+.code-content-slot .hljs {
+    background: transparent !important;
+    color: #abb2bf !important;
+}
+
+::slotted(.hljs-attr),
+.code-content-slot .hljs-attr {
+    color: #e06c75 !important;
+}
+
+::slotted(.hljs-string),
+.code-content-slot .hljs-string {
+    color: #98c379 !important;
+}
+
+::slotted(.hljs-number),
+.code-content-slot .hljs-number {
+    color: #d19a66 !important;
+}
+
+::slotted(.hljs-literal),
+.code-content-slot .hljs-literal {
+    color: #56b6c2 !important;
+}
+
+::slotted(.hljs-title),
+.code-content-slot .hljs-title {
+    color: #61afef !important;
+}
+
+::slotted(.hljs-params),
+.code-content-slot .hljs-params {
+    color: #abb2bf !important;
+}
+
+::slotted(.hljs-comment),
+.code-content-slot .hljs-comment {
+    color: #5c6370 !important;
+}
+
+::slotted(.hljs-keyword),
+.code-content-slot .hljs-keyword {
+    color: #c678dd !important;
+}
+
+::slotted(.hljs-function),
+.code-content-slot .hljs-function {
+    color: #61afef !important;
+}
+
+::slotted(.hljs-built_in),
+.code-content-slot .hljs-built_in {
+    color: #e06c75 !important;
+}
+
+/* Scrollbar styling for the code block */
+.code-content-slot pre::-webkit-scrollbar,
+::slotted(pre)::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+.code-content-slot pre::-webkit-scrollbar-track,
+::slotted(pre)::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.code-content-slot pre::-webkit-scrollbar-thumb,
+::slotted(pre)::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.code-content-slot pre::-webkit-scrollbar-thumb:hover,
+::slotted(pre)::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}

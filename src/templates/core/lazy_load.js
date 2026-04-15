@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const storeEl = document.getElementById('situ-asset-store');
+    const storeEl = document.getElementById('mono-asset-store');
     if (storeEl) {
         try {
             const assets = JSON.parse(storeEl.innerHTML);

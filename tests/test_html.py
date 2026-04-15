@@ -40,9 +40,9 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
 
     @patch("pathlib.Path.read_text")
     def test_build_document_icon_fonts_injection(self, mock_read_text):
-        """<situ-icon>が存在する場合にGoogle Fontsが注入されることをテスト"""
+        """<mono-icon>が存在する場合にGoogle Fontsが注入されることをテスト"""
         mock_read_text.return_value = "<!doctype html><html><head>{CSP_META}</head><body>{BODY}</body></html>"
-        html_body = "<situ-icon name=\"search\"></situ-icon>"
+        html_body = "<mono-icon name=\"search\"></mono-icon>"
 
         result = self.builder.build_document(html_body=html_body)
 
@@ -58,15 +58,15 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
              patch.object(self.builder, '_load_base_css', return_value=""), \
              patch.object(self.builder, '_build_highlight_js_link', return_value=""), \
              patch.object(self.builder, '_load_component_templates', return_value=""), \
-             patch.object(self.builder, '_load_situ_components_script', return_value=""):
+             patch.object(self.builder, '_load_mono_components_script', return_value=""):
 
             # test enable_export=True
             result1 = self.builder.build_document(html_body="<p>test</p>", enable_export=True)
-            self.assertIn("<situ-export></situ-export>", result1)
+            self.assertIn("<mono-export></mono-export>", result1)
 
             # test interactive component triggers export
-            result2 = self.builder.build_document(html_body="<situ-poll></situ-poll>")
-            self.assertIn("<situ-export></situ-export>", result2)
+            result2 = self.builder.build_document(html_body="<mono-poll></mono-poll>")
+            self.assertIn("<mono-export></mono-export>", result2)
 
     @patch('pathlib.Path.read_text')
     def test_build_document_connect_ws_src(self, mock_read_text):
@@ -76,7 +76,7 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
              patch.object(self.builder, '_load_base_css', return_value=""), \
              patch.object(self.builder, '_build_highlight_js_link', return_value=""), \
              patch.object(self.builder, '_load_component_templates', return_value=""), \
-             patch.object(self.builder, '_load_situ_components_script', return_value=""):
+             patch.object(self.builder, '_load_mono_components_script', return_value=""):
 
             result = self.builder.build_document(
                 html_body="<p>test</p>",
@@ -84,8 +84,8 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
                 ws_src="wss://ws.example.com"
             )
             self.assertIn("connect-src 'self' https://api.example.com wss://ws.example.com", result)
-            self.assertIn('<meta name="situ-api-url" content="https://api.example.com">', result)
-            self.assertIn('<meta name="situ-ws-url" content="wss://ws.example.com">', result)
+            self.assertIn('<meta name="mono-api-url" content="https://api.example.com">', result)
+            self.assertIn('<meta name="mono-ws-url" content="wss://ws.example.com">', result)
 
     @patch('pathlib.Path.read_text')
     def test_build_document_asset_store(self, mock_read_text):
@@ -96,12 +96,12 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
              patch.object(self.builder, '_build_highlight_js_link', return_value=""), \
              patch.object(self.builder, '_load_lazy_load_script', return_value="console.log('lazy');"), \
              patch.object(self.builder, '_load_component_templates', return_value=""), \
-             patch.object(self.builder, '_load_situ_components_script', return_value=""):
+             patch.object(self.builder, '_load_mono_components_script', return_value=""):
 
             asset_store = {"image1.png": "data:image/png;base64,1234"}
             result = self.builder.build_document(html_body="<p>test</p>", asset_store=asset_store)
 
-            self.assertIn('<template id="situ-asset-store">{"image1.png": "data:image/png;base64,1234"}</template>', result)
+            self.assertIn('<template id="mono-asset-store">{"image1.png": "data:image/png;base64,1234"}</template>', result)
             self.assertIn("console.log('lazy');", result)
 
     def test_build_css_block(self):
@@ -132,11 +132,11 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
 
     def test_enhance_code_blocks(self):
         html_input = '<pre><code class="language-python">print("hello")</code></pre>'
-        expected = '<situ-code-block language="python">\n<pre><code class="language-python">print("hello")</code></pre>\n</situ-code-block>'
+        expected = '<mono-code-block language="python">\n<pre><code class="language-python">print("hello")</code></pre>\n</mono-code-block>'
         self.assertEqual(self.builder._enhance_code_blocks(html_input), expected)
 
         html_input_no_lang = '<pre><code>print("hello")</code></pre>'
-        expected_no_lang = '<situ-code-block language="">\n<pre><code>print("hello")</code></pre>\n</situ-code-block>'
+        expected_no_lang = '<mono-code-block language="">\n<pre><code>print("hello")</code></pre>\n</mono-code-block>'
         self.assertEqual(self.builder._enhance_code_blocks(html_input_no_lang), expected_no_lang)
 
     def test_remove_table_inline_styles(self):
@@ -219,27 +219,27 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         from unittest.mock import MagicMock
 
         mock_sync = MagicMock()
-        mock_sync.name = 'situ-sync'
+        mock_sync.name = 'mono-sync'
         mock_sync.is_dir.return_value = True
         mock_sync.__lt__.side_effect = lambda other: mock_sync.name < other.name
 
         mock_brush = MagicMock()
-        mock_brush.name = 'situ-brush'
+        mock_brush.name = 'mono-brush'
         mock_brush.is_dir.return_value = True
         mock_brush.__lt__.side_effect = lambda other: mock_brush.name < other.name
 
         mock_export = MagicMock()
-        mock_export.name = 'situ-export'
+        mock_export.name = 'mono-export'
         mock_export.is_dir.return_value = True
         mock_export.__lt__.side_effect = lambda other: mock_export.name < other.name
 
         mock_poll = MagicMock()
-        mock_poll.name = 'situ-poll'
+        mock_poll.name = 'mono-poll'
         mock_poll.is_dir.return_value = True
         mock_poll.__lt__.side_effect = lambda other: mock_poll.name < other.name
 
         mock_unknown = MagicMock()
-        mock_unknown.name = 'situ-unknown'
+        mock_unknown.name = 'mono-unknown'
         mock_unknown.is_dir.return_value = True
         mock_unknown.__lt__.side_effect = lambda other: mock_unknown.name < other.name
 
@@ -250,23 +250,23 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
 
         mock_iterdir.return_value = [mock_sync, mock_brush, mock_export, mock_poll, mock_unknown, mock_not_dir]
 
-        # Test 1: enable_export=False, html_body has <situ-poll>
-        result1 = self.builder._get_used_component_dirs(html_body="<situ-poll></situ-poll>", should_enable_export=False)
+        # Test 1: enable_export=False, html_body has <mono-poll>
+        result1 = self.builder._get_used_component_dirs(html_body="<mono-poll></mono-poll>", should_enable_export=False)
         names1 = [p.name for p in result1]
-        self.assertIn('situ-sync', names1)  # Always included
-        self.assertIn('situ-brush', names1) # Always included
-        self.assertIn('situ-poll', names1)  # Found in HTML
-        self.assertNotIn('situ-export', names1) # Export not enabled
-        self.assertNotIn('situ-unknown', names1) # Not found in HTML
+        self.assertIn('mono-sync', names1)  # Always included
+        self.assertIn('mono-brush', names1) # Always included
+        self.assertIn('mono-poll', names1)  # Found in HTML
+        self.assertNotIn('mono-export', names1) # Export not enabled
+        self.assertNotIn('mono-unknown', names1) # Not found in HTML
         self.assertNotIn('not-a-dir', names1) # Not a directory
 
         # Test 2: enable_export=True, no components in HTML
         result2 = self.builder._get_used_component_dirs(html_body="<p>test</p>", should_enable_export=True)
         names2 = [p.name for p in result2]
-        self.assertIn('situ-sync', names2)
-        self.assertIn('situ-brush', names2)
-        self.assertIn('situ-export', names2) # Export enabled
-        self.assertNotIn('situ-poll', names2)
+        self.assertIn('mono-sync', names2)
+        self.assertIn('mono-brush', names2)
+        self.assertIn('mono-export', names2) # Export enabled
+        self.assertNotIn('mono-poll', names2)
 
     @patch('pathlib.Path.exists', return_value=False)
     def test_get_used_component_dirs_missing_dir(self, mock_exists):
@@ -275,22 +275,22 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
 
     @patch('pathlib.Path.exists', return_value=True)
     @patch('pathlib.Path.read_text', return_value="console.log('component');")
-    def test_load_situ_components_script(self, mock_read_text, mock_exists):
+    def test_load_mono_components_script(self, mock_read_text, mock_exists):
         mock_dir1 = Path("fake_dir1")
         mock_dir2 = Path("fake_dir2")
 
-        result = self.builder._load_situ_components_script([mock_dir1, mock_dir2])
+        result = self.builder._load_mono_components_script([mock_dir1, mock_dir2])
         self.assertIn("<script>", result)
         self.assertIn("console.log('component');", result)
         self.assertIn("</script>", result)
 
         # Test exception handling
         mock_read_text.side_effect = Exception("Read error")
-        result_error = self.builder._load_situ_components_script([mock_dir1])
+        result_error = self.builder._load_mono_components_script([mock_dir1])
         self.assertEqual(result_error, "")
 
-    def test_load_situ_components_script_empty(self):
-        self.assertEqual(self.builder._load_situ_components_script([]), "")
+    def test_load_mono_components_script_empty(self):
+        self.assertEqual(self.builder._load_mono_components_script([]), "")
 
     @patch('pathlib.Path.exists', return_value=True)
     @patch('pathlib.Path.read_text')

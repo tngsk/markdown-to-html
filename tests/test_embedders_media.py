@@ -151,7 +151,7 @@ def test_embed_media_external_urls(media_embedder):
 @patch("src.embedders.media.Path.resolve")
 @patch("src.embedders.media.Path.exists")
 def test_embed_media_ab_test_tag_both_assets(mock_exists, mock_resolve, mock_encode, media_embedder):
-    html_content = '<situ-ab-test title="Test" src-a="imageA.png" src-b="imageB.png"></situ-ab-test>'
+    html_content = '<mono-ab-test title="Test" src-a="imageA.png" src-b="imageB.png"></mono-ab-test>'
     markdown_dir = Path("/path/to/markdown")
 
     mock_exists.return_value = True
@@ -330,8 +330,8 @@ def test_embed_media_valid_image(mock_exists, mock_resolve, mock_encode, media_e
 @patch("src.embedders.media.Path.resolve")
 @patch("src.embedders.media.Path.exists")
 def test_embed_media_ab_test_tag(mock_exists, mock_resolve, mock_encode, media_embedder):
-    """Test embed_media_in_html replaces src-a and src-b in situ-ab-test tags"""
-    html_content = '<situ-ab-test title="Test" src-a="imageA.png" src-b="imageB.png"></situ-ab-test>'
+    """Test embed_media_in_html replaces src-a and src-b in mono-ab-test tags"""
+    html_content = '<mono-ab-test title="Test" src-a="imageA.png" src-b="imageB.png"></mono-ab-test>'
     markdown_dir = Path("/path/to/markdown")
 
     mock_exists.return_value = True
@@ -363,8 +363,8 @@ def test_embed_media_ab_test_tag(mock_exists, mock_resolve, mock_encode, media_e
 @patch("src.embedders.media.Path.resolve")
 @patch("src.embedders.media.Path.exists")
 def test_embed_media_ab_test_tag_mixed(mock_exists, mock_resolve, mock_encode, media_embedder):
-    """Test embed_media_in_html handles mixed local/external src in situ-ab-test tags"""
-    html_content = '<situ-ab-test title="Test" src-a="https://example.com/imageA.png" src-b="imageB.png"></situ-ab-test>'
+    """Test embed_media_in_html handles mixed local/external src in mono-ab-test tags"""
+    html_content = '<mono-ab-test title="Test" src-a="https://example.com/imageA.png" src-b="imageB.png"></mono-ab-test>'
     markdown_dir = Path("/path/to/markdown")
 
     mock_exists.return_value = True
