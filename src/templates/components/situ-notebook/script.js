@@ -46,6 +46,11 @@ class SituNotebookInput extends HTMLElement {
       }
     }
 
+    const placeholder = this.getAttribute("placeholder");
+    if (placeholder && this.refs.inputArea) {
+      this.refs.inputArea.placeholder = placeholder;
+    }
+
     // Test if Local Storage is available
     try {
       const testKey = "__storage_test__";
