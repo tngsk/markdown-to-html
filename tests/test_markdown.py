@@ -110,6 +110,18 @@ class TestMarkdownProcessor(unittest.TestCase):
         result_title = self._get_parser("situ-notebook", processor2).process(md_content_title)
         self.assertEqual(result_title, expected_html_title)
 
+        md_content_placeholder = "Notebook link: @[notebook](my-notebook-id, Please write here)"
+        expected_html_placeholder = 'Notebook link: <situ-notebook id="my-notebook-id" placeholder="Please write here"></situ-notebook>'
+        processor3 = MarkdownProcessor(self.logger, self.file_handler)
+        result_placeholder = self._get_parser("situ-notebook", processor3).process(md_content_placeholder)
+        self.assertEqual(result_placeholder, expected_html_placeholder)
+
+        md_content_both = "Notebook link: @[notebook: My Notes](my-notebook-id, Please write here)"
+        expected_html_both = 'Notebook link: <situ-notebook id="my-notebook-id" title="My Notes" placeholder="Please write here"></situ-notebook>'
+        processor4 = MarkdownProcessor(self.logger, self.file_handler)
+        result_both = self._get_parser("situ-notebook", processor4).process(md_content_both)
+        self.assertEqual(result_both, expected_html_both)
+
     def test_preprocess_ab_tests(self):
         md_content = "Test: @[ab-test: My Test](file_a.md, file_b.md)"
         expected_html = 'Test: <situ-ab-test id="abtest-1" title="My Test" src-a="file_a.md" src-b="file_b.md"></situ-ab-test>'
