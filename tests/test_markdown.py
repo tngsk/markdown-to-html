@@ -202,6 +202,30 @@ class TestMarkdownProcessor(unittest.TestCase):
         expected_preprocessed = '# Title\n<situ-poll id="poll-1" title="Title" options="A, B"></situ-poll>'
         mock_markdown.markdown.assert_any_call(expected_preprocessed, extensions=MARKDOWN_EXTENSIONS)
 
+    def test_code_blocks_protected(self):
+        """コードブロック内のコンポーネント構文が変換されず保護されることをテスト"""
+        markdown_content = """
+@[icon: outside]
+
+```markdown
+@[icon: inside_fenced]
+```
+
+Inline `@[icon: inside_inline]` testing.
+"""
+        html_output = self.processor.convert_markdown_to_html(markdown_content)
+
+        # 外側のアイコンは変換される
+        assert '<situ-icon name="outside">' in html_output
+
+        # フェンスコードブロック内のアイコンは変換されない
+        assert '<situ-icon name="inside_fenced">' not in html_output
+        assert '@[icon: inside_fenced]' in html_output
+
+        # インラインコードブロック内のアイコンは変換されない
+        assert '<situ-icon name="inside_inline">' not in html_output
+        assert '@[icon: inside_inline]' in html_output
+
     @patch('src.processors.markdown.markdown')
     def test_convert_markdown_to_html_error(self, mock_markdown):
         mock_markdown.markdown.side_effect = Exception("Markdown parsing failed")
