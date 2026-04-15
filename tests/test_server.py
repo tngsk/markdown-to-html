@@ -1,9 +1,10 @@
 import json
 import logging
-from unittest.mock import AsyncMock, MagicMock, mock_open, patch
+from typing import cast
+from unittest.mock import AsyncMock, patch
 
 import pytest
-from fastapi import WebSocket, WebSocketDisconnect
+from fastapi import WebSocket
 from fastapi.testclient import TestClient
 
 from src.server import (
@@ -43,7 +44,7 @@ def test_get_allowed_origins_exception(caplog):
 async def test_connection_manager_connect():
     test_manager = ConnectionManager()
     ws = MockWebSocket()
-    await test_manager.connect(ws)
+    await test_manager.connect(cast(WebSocket, ws))
 
     assert ws.accepted is True
     assert ws in test_manager.active_connections
@@ -53,14 +54,14 @@ async def test_connection_manager_connect():
 async def test_connection_manager_disconnect():
     test_manager = ConnectionManager()
     ws = MockWebSocket()
-    await test_manager.connect(ws)
+    await test_manager.connect(cast(WebSocket, ws))
     assert ws in test_manager.active_connections
 
-    test_manager.disconnect(ws)
+    test_manager.disconnect(cast(WebSocket, ws))
     assert ws not in test_manager.active_connections
 
 
-def test_get_allowed_origins_exception(caplog):
+def test_get_allowed_origins_open_error(caplog):
     with patch("builtins.open", side_effect=Exception("Test open error")):
         with caplog.at_level(logging.WARNING):
             origins = get_allowed_origins()
@@ -91,8 +92,8 @@ async def test_connection_manager_broadcast():
     ws1 = MockWebSocket()
     ws2 = MockWebSocket()
 
-    await test_manager.connect(ws1)
-    await test_manager.connect(ws2)
+    await test_manager.connect(cast(WebSocket, ws1))
+    await test_manager.connect(cast(WebSocket, ws2))
 
     await test_manager.broadcast("test message")
 
@@ -106,7 +107,7 @@ async def test_connection_manager_broadcast():
 
 
 @pytest.mark.asyncio
-async def test_connection_manager_broadcast_empty():
+async def test_connection_manager_broadcast_empty_no_active():
     test_manager = ConnectionManager()
     # active_connections is empty
     await test_manager.broadcast("should return early")
@@ -116,10 +117,10 @@ async def test_connection_manager_broadcast_empty():
 async def test_connection_manager_broadcast_error(caplog):
     test_manager = ConnectionManager()
     ws = MockWebSocket()
-    await test_manager.connect(ws)
+    await test_manager.connect(cast(WebSocket, ws))
 
     # Make send_text raise an exception
-    async def mock_send_text(msg):
+    async def mock_send_text(data: str):
         raise Exception("Test broadcast error")
 
     ws.send_text = mock_send_text
@@ -143,7 +144,7 @@ async def test_websocket_endpoint_exception(caplog):
     ws = ErrorWebSocket()
     # It should not raise, just log the error and disconnect
     with caplog.at_level(logging.ERROR):
-        await websocket_endpoint(ws)
+        await websocket_endpoint(cast(WebSocket, ws))
 
     assert "WebSocket Error: Test generic socket error" in caplog.text
     assert ws not in manager.active_connections
@@ -172,7 +173,7 @@ def test_websocket_exception(caplog, client):
     with patch.object(
         WebSocket, "receive_text", side_effect=Exception("Generic WS error")
     ):
-        with client.websocket_connect("/ws/sync") as websocket:
+        with client.websocket_connect("/ws/sync"):
             pass
     assert "WebSocket Error: Generic WS error" in caplog.text
 
@@ -180,7 +181,7 @@ def test_websocket_exception(caplog, client):
 def test_websocket_disconnect(client):
     manager.active_connections.clear()
 
-    with client.websocket_connect("/ws/sync") as websocket:
+    with client.websocket_connect("/ws/sync"):
         assert len(manager.active_connections) == 1
 
     # Once the context manager exits, the disconnect happens
@@ -195,7 +196,7 @@ def test_websocket_endpoint_general_error(client, caplog):
     ):
         # We catch the exception and assert on the log
         try:
-            with client.websocket_connect("/ws/sync") as websocket:
+            with client.websocket_connect("/ws/sync"):
                 pass
         except Exception:
             pass
