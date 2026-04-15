@@ -10,6 +10,10 @@ class Parser(BaseComponentParser):
 
         def replacer(match: re.Match) -> str:
             name = match.group(1).strip()
+            # Strip surrounding quotes if present
+            if (name.startswith('"') and name.endswith('"')) or (name.startswith("'") and name.endswith("'")):
+                name = name[1:-1].strip()
+
             args_str = match.group(2)
 
             size_attr = ""

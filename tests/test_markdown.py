@@ -38,6 +38,9 @@ class TestMarkdownProcessor(unittest.TestCase):
             ("@[icon: search](color: blue)", '<situ-icon name="search" color="blue"></situ-icon>'),
             ("@[icon: search](display: inline)", '<situ-icon name="search" display="inline"></situ-icon>'),
             ('@[icon: "quotes" test]', '<situ-icon name="&quot;quotes&quot; test"></situ-icon>'),
+            ('@[icon: "search"]', '<situ-icon name="search"></situ-icon>'),
+            ("@[icon: 'search with space']", '<situ-icon name="search with space"></situ-icon>'),
+            ('@[icon: "search with space"](size: 24px)', '<situ-icon name="search with space" size="24px"></situ-icon>'),
         ]
 
         for markdown_text, expected_html in cases:
@@ -198,6 +201,30 @@ class TestMarkdownProcessor(unittest.TestCase):
         # Verify markdown.markdown was called with the preprocessed content
         expected_preprocessed = '# Title\n<situ-poll id="poll-1" title="Title" options="A, B"></situ-poll>'
         mock_markdown.markdown.assert_any_call(expected_preprocessed, extensions=MARKDOWN_EXTENSIONS)
+
+    def test_code_blocks_protected(self):
+        """コードブロック内のコンポーネント構文が変換されず保護されることをテスト"""
+        markdown_content = """
+@[icon: outside]
+
+```markdown
+@[icon: inside_fenced]
+```
+
+Inline `@[icon: inside_inline]` testing.
+"""
+        html_output = self.processor.convert_markdown_to_html(markdown_content)
+
+        # 外側のアイコンは変換される
+        assert '<situ-icon name="outside">' in html_output
+
+        # フェンスコードブロック内のアイコンは変換されない
+        assert '<situ-icon name="inside_fenced">' not in html_output
+        assert '@[icon: inside_fenced]' in html_output
+
+        # インラインコードブロック内のアイコンは変換されない
+        assert '<situ-icon name="inside_inline">' not in html_output
+        assert '@[icon: inside_inline]' in html_output
 
     @patch('src.processors.markdown.markdown')
     def test_convert_markdown_to_html_error(self, mock_markdown):
