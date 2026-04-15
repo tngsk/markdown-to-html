@@ -38,6 +38,14 @@ class SituNotebookInput extends HTMLElement {
       this.refs[el.dataset.ref] = el;
     });
 
+    const title = this.getAttribute("title");
+    if (title) {
+      const labelEl = this.shadowRoot.querySelector(".notebook-label");
+      if (labelEl) {
+        labelEl.textContent = title;
+      }
+    }
+
     // Test if Local Storage is available
     try {
       const testKey = "__storage_test__";

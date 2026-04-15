@@ -93,7 +93,7 @@ class HTMLDocumentBuilder:
             for tag in [
                 "<situ-poll",
                 "<situ-ab-test",
-                "<situ-notebook-input",
+                "<situ-notebook",
                 "<situ-textfield-input",
                 "<situ-reaction",
                 "<situ-session-join",
