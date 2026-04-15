@@ -26,11 +26,11 @@
 * **CSPヘッダーの構成:** アプリケーションはリポジトリルートの `config.toml` をセキュリティ設定のために読み込み、`[security]` セクションから `connect-src` と `ws-src` を抽出して Content-Security-Policy (CSP) のmetaタグに入力する。
 * **新規リソースの許可:** フロントエンドに導入される新しい外部CDNやリソースが、`processors/html.py` で動的に生成される Content-Security-Policy (CSP) のmetaタグで明示的に許可されていることを確認すること。
 
-## 【厳守ルール】およびAIへの指示 (docs_internal/doc.mdより)
+## 【厳守ルール】およびAIへの指示
 * **Gitの強制オプション（`git add -f`, `git push --force` 等）の使用は一切禁止する。** `.gitignore` に記載された非公開ファイルを強制追加してはならない。
 * 全てのスクリプトは堅牢なエラーハンドリングを含み、SIGINT等に対して安全に終了する構造とすること。
 * Markdownの独自拡張記法は、将来的に外部センサーデータと統合することを想定して設計すること。
-* Beautiful Soup 4 のような重い依存を排除し、高速かつメモリ効率の高いストリームライクな置換を実現するためDOM操作にはPython標準の `re` (正規表現) を用いること。
+* 高速かつメモリ効率の高いストリームライクな置換を実現するためDOM操作にはPython標準の `re` (正規表現) を用いること。
 * YAML Frontmatterの使用は避け、設定ファイル管理（config.toml）を使用すること。
 
 ## 実行計画のフォーマットルール

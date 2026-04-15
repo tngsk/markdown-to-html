@@ -1,4 +1,4 @@
-# Markdown to HTML Converter
+# Mono - Markdown to Monolithic Document
 
 Markdownファイルを、画像（Base64）やCSSが埋め込まれた**単一の自己完結型HTMLファイル**に変換するCLIツールです。ローカルでの配布や共有に最適です。
 
