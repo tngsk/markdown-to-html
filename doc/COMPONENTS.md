@@ -11,14 +11,14 @@ Used to present an A/B test between two media sources (images or audio).
 
 **Syntax:**
 ```markdown
-@[ab-test: <title>](<src_a>, <src_b>)
+@[ab-test: <title>](src-a: <src_a>, src-b: <src_b>)
 ```
 *   `title`: The title of the A/B test.
 *   `src_a`: Path or URL to the first media source.
 *   `src_b`: Path or URL to the second media source.
 
 Result:
-@[ab-test: <title>](<src_a>, <src_b>)
+@[ab-test: <title>](src-a: <src_a>, src-b: <src_b>)
 
 ---
 
@@ -27,17 +27,17 @@ Used to embed a playable sound file.
 
 **Syntax:**
 ```markdown
-@[sound: <label>](<src>)
+@[sound: <label>](src: <src>)
 ```
 *   `label`: (Optional) Text label to display.
 *   `src`: Path or URL to the audio file.
 
 Result:
-@[sound: <label>](<src>)
+@[sound: <label>](src: <src>)
 
 Alternative syntax without a label:
 ```markdown
-@[sound](<src>)
+@[sound](src: <src>)
 ```
 
 ---
@@ -90,7 +90,7 @@ Used to create a single-line text input field.
 
 **Syntax:**
 ```markdown
-@[textfield: size: <size> (<placeholder>)]
+@[textfield: <placeholder>](size: <size>) or @[textfield](placeholder: <placeholder>, size: <size>)
 ```
 *   `size`: Number indicating the size attribute of the input.
 *   `placeholder`: The placeholder text for the input.
@@ -106,7 +106,7 @@ Used to create a multi-line notebook-style input area.
 
 **Syntax:**
 ```markdown
-@[notebook: <title>](<id>, <placeholder>)
+@[notebook: <title>](id: <id>, placeholder: <placeholder>)
 ```
 *   `title`: (Optional) The title of the notebook input area.
 *   `id`: The unique identifier for this input block.
@@ -117,7 +117,7 @@ Used to create a polling interface with multiple options.
 
 **Syntax:**
 ```markdown
-@[poll: <title>](<options>)
+@[poll: <title>](options: <options>)
 ```
 *   `title`: The question or title of the poll.
 *   `options`: Comma-separated list of poll options.
@@ -127,7 +127,7 @@ Used to embed interactive reaction buttons.
 
 **Syntax:**
 ```markdown
-@[reaction: "<options>"]
+@[reaction](options: "<options>")
 ```
 *   `options`: Comma-separated list of reaction emojis or texts. Quotes around the options are optional.
 
@@ -190,14 +190,14 @@ Used to insert empty space (horizontal or vertical) in the layout.
 
 **Syntax:**
 ```markdown
-@[spacer](<width>, <height>)
+@[spacer](width: <width>, height: <height>)
 ```
 *   `width`: CSS width value.
 *   `height`: (Optional) CSS height value. If omitted, defaults to the width value.
 
 Alternative syntax:
 ```markdown
-@[spacer](<size>)
+@[spacer](width: <size>)
 ```
 
 ---
