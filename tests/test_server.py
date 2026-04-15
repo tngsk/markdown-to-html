@@ -1,12 +1,18 @@
 import json
 import logging
-from unittest.mock import patch, mock_open, AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, mock_open, patch
 
 import pytest
-from fastapi.testclient import TestClient
 from fastapi import WebSocket, WebSocketDisconnect
+from fastapi.testclient import TestClient
 
-from src.server import app, ConnectionManager, manager, get_allowed_origins, websocket_endpoint
+from src.server import (
+    ConnectionManager,
+    app,
+    get_allowed_origins,
+    manager,
+    websocket_endpoint,
+)
 
 
 @pytest.fixture
@@ -92,6 +98,7 @@ async def test_connection_manager_broadcast():
 
     # Since tasks are created in the background, we need to yield to the event loop
     import asyncio
+
     await asyncio.sleep(0)
 
     assert "test message" in ws1.sent_messages
@@ -103,6 +110,7 @@ async def test_connection_manager_broadcast_empty():
     test_manager = ConnectionManager()
     # active_connections is empty
     await test_manager.broadcast("should return early")
+
 
 @pytest.mark.asyncio
 async def test_connection_manager_broadcast_error(caplog):
@@ -120,6 +128,7 @@ async def test_connection_manager_broadcast_error(caplog):
 
     # Since tasks are created in the background, we need to yield to the event loop
     import asyncio
+
     await asyncio.sleep(0)
 
     assert "Error broadcasting: Test broadcast error" in caplog.text
@@ -160,7 +169,9 @@ def test_websocket_sync_endpoint(client):
 
 def test_websocket_exception(caplog, client):
     manager.active_connections.clear()
-    with patch.object(WebSocket, "receive_text", side_effect=Exception("Generic WS error")):
+    with patch.object(
+        WebSocket, "receive_text", side_effect=Exception("Generic WS error")
+    ):
         with client.websocket_connect("/ws/sync") as websocket:
             pass
     assert "WebSocket Error: Generic WS error" in caplog.text
@@ -175,10 +186,13 @@ def test_websocket_disconnect(client):
     # Once the context manager exits, the disconnect happens
     assert len(manager.active_connections) == 0
 
+
 def test_websocket_endpoint_general_error(client, caplog):
     manager.active_connections.clear()
 
-    with patch.object(WebSocket, "receive_text", side_effect=Exception("General WS Error")):
+    with patch.object(
+        WebSocket, "receive_text", side_effect=Exception("General WS Error")
+    ):
         # We catch the exception and assert on the log
         try:
             with client.websocket_connect("/ws/sync") as websocket:
@@ -224,6 +238,10 @@ def test_receive_data_error(mock_file, client):
 @patch("uvicorn.run")
 def test_main(mock_run):
     import runpy
+    import sys
+
+    # Ensure any previously imported instance of src.server is removed to avoid RuntimeWarning
+    sys.modules.pop("src.server", None)
     # Run the server module as __main__ to hit the if __name__ == "__main__": block
     runpy.run_module("src.server", run_name="__main__")
     # assert_called_once checks that it was called once.
