@@ -1,7 +1,8 @@
 [project]
-name = "markdown-to-html"
+name = "Mono"
+title = "Mono - Markdown to Monolithic Document"
 version = "0.1.0"
-description = "Add your description here"
+description = "Markdownファイルを、画像（Base64）やCSSが埋め込まれた単一の自己完結型HTMLファイルに変換するCLIツールです。ローカルでの配布や共有に最適です。"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
