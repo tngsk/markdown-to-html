@@ -1,21 +1,24 @@
 import re
-
 from src.processors.base_parser import BaseComponentParser
 
-
 class Parser(BaseComponentParser):
-    PATTERN = r"@\[(?:notebook|notebook-input)(?::\s*([^\]]+))?\]\(([^,)]+?)(?:,\s*([^)]+?))?\)"
+    PATTERN = r"@\[(?:notebook|notebook-input)(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
 
         def replacer(match: re.Match) -> str:
             title = match.group(1)
-            input_id = match.group(2).strip()
-            placeholder = match.group(3)
+            args_str = match.group(2)
+            args = self.parse_key_value_args(args_str)
+
+            input_id = args.get('id', '')
+            placeholder = args.get('placeholder', '')
+            if 'title' in args:
+                title = args['title']
 
             safe_id = self.escape_html(input_id)
-            attrs = [f'id="{safe_id}"']
+            attrs = [f'id="{safe_id}"'] if safe_id else []
 
             if title:
                 safe_title = self.escape_html(title.strip())

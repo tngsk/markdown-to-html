@@ -2,31 +2,23 @@ import re
 from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
-    PATTERN = r"@\[clock\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    PATTERN = r"@\[clock(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     TEMPLATE = '<situ-clock{format_attr}{display_attr}></situ-clock>'
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
 
         def replacer(match: re.Match) -> str:
-            args_str = match.group(1)
+            args_str = match.group(2)
+            args = self.parse_key_value_args(args_str)
 
             format_attr = ""
             display_attr = ""
 
-            if args_str:
-                format_match = re.search(r'format:\s*([^,]+)(?:,|$)', args_str)
-                if format_match:
-                    # Remove potential surrounding quotes from format
-                    format_val = format_match.group(1).strip()
-                    if (format_val.startswith('"') and format_val.endswith('"')) or (format_val.startswith("'") and format_val.endswith("'")):
-                        format_val = format_val[1:-1]
-                    format_attr = f' format="{self.escape_html(format_val)}"'
-
-                display_match = re.search(r'display:\s*([^,]+)(?:,|$)', args_str)
-                if display_match:
-                    display_val = display_match.group(1).strip()
-                    display_attr = f' display="{self.escape_html(display_val)}"'
+            if 'format' in args:
+                format_attr = f' format="{self.escape_html(args["format"])}"'
+            if 'display' in args:
+                display_attr = f' display="{self.escape_html(args["display"])}"'
 
             return self.TEMPLATE.format(
                 format_attr=format_attr,

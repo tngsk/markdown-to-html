@@ -18,6 +18,47 @@ class BaseComponentParser:
             return ""
         return html.escape(text.strip())
 
+    @staticmethod
+    def parse_key_value_args(args_str: str) -> dict:
+        if not args_str:
+            return {}
+        result = {}
+        parts = []
+        current = []
+        paren_depth = 0
+        in_quote = None
+        for char in args_str:
+            if in_quote:
+                current.append(char)
+                if char == in_quote:
+                    in_quote = None
+            elif char in "\"'":
+                in_quote = char
+                current.append(char)
+            elif char == '(':
+                paren_depth += 1
+                current.append(char)
+            elif char == ')':
+                paren_depth -= 1
+                current.append(char)
+            elif char == ',' and paren_depth == 0:
+                parts.append(''.join(current).strip())
+                current = []
+            else:
+                current.append(char)
+        if current:
+            parts.append(''.join(current).strip())
+
+        for part in parts:
+            if ':' in part:
+                k, v = part.split(':', 1)
+                k = k.strip()
+                v = v.strip()
+                if (v.startswith('"') and v.endswith('"')) or (v.startswith("'") and v.endswith("'")):
+                    v = v[1:-1]
+                result[k] = v
+        return result
+
     def process(self, markdown_content: str) -> str:
         """
         Markdownテキストを受け取り、コンポーネント固有の前処理（置換）を行った結果を返す。

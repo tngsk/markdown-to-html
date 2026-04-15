@@ -50,7 +50,7 @@ class TestMarkdownProcessor(unittest.TestCase):
 
     def test_preprocess_sound(self):
         # Test basic and no-label replacements
-        md_content = "Here is @[sound: UI1](test.mp3) and @[sound](test.wav)."
+        md_content = "Here is @[sound: UI1](src: test.mp3) and @[sound](src: test.wav)."
         result = self._get_parser("situ-sound").process(md_content)
 
         self.assertIn('<situ-sound id="sound-1" label="UI1" src="test.mp3"></situ-sound>', result)
@@ -58,13 +58,13 @@ class TestMarkdownProcessor(unittest.TestCase):
 
     def test_preprocess_polls(self):
         # Test basic replacement
-        md_content = "Some text @[poll: My Title](Option A, Option B)"
+        md_content = "Some text @[poll: My Title](options: \"Option A, Option B\")"
         expected_html = 'Some text <situ-poll id="poll-1" title="My Title" options="Option A, Option B"></situ-poll>'
         result = self._get_parser("situ-poll").process(md_content)
         self.assertEqual(result, expected_html)
 
         # Test escaping
-        md_content_escape = 'Another @[poll: Title "with quotes"](Option <A>)'
+        md_content_escape = 'Another @[poll: Title "with quotes"](options: "Option <A>")'
         expected_html_escape = 'Another <situ-poll id="poll-1" title="Title &quot;with quotes&quot;" options="Option &lt;A&gt;"></situ-poll>'
 
         # We need to create a new processor to reset the counter
@@ -80,7 +80,7 @@ class TestMarkdownProcessor(unittest.TestCase):
         self.assertEqual(result, expected_html)
 
         # Test size format
-        md_content_size = "Input with size: @[textfield: size:50 (Details)]"
+        md_content_size = "Input with size: @[textfield](size: 50, placeholder: Details)"
         expected_html_size = 'Input with size: <situ-textfield-input id="textfield-1" placeholder="Details" size="50"></situ-textfield-input>'
         processor2 = MarkdownProcessor(self.logger, self.file_handler)
         result_size = self._get_parser("situ-textfield-input", processor2).process(md_content_size)
@@ -95,44 +95,44 @@ class TestMarkdownProcessor(unittest.TestCase):
 
     def test_preprocess_textfield_size_without_placeholder(self):
         # Test size without placeholder
-        md_content_size_no_placeholder = "Input with size no placeholder: @[textfield: size:30]"
+        md_content_size_no_placeholder = "Input with size no placeholder: @[textfield](size: 30)"
         expected_html_size_no_placeholder = 'Input with size no placeholder: <situ-textfield-input id="textfield-1" placeholder="" size="30"></situ-textfield-input>'
         processor = MarkdownProcessor(self.logger, self.file_handler)
         result_size_no_placeholder = self._get_parser("situ-textfield-input", processor).process(md_content_size_no_placeholder)
         self.assertEqual(result_size_no_placeholder, expected_html_size_no_placeholder)
 
     def test_preprocess_notebooks(self):
-        md_content = "Notebook link: @[notebook-input](my-notebook-id)"
+        md_content = "Notebook link: @[notebook-input](id: my-notebook-id)"
         expected_html = 'Notebook link: <situ-notebook id="my-notebook-id"></situ-notebook>'
         result = self._get_parser("situ-notebook").process(md_content)
         self.assertEqual(result, expected_html)
 
-        md_content_title = "Notebook link: @[notebook: My Notes](my-notebook-id)"
+        md_content_title = "Notebook link: @[notebook: My Notes](id: my-notebook-id)"
         expected_html_title = 'Notebook link: <situ-notebook id="my-notebook-id" title="My Notes"></situ-notebook>'
         processor2 = MarkdownProcessor(self.logger, self.file_handler)
         result_title = self._get_parser("situ-notebook", processor2).process(md_content_title)
         self.assertEqual(result_title, expected_html_title)
 
-        md_content_placeholder = "Notebook link: @[notebook](my-notebook-id, Please write here)"
+        md_content_placeholder = "Notebook link: @[notebook](id: my-notebook-id, placeholder: Please write here)"
         expected_html_placeholder = 'Notebook link: <situ-notebook id="my-notebook-id" placeholder="Please write here"></situ-notebook>'
         processor3 = MarkdownProcessor(self.logger, self.file_handler)
         result_placeholder = self._get_parser("situ-notebook", processor3).process(md_content_placeholder)
         self.assertEqual(result_placeholder, expected_html_placeholder)
 
-        md_content_both = "Notebook link: @[notebook: My Notes](my-notebook-id, Please write here)"
+        md_content_both = "Notebook link: @[notebook: My Notes](id: my-notebook-id, placeholder: Please write here)"
         expected_html_both = 'Notebook link: <situ-notebook id="my-notebook-id" title="My Notes" placeholder="Please write here"></situ-notebook>'
         processor4 = MarkdownProcessor(self.logger, self.file_handler)
         result_both = self._get_parser("situ-notebook", processor4).process(md_content_both)
         self.assertEqual(result_both, expected_html_both)
 
     def test_preprocess_ab_tests(self):
-        md_content = "Test: @[ab-test: My Test](file_a.md, file_b.md)"
+        md_content = "Test: @[ab-test: My Test](src-a: file_a.md, src-b: file_b.md)"
         expected_html = 'Test: <situ-ab-test id="abtest-1" title="My Test" src-a="file_a.md" src-b="file_b.md"></situ-ab-test>'
         result = self._get_parser("situ-ab-test").process(md_content)
         self.assertEqual(result, expected_html)
 
     def test_preprocess_reactions(self):
-        md_content = "React here: @[reaction: like, dislike]"
+        md_content = "React here: @[reaction](options: \"like, dislike\")"
         expected_html = 'React here: <situ-reaction id="reaction-1" options="like, dislike"></situ-reaction>'
         result = self._get_parser("situ-reaction").process(md_content)
         self.assertEqual(result, expected_html)
@@ -150,12 +150,12 @@ class TestMarkdownProcessor(unittest.TestCase):
         self.assertEqual(result, expected_html)
 
     def test_preprocess_spacer(self):
-        md_content_single = "Text before @[spacer](20px) text after."
+        md_content_single = "Text before @[spacer](width: 20px) text after."
         expected_html_single = 'Text before <situ-spacer width="20px" height="20px"></situ-spacer> text after.'
         result_single = self._get_parser("situ-spacer").process(md_content_single)
         self.assertEqual(result_single, expected_html_single)
 
-        md_content_double = "Text before @[spacer](10px, 20px) text after."
+        md_content_double = "Text before @[spacer](width: 10px, height: 20px) text after."
         expected_html_double = 'Text before <situ-spacer width="10px" height="20px"></situ-spacer> text after.'
         result_double = self._get_parser("situ-spacer").process(md_content_double)
         self.assertEqual(result_double, expected_html_double)
@@ -193,7 +193,7 @@ class TestMarkdownProcessor(unittest.TestCase):
         mock_markdown.markdown.side_effect = None
         mock_markdown.markdown.return_value = "<h1>Processed</h1>"
 
-        md_content = "# Title\n@[poll: Title](A, B)"
+        md_content = "# Title\n@[poll: Title](options: \"A, B\")"
         result = self.processor.convert_markdown_to_html(md_content)
 
         self.assertEqual(result, "<h1>Processed</h1>")
