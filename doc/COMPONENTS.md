@@ -89,8 +89,9 @@ Used to create a multi-line notebook-style input area.
 
 **Syntax:**
 ```markdown
-@[notebook-input](<id>)
+@[notebook: <title>](<id>)
 ```
+*   `title`: (Optional) The title of the notebook input area.
 *   `id`: The unique identifier for this input block.
 
 ### Poll (`situ-poll`)
