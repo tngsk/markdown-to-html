@@ -235,12 +235,16 @@ class MarkdownProcessor:
             if isinstance(block_level, list):
                 if "mono-layout" not in block_level:
                     block_level.append("mono-layout")
+                if "mono-hero" not in block_level:
+                    block_level.append("mono-hero")
             elif isinstance(block_level, set):
                 block_level.add("mono-layout")
+                block_level.add("mono-hero")
             else:
                 add_fn = getattr(block_level, "add", None)
                 if callable(add_fn):
                     add_fn("mono-layout")
+                    add_fn("mono-hero")
 
             html = markdown.markdown(markdown_content, extensions=MARKDOWN_EXTENSIONS)
             self.logger.debug("Markdown → HTML 変換完了")

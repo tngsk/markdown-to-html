@@ -153,6 +153,21 @@ Used to display a session join component.
 
 ## Layout & Formatting Components
 
+### Hero (`mono-hero`)
+Used to create a full-screen landing page style hero section.
+
+**Syntax:**
+```markdown
+@[hero: <title>](image: <image_url>, mode: <mode>, bg-color: <bg_color>, text-color: <text_color>)
+...content...
+@[/hero]
+```
+*   `title`: (Optional) The main title to display in the center.
+*   `image`: (Optional) Background image URL.
+*   `mode`: (Optional) `cover` (default) or `contain`/`fit`.
+*   `bg-color`: (Optional) Background color.
+*   `text-color`: (Optional) Text color.
+
 ### Layout (`mono-layout`)
 Used to create flexbox-based layouts such as rows and stacks (columns).
 
@@ -160,7 +175,7 @@ Used to create flexbox-based layouts such as rows and stacks (columns).
 ```markdown
 @[row: <classes>]
 ...content...
-@[end]
+@[/row]
 ```
 *   `classes`: (Optional) CSS class names to apply to the row.
 *   Alternative: `@[row]`
@@ -169,7 +184,7 @@ Used to create flexbox-based layouts such as rows and stacks (columns).
 ```markdown
 @[stack: <classes>]
 ...content...
-@[end]
+@[/stack]
 ```
 *   `classes`: (Optional) CSS class names to apply to the stack.
 *   Alternative: `@[stack]`

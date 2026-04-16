@@ -1,0 +1,60 @@
+:host {
+    display: block;
+    /* Break out of normal body padding if necessary */
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    min-height: 100vh;
+    /* Offset top padding from body if present */
+    margin-top: -5rem;
+    margin-bottom: 5rem;
+    overflow: hidden;
+    background-color: var(--hero-bg-color, transparent);
+    background-image: var(--hero-bg-image, none);
+    background-size: var(--hero-bg-mode, cover);
+    background-position: center;
+    background-repeat: no-repeat;
+    color: var(--hero-text-color, inherit);
+}
+
+.hero-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: cover; /* Default */
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.hero-content {
+    text-align: center;
+    max-width: 90%;
+    z-index: 1;
+}
+
+/* Responsive font sizing for text inside hero */
+::slotted(h1),
+.hero-content h1 {
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    margin: 0;
+    line-height: 1.2;
+}
+
+::slotted(h2),
+.hero-content h2 {
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    margin: 1rem 0;
+}
+
+::slotted(p),
+.hero-content p {
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    margin: 1rem 0;
+}

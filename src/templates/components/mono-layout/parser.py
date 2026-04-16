@@ -4,7 +4,7 @@ from src.processors.base_parser import BaseComponentParser
 class Parser(BaseComponentParser):
     ROW_PATTERN = r"@\[row(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     STACK_PATTERN = r"@\[stack(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
-    END_PATTERN = r"@\[end\]"
+    END_PATTERN = r"@\[(?:end|/row|/stack|/layout)\]"
     COLUMN_START_PATTERN = r":::column"
     COLUMN_END_PATTERN = r":::(?!\S)"
 

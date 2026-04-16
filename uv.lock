@@ -232,7 +232,7 @@ wheels = [
 ]
 
 [[package]]
-name = "markdown-to-html"
+name = "mono"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
