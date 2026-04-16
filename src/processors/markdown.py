@@ -148,20 +148,25 @@ class MarkdownProcessor:
             markdown_content = self._restore_code_blocks(protected_content, blocks)
 
             # Markdownパーサーにカスタムコンポーネントをブロックレベル要素として認識させる
-            block_level = markdown.util.BLOCK_LEVEL_ELEMENTS
-            if isinstance(block_level, list):
-                if "mono-layout" not in block_level:
-                    block_level.append("mono-layout")
-                if "mono-hero" not in block_level:
-                    block_level.append("mono-hero")
-            elif isinstance(block_level, set):
-                block_level.add("mono-layout")
-                block_level.add("mono-hero")
-            else:
-                add_fn = getattr(block_level, "add", None)
-                if callable(add_fn):
-                    add_fn("mono-layout")
-                    add_fn("mono-hero")
+            tags_to_add = []
+            for parser in self.parsers:
+                if hasattr(parser, 'block_level_tags'):
+                    tags_to_add.extend(parser.block_level_tags)
+
+            if tags_to_add:
+                block_level = markdown.util.BLOCK_LEVEL_ELEMENTS
+                if isinstance(block_level, list):
+                    for tag in tags_to_add:
+                        if tag not in block_level:
+                            block_level.append(tag)
+                elif isinstance(block_level, set):
+                    for tag in tags_to_add:
+                        block_level.add(tag)
+                else:
+                    add_fn = getattr(block_level, "add", None)
+                    if callable(add_fn):
+                        for tag in tags_to_add:
+                            add_fn(tag)
 
             html = markdown.markdown(markdown_content, extensions=MARKDOWN_EXTENSIONS)
             self.logger.debug("Markdown → HTML 変換完了")

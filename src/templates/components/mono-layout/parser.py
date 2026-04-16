@@ -8,6 +8,10 @@ class Parser(BaseComponentParser):
     COLUMN_START_PATTERN = r":::column"
     COLUMN_END_PATTERN = r":::(?!\S)"
 
+    @property
+    def block_level_tags(self) -> list[str]:
+        return ["mono-layout"]
+
     def process(self, markdown_content: str) -> str:
         # row
         pattern = re.compile(self.ROW_PATTERN)

@@ -7,6 +7,10 @@ class Parser(BaseComponentParser):
     START_PATTERN = r"@\[hero(?:\:\s*([^\]]*))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     END_PATTERN = r"@\[/hero\]"
 
+    @property
+    def block_level_tags(self) -> list[str]:
+        return ["mono-hero"]
+
     def process(self, markdown_content: str) -> str:
         # start tag
         pattern = re.compile(self.START_PATTERN)
