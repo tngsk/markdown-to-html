@@ -1,0 +1,154 @@
+:host {
+  display: block;
+}
+
+.drawer-container {
+  position: fixed;
+  z-index: 9999;
+  transition: transform 0.3s ease;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  border: 1px solid #ccc;
+}
+
+/* Left Drawer */
+.drawer-container.left {
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%) translateX(-100%);
+  border-radius: 0 8px 8px 0;
+}
+.drawer-container.left.open {
+  transform: translateY(-50%) translateX(0);
+}
+.drawer-container.left .drawer-handle {
+  position: absolute;
+  top: 50%;
+  right: -32px;
+  transform: translateY(-50%);
+  width: 30px;
+  padding: 10px 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-left: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 8px 8px 0;
+  writing-mode: vertical-rl;
+  box-shadow: 4px 0 6px rgba(0,0,0,0.1);
+  user-select: none;
+}
+
+/* Right Drawer */
+.drawer-container.right {
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%) translateX(100%);
+  border-radius: 8px 0 0 8px;
+}
+.drawer-container.right.open {
+  transform: translateY(-50%) translateX(0);
+}
+.drawer-container.right .drawer-handle {
+  position: absolute;
+  top: 50%;
+  left: -32px;
+  transform: translateY(-50%);
+  width: 30px;
+  padding: 10px 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-right: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px 0 0 8px;
+  writing-mode: vertical-rl;
+  box-shadow: -4px 0 6px rgba(0,0,0,0.1);
+  user-select: none;
+}
+
+/* Top Drawer */
+.drawer-container.top {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  border-radius: 0 0 8px 8px;
+}
+.drawer-container.top.open {
+  transform: translateX(-50%) translateY(0);
+}
+.drawer-container.top .drawer-handle {
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 30px;
+  padding: 0 10px;
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  user-select: none;
+}
+
+/* Bottom Drawer */
+.drawer-container.bottom {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  border-radius: 8px 8px 0 0;
+}
+.drawer-container.bottom.open {
+  transform: translateX(-50%) translateY(0);
+}
+.drawer-container.bottom .drawer-handle {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 30px;
+  padding: 0 10px;
+  background: white;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -4px 6px rgba(0,0,0,0.1);
+  user-select: none;
+}
+
+.drawer-content {
+  padding: 16px;
+  max-width: 80vw;
+  max-height: 80vh;
+  overflow: auto;
+}
+
+/* Material Symbols in Shadow DOM */
+.drawer-handle .material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}

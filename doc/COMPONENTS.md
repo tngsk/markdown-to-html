@@ -168,6 +168,27 @@ Used to create a full-screen landing page style hero section.
 *   `bg-color`: (Optional) Background color.
 *   `text-color`: (Optional) Text color.
 
+
+### Drawer (`mono-drawer`)
+Used to create a sliding drawer tab on the edges of the screen, which can contain any other Markdown or components.
+
+**Syntax:**
+```markdown
+@[drawer: <label>](position: <position>, open: <open>)
+...content...
+@[/drawer]
+```
+*   `label`: The text to display on the drawer tab/handle.
+*   `position`: (Optional) `left`, `right`, `top`, or `bottom`. Defaults to `left`.
+*   `open`: (Optional) `true` or `false` to set the initial open state. Defaults to `false`.
+
+Alternative syntax:
+```markdown
+@[drawer](label: <label>, position: <position>)
+...content...
+@[/drawer]
+```
+
 ### Layout (`mono-layout`)
 Used to create flexbox-based layouts such as rows and stacks (columns).
 
