@@ -83,6 +83,9 @@ uv run main.py --help
 
 ## 変更ログ
 
+<small>
+
+- 2026-04-16: プロジェクト設定の名前変更 (rename the project setting)
 - `mono-icon`コンポーネントの追加
 - `mono-spacer`コンポーネントによる水平/垂直スペーシングのサポート
 - デスクトップアプリの設計ドキュメントの最終化
@@ -91,3 +94,5 @@ uv run main.py --help
 - ディレクトリ構造の `src/` 配下へのリファクタリング
 - 描画オーバーレイのための `mono-brush` コンポーネント追加
 - 方向ベースのレイアウトシステム `mono-layout` の追加
+
+</small>
