@@ -130,15 +130,6 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         self.assertEqual(self.builder._escape_html('He said "Hello"'), 'He said &quot;Hello&quot;')
         self.assertEqual(self.builder._escape_html("It's a test"), "It&#39;s a test")
 
-    def test_enhance_code_blocks(self):
-        html_input = '<pre><code class="language-python">print("hello")</code></pre>'
-        expected = '<mono-code-block language="python">\n<pre><code class="language-python">print("hello")</code></pre>\n</mono-code-block>'
-        self.assertEqual(self.builder._enhance_code_blocks(html_input), expected)
-
-        html_input_no_lang = '<pre><code>print("hello")</code></pre>'
-        expected_no_lang = '<mono-code-block language="">\n<pre><code>print("hello")</code></pre>\n</mono-code-block>'
-        self.assertEqual(self.builder._enhance_code_blocks(html_input_no_lang), expected_no_lang)
-
     def test_remove_table_inline_styles(self):
         html_input = '<table><tr><td style="text-align: left;">Data</td><th style="color: red;">Head</th></tr></table>'
         expected = '<table><tr><td>Data</td><th>Head</th></tr></table>'
@@ -161,24 +152,6 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         # Test no exclusions
         result3 = self.builder._remove_excluded_tags(html_input, None)
         self.assertEqual(result3, html_input)
-
-    def test_enhance_colab_links(self):
-        html_input = '<a href="https://github.com/user/repo/blob/main/test.ipynb">Open Note</a>'
-        result = self.builder._enhance_colab_links(html_input)
-        self.assertIn("https://colab.research.google.com/github/user/repo/blob/main/test.ipynb", result)
-        self.assertIn('class="colab-link"', result)
-        self.assertIn("colab-badge.svg", result)
-
-        html_input_other = '<a href="https://example.com/test.ipynb">Open Note</a>'
-        result_other = self.builder._enhance_colab_links(html_input_other)
-        self.assertIn("https://example.com/test.ipynb", result_other)
-        self.assertIn('class="colab-link"', result_other)
-        self.assertIn("colab-badge.svg", result_other)
-
-    def test_replace_custom_nowrap(self):
-        html_input = 'Here is some {{custom syntax}} text.'
-        expected = 'Here is some <span class="nowrap">custom syntax</span> text.'
-        self.assertEqual(self.builder._replace_custom_nowrap(html_input), expected)
 
     def test_build_highlight_js_link(self):
         from src.constants import HIGHLIGHT_JS_CDN_CSS

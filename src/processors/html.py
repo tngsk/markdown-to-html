@@ -69,20 +69,11 @@ class HTMLDocumentBuilder:
         except Exception as e:
             raise ConversionError(f"テンプレート読み込みエラー: {e}") from e
 
-        # コードブロック拡張（コピーボタン、シンタックスハイライト準備）
-        html_body = self._enhance_code_blocks(html_body)
-
         # テーブルインラインスタイル削除
         html_body = self._remove_table_inline_styles(html_body)
 
         # 除外タグ削除
         html_body = self._remove_excluded_tags(html_body, excluded_tags)
-
-        # カスタム記法処理（{{...}} → <span class="nowrap">...</span>）
-        html_body = self._replace_custom_nowrap(html_body)
-
-        # Colabリンクの変換処理 (.ipynb)
-        html_body = self._enhance_colab_links(html_body)
 
         # プレースホルダーを置換
         safe_title = self._escape_html(title)
@@ -200,33 +191,6 @@ class HTMLDocumentBuilder:
             text = text.replace(char, escaped)
         return text
 
-    def _enhance_code_blocks(self, html_content: str) -> str:
-        """
-        コードブロックを拡張（コピーボタン、シンタックスハイライト対応）
-        """
-        # <pre><code ...>...</code></pre> パターンを検索
-        pattern = re.compile(
-            r'(<pre><code(?:\s+class="([^"]*)")?>.*?</code></pre>)', re.DOTALL
-        )
-
-        def replacer(match: re.Match) -> str:
-            original_block = match.group(1)
-            lang_class = match.group(2) or ""
-
-            # 言語クラスから言語名を抽出（"language-python" → "python"）
-            language = ""
-            if lang_class:
-                lang_match = re.search(r"language-(\w+)", lang_class)
-                if lang_match:
-                    language = lang_match.group(1)
-
-            # コードブロックの新しい構造を構築
-            enhanced = f'<mono-code-block language="{language}">\n{original_block}\n</mono-code-block>'
-            return enhanced
-
-        result = pattern.sub(replacer, html_content)
-        return result
-
     def _remove_table_inline_styles(self, html_content: str) -> str:
         """
         テーブルタグから不要なインラインスタイルを削除
@@ -269,56 +233,6 @@ class HTMLDocumentBuilder:
             self.logger.debug(f"タグ削除完了: {tag}")
 
         return html_content
-
-    def _enhance_colab_links(self, html_content: str) -> str:
-        """
-        URLに .ipynb が含まれるリンクを検知し、Google Colabリンクに変換する。
-        """
-        pattern = re.compile(HTML_IPYNB_LINK_PATTERN, re.IGNORECASE)
-
-        def replacer(match: re.Match) -> str:
-            before_href = match.group(1)
-            url = match.group(2)
-            after_href = match.group(3)
-            link_text = match.group(4)
-
-            # GitHubのURLであれば、Colab用のURLに変換
-            colab_url = url
-            if url.startswith(GITHUB_BASE_URL):
-                colab_url = url.replace(GITHUB_BASE_URL, COLAB_GITHUB_BASE_URL)
-
-            badge_img = HTML_COLAB_BADGE_IMG.format(badge_url=COLAB_BADGE_URL)
-
-            return HTML_COLAB_LINK_TEMPLATE.format(
-                before_href=before_href,
-                colab_url=colab_url,
-                after_href=after_href,
-                badge_img=badge_img,
-                link_text=link_text,
-            )
-
-        result = pattern.sub(replacer, html_content)
-        self.logger.debug("Colabリンク処理完了: .ipynbリンクをColabバッジに変換")
-        return result
-
-    def _replace_custom_nowrap(self, html_content: str) -> str:
-        """
-        カスタム記法 {{...}} をno改行しないテキストに変換
-
-        {{連結テキスト}} → <span class="nowrap">連結テキスト</span>
-
-        Args:
-            html_content: HTML文字列
-
-        Returns:
-            記法処理後のHTML
-        """
-        pattern = re.compile(r"\{\{(.*?)\}\}")
-        result = pattern.sub(r'<span class="nowrap">\1</span>', html_content)
-        self.logger.debug(
-            'カスタム記法処理完了: {{...}} → <span class="nowrap">...</span>'
-        )
-        return result
 
     def _build_highlight_js_link(self) -> str:
         """Highlight.js CSSリンクタグを構築"""
