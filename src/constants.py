@@ -82,12 +82,6 @@ HTML_HEAD_CLOSING_TAG = "</head>"
 HTML_OPENING_TAG = r"<html[^>]*>"
 HTML_TAG_REMOVAL_PATTERN_TEMPLATE = r"<{tag}[^>]*>.*?</{tag}>"
 HTML_IPYNB_LINK_PATTERN = r'<a\s+([^>]*?)href="([^"]+\.ipynb)"([^>]*)>(.*?)</a>'
-HTML_POLL_COMPONENT_TEMPLATE = (
-    '<mono-poll id="{id}" title="{title}" options="{options}"></mono-poll>'
-)
-HTML_AB_TEST_COMPONENT_TEMPLATE = (
-    '<mono-ab-test id="{id}" title="{title}" src-a="{src_a}" src-b="{src_b}"></mono-ab-test>'
-)
 
 # 外部サービス URL
 GITHUB_BASE_URL = "https://github.com/"
@@ -108,63 +102,6 @@ REGEX_FLAG_IGNORECASE = "IGNORECASE"
 
 # Markdownの拡張機能リスト
 MARKDOWN_EXTENSIONS = ["fenced_code", "tables", "nl2br", "toc", "md_in_html"]
-
-# 効果音コンポーネントの正規表現パターン
-MARKDOWN_SOUND_PATTERN = r"@\[sound(?::\s*(.*?))?\]\((.+?)\)"
-HTML_SOUND_COMPONENT_TEMPLATE = (
-    '<mono-sound id="{id}" label="{label}" src="{src}"></mono-sound>'
-)
-
-# 投票コンポーネント（Live Polling）の正規表現パターン
-MARKDOWN_POLL_PATTERN = r"@\[poll:\s*(.+?)\]\((.+?)\)"
-
-# A/Bテストコンポーネントの正規表現パターン
-MARKDOWN_AB_TEST_PATTERN = r"@\[ab-test:\s*(.+?)\]\((.+?),\s*(.+?)\)"
-
-# アイコンコンポーネントの正規表現パターン
-MARKDOWN_ICON_PATTERN = r"@\[icon:\s*([^\]]+)\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
-HTML_ICON_COMPONENT_TEMPLATE = (
-    '<mono-icon name="{name}"{size_attr}{color_attr}{display_attr}></mono-icon>'
-)
-
-# ノートブック入力コンポーネントの正規表現パターン
-MARKDOWN_NOTEBOOK_PATTERN = r"@\[notebook-input\]\((.+?)\)"
-HTML_NOTEBOOK_COMPONENT_TEMPLATE = (
-    '<mono-notebook-input id="{id}"></mono-notebook-input>'
-)
-
-# テキストフィールド入力コンポーネントの正規表現パターン
-MARKDOWN_TEXTFIELD_PATTERN = r"@\[(?:textfield|textfiled):\s*(.+?)\]"
-HTML_TEXTFIELD_COMPONENT_TEMPLATE = (
-    '<mono-textfield-input id="{id}" placeholder="{placeholder}"{size_attr}></mono-textfield-input>'
-)
-
-# リアクションコンポーネントの正規表現パターン
-MARKDOWN_REACTION_PATTERN = r"@\[reaction:\s*\"?(.*?)\"?\]"
-HTML_REACTION_COMPONENT_TEMPLATE = '<mono-reaction id="{id}" options="{options}"></mono-reaction>'
-
-# セッション参加コンポーネントの正規表現パターン
-MARKDOWN_SESSION_JOIN_PATTERN = r"@\[session-join:\s*\"?(.*?)\"?\]"
-HTML_SESSION_JOIN_COMPONENT_TEMPLATE = (
-    '<mono-session-join title="{title}"></mono-session-join>'
-)
-
-# グループ分けコンポーネントの正規表現パターン
-MARKDOWN_GROUP_ASSIGNMENT_PATTERN = r"@\[group-assignment:\s*\"?(.*?)\"?\]"
-HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE = (
-    '<mono-group-assignment title="{title}"></mono-group-assignment>'
-)
-
-# スペーサーコンポーネントの正規表現パターン
-MARKDOWN_SPACER_PATTERN = r"@\[spacer\]\((.+?)\)"
-HTML_SPACER_COMPONENT_TEMPLATE = '<mono-spacer width="{width}" height="{height}"></mono-spacer>'
-
-# レイアウトコンポーネントの正規表現パターン
-MARKDOWN_LAYOUT_ROW_PATTERN = r"@\[row(?::\s*(.+?))?\]"
-MARKDOWN_LAYOUT_STACK_PATTERN = r"@\[stack(?::\s*(.+?))?\]"
-MARKDOWN_LAYOUT_END_PATTERN = r"@\[end\]"
-MARKDOWN_COLUMN_START_PATTERN = r":::column"
-MARKDOWN_COLUMN_END_PATTERN = r":::(?!\S)"
 
 
 # ============================================================================

@@ -49,8 +49,6 @@ class TestConstants(unittest.TestCase):
         self.assertIsInstance(constants.HTML_TABLE_STYLE_PATTERN, str)
         self.assertIsInstance(constants.HTML_TAG_REMOVAL_PATTERN_TEMPLATE, str)
         self.assertIsInstance(constants.HTML_IPYNB_LINK_PATTERN, str)
-        self.assertIsInstance(constants.HTML_POLL_COMPONENT_TEMPLATE, str)
-        self.assertIsInstance(constants.HTML_AB_TEST_COMPONENT_TEMPLATE, str)
         self.assertIn("github.com", constants.GITHUB_BASE_URL)
         self.assertIn("github", constants.COLAB_GITHUB_BASE_URL)
         self.assertIn("colab-badge.svg", constants.COLAB_BADGE_URL)
@@ -66,24 +64,6 @@ class TestConstants(unittest.TestCase):
         self.assertIn("nl2br", constants.MARKDOWN_EXTENSIONS)
         self.assertIn("toc", constants.MARKDOWN_EXTENSIONS)
         self.assertIn("md_in_html", constants.MARKDOWN_EXTENSIONS)
-
-        self.assertIsInstance(constants.MARKDOWN_POLL_PATTERN, str)
-        self.assertIsInstance(constants.MARKDOWN_AB_TEST_PATTERN, str)
-        self.assertIsInstance(constants.MARKDOWN_NOTEBOOK_PATTERN, str)
-        self.assertIsInstance(constants.HTML_NOTEBOOK_COMPONENT_TEMPLATE, str)
-        self.assertIsInstance(constants.MARKDOWN_TEXTFIELD_PATTERN, str)
-        self.assertIsInstance(constants.HTML_TEXTFIELD_COMPONENT_TEMPLATE, str)
-        self.assertIsInstance(constants.MARKDOWN_REACTION_PATTERN, str)
-        self.assertIsInstance(constants.HTML_REACTION_COMPONENT_TEMPLATE, str)
-        self.assertIsInstance(constants.MARKDOWN_SESSION_JOIN_PATTERN, str)
-        self.assertIsInstance(constants.HTML_SESSION_JOIN_COMPONENT_TEMPLATE, str)
-        self.assertIsInstance(constants.MARKDOWN_GROUP_ASSIGNMENT_PATTERN, str)
-        self.assertIsInstance(constants.HTML_GROUP_ASSIGNMENT_COMPONENT_TEMPLATE, str)
-        self.assertIsInstance(constants.MARKDOWN_LAYOUT_ROW_PATTERN, str)
-        self.assertIsInstance(constants.MARKDOWN_LAYOUT_STACK_PATTERN, str)
-        self.assertIsInstance(constants.MARKDOWN_LAYOUT_END_PATTERN, str)
-        self.assertIsInstance(constants.MARKDOWN_COLUMN_START_PATTERN, str)
-        self.assertIsInstance(constants.MARKDOWN_COLUMN_END_PATTERN, str)
 
     def test_size_formatting(self):
         """Test Size Formatting constants"""
