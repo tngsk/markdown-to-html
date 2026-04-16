@@ -160,6 +160,21 @@ class TestMarkdownProcessor(unittest.TestCase):
         result_double = self._get_parser("mono-spacer").process(md_content_double)
         self.assertEqual(result_double, expected_html_double)
 
+    def test_preprocess_hero(self):
+        md_content = (
+            "@[hero: Welcome!](image: \"bg.jpg\", mode: cover, bg-color: \"#000\", text-color: \"#fff\")\n"
+            "This is a subtext\n"
+            "@[/hero]"
+        )
+        expected_html = (
+            '<mono-hero markdown="1" image="bg.jpg" mode="cover" bg-color="#000" text-color="#fff">\n'
+            '<h1>Welcome!</h1>\n\n'
+            'This is a subtext\n'
+            '</mono-hero>'
+        )
+        result = self._get_parser("mono-hero").process(md_content)
+        self.assertEqual(result, expected_html)
+
     def test_preprocess_layout(self):
         md_content = (
             "@[row: center gap-md]\n"
@@ -170,8 +185,8 @@ class TestMarkdownProcessor(unittest.TestCase):
             ":::column\n"
             "B\n"
             ":::\n"
-            "@[end]\n"
-            "@[end]"
+            "@[/stack]\n"
+            "@[/row]"
         )
         expected_html = (
             '<mono-layout type="row" class="center gap-md" markdown="1">\n'
