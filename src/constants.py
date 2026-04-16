@@ -14,6 +14,9 @@ from typing import Dict
 # テンプレートディレクトリ
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
+# コンポーネントディレクトリ
+COMPONENTS_DIR = Path(__file__).parent / "components"
+
 # デフォルトテンプレートパス
 DEFAULT_TEMPLATE_PATH = TEMPLATES_DIR / "default.html"
 
