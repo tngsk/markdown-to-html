@@ -110,9 +110,12 @@ class HTMLDocumentBuilder:
         used_component_dirs = self._get_used_component_dirs(html_body, should_enable_export)
 
         # コードブロック用リソース（CSS/JS）を読み込む
-        highlight_js_css = self._build_highlight_js_link()
         base_css = self._load_base_css()
-        highlight_js = self._load_highlight_js_script()
+
+        has_code_block = "<mono-code-block" in html_body
+        highlight_js_css = self._build_highlight_js_link() if has_code_block else ""
+        highlight_js = self._load_highlight_js_script() if has_code_block else ""
+
         mono_components_js = self._load_mono_components_script(used_component_dirs)
         component_templates = self._load_component_templates(used_component_dirs)
 

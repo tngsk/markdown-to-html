@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: https://colab.research.google.com; connect-src 'self' http://localhost:8000 ws://localhost:8000; object-src 'none'; font-src 'self' https://fonts.gstatic.com;">
+        <meta name="mono-api-url" content="http://localhost:8000">
+<meta name="mono-ws-url" content="ws://localhost:8000">
+        <title>Document</title>
+         <style>
+/* ベース -------------------------------------------------- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root {
+    --font-color: #111827;
+    --font-color-light: #374151;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    margin: 0;
+    padding: 5rem;
+    width: 100%;
+    font-family:
+        -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
+        "Segoe UI", "Yu Gothic Medium", "Hiragino Kaku Gothic ProN",
+        "Noto Sans JP", Meiryo, sans-serif;
+    line-height: 1.9;
+    color: var(--font-color);
+    background: #f3f4f6;
+}
+
+hr {
+    width: 10%;
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+    margin-left: auto;
+    margin-right: auto;
+    border: none;
+    border-top: 2px dotted #ddd;
+}
+
+/* 見出し -------------------------------------------------- */
+h1,
+h2,
+h3,
+h4 {
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--font-color);
+    letter-spacing: 0.08em;
+}
+
+h1 {
+    font-size: 2rem;
+    margin: 0 0 1.8rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+    margin: 3rem 0 1rem;
+    padding-bottom: 0.35rem;
+}
+
+h3 {
+    font-size: 1.2rem;
+    margin: 2rem 0 0.6rem;
+    color: var(--font-color-light);
+}
+
+/* 段落・テキスト ------------------------------------------ */
+p {
+    margin: 0.6rem 0 1.3rem;
+}
+
+p + p {
+    margin-top: 0.5rem;
+}
+
+strong {
+    font-weight: 600;
+}
+
+em {
+    font-style: normal;
+    position: relative;
+}
+
+em::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.15em;
+    width: 100%;
+    height: 0.2em;
+    background: rgba(129, 140, 248, 0.25);
+}
+
+img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+/* リンク -------------------------------------------------- */
+a {
+    color: #2563eb;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(37, 99, 235, 0.35);
+    padding-bottom: 0.05em;
+    transition:
+        color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+a:hover {
+    color: #1d4ed8;
+    border-bottom-color: rgba(37, 99, 235, 0.7);
+}
+
+/* リスト -------------------------------------------------- */
+ul,
+ol {
+    margin: 0.4rem 0 1.4rem;
+    padding-left: 1.7rem;
+}
+
+li + li {
+    margin-top: 0.2rem;
+}
+
+/* コード -------------------------------------------------- */
+code {
+    font-family:
+        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+    background: #fff;
+    padding: 0.5rem;
+}
+
+pre {
+    margin: 1.5rem;
+    padding: 1.2rem;
+    background: #020617;
+    color: #e5e7eb;
+    overflow-x: auto;
+    line-height: 1.7;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* 引用 ---------------------------------------------------- */
+blockquote {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+    border-left: 4px solid #9ca3af;
+    background: #f9fafb;
+    color: #4b5563;
+}
+
+/* テーブル ------------------------------------------------ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+}
+
+th,
+td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #666;
+}
+
+th {
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #222;
+}
+
+/* ============================================================================ */
+
+.nowrap { white-space: nowrap; display: inline; }
+
+/* レイアウト ---------------------------------------------- */
+.column {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* Colab -------------------------------------------------- */
+.colab-badge {
+    vertical-align: middle;
+    margin-right: 6px;
+    height: 20px;
+    width: auto;
+    border-radius: 0;
+}
+
+.colab-link {
+    text-decoration: none;
+}
+
+</style>
+    </head>
+    <body>
+        <h1 id="empty">Empty</h1>  <template id="mono-brush-template">
+    <style>:host {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+#pointer {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    background-color: rgba(255, 0, 0, 0.5);
+    border-radius: 50%;
+    transform: translate(-100%, -100%);
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;
+    opacity: 1;
+}
+
+#pointer.hidden {
+    opacity: 0;
+}
+
+#canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* By default, pass through */
+    transition: opacity 0.3s ease-out;
+    opacity: 1;
+}
+
+#canvas.hidden {
+    opacity: 0;
+}
+
+#canvas.drawing-mode {
+    pointer-events: auto; /* Intercept events when drawing */
+    cursor: crosshair;
+}
+</style>
+    <div id="pointer" class="hidden"></div>
+    <canvas id="canvas" class="hidden"></canvas>
+</template>
+
+
+<template id="mono-sync-template">
+</template>
+<script>
+class MonoBrush extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    this.isAltPressed = false;
+    this.isShiftPressed = false;
+    this.isDrawing = false;
+    this.hue = 0;
+    this.lastX = 0;
+    this.lastY = 0;
+    this.animationFrameId = null;
+    this.resizeTimeout = null;
+  }
+
+  connectedCallback() {
+    this.mountTemplate();
+    this.setupElements();
+    this.setupEventListeners();
+    this.resizeCanvas();
+  }
+
+  disconnectedCallback() {
+    this.removeEventListeners();
+  }
+
+  mountTemplate() {
+    const template = document.getElementById("mono-brush-template");
+    if (template) {
+      this.shadowRoot.appendChild(template.content.cloneNode(true));
+    }
+  }
+
+  setupElements() {
+    this.pointer = this.shadowRoot.getElementById("pointer");
+    this.canvas = this.shadowRoot.getElementById("canvas");
+    this.ctx = this.canvas.getContext("2d");
+  }
+
+  setupEventListeners() {
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
+    this.handleResize = this.handleResize.bind(this);
+
+    this.handleBlur = this.handleBlur.bind(this);
+
+    document.addEventListener("keydown", this.handleKeyDown);
+    document.addEventListener("keyup", this.handleKeyUp);
+    document.addEventListener("mousemove", this.handleMouseMove, {
+      passive: false,
+    });
+
+    // Canvas events for drawing
+    this.canvas.addEventListener("mousedown", this.handleMouseDown);
+    this.canvas.addEventListener("mousemove", this.handleMouseMove);
+    this.canvas.addEventListener("mouseup", this.handleMouseUp);
+    this.canvas.addEventListener("mouseout", this.handleMouseUp);
+
+    // Touch support
+    this.canvas.addEventListener(
+      "touchstart",
+      this.handleTouchStart.bind(this),
+      { passive: false },
+    );
+    this.canvas.addEventListener("touchmove", this.handleTouchMove.bind(this), {
+      passive: false,
+    });
+    this.canvas.addEventListener("touchend", this.handleMouseUp);
+
+    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("blur", this.handleBlur);
+  }
+
+  removeEventListeners() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+    document.removeEventListener("keyup", this.handleKeyUp);
+    document.removeEventListener("mousemove", this.handleMouseMove);
+    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("blur", this.handleBlur);
+  }
+
+  handleBlur() {
+    this.isAltPressed = false;
+    this.isShiftPressed = false;
+    this.updateMode();
+  }
+
+  handleResize() {
+    // Debounce resize
+    clearTimeout(this.resizeTimeout);
+    this.resizeTimeout = setTimeout(() => {
+      this.resizeCanvas();
+    }, 200);
+  }
+
+  resizeCanvas() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+  }
+
+  updateMode() {
+    const inPointerMode = this.isAltPressed && !this.isShiftPressed;
+    const inDrawingMode = this.isAltPressed && this.isShiftPressed;
+
+    if (inPointerMode) {
+      this.pointer.classList.remove("hidden");
+    } else {
+      this.pointer.classList.add("hidden");
+    }
+
+    if (inDrawingMode) {
+      this.canvas.classList.add("drawing-mode");
+      this.canvas.classList.remove("hidden");
+      this.pointer.classList.add("hidden"); // Hide pointer when drawing
+    } else {
+      this.canvas.classList.remove("drawing-mode");
+      this.isDrawing = false;
+
+      // Fade out and clear canvas if we were drawing
+      if (!this.canvas.classList.contains("hidden")) {
+        this.canvas.classList.add("hidden");
+        // Wait for fade out animation before clearing
+        setTimeout(() => {
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }, 300);
+      }
+    }
+  }
+
+  handleKeyDown(e) {
+    if (e.key === "Alt" || e.key === "Option") {
+      this.isAltPressed = true;
+      this.updateMode();
+      if (this.lastMouseX !== undefined && this.lastMouseY !== undefined) {
+        this.updatePointerPosition(this.lastMouseX, this.lastMouseY);
+      }
+    } else if (e.key === "Shift") {
+      this.isShiftPressed = true;
+      this.updateMode();
+    }
+  }
+
+  handleKeyUp(e) {
+    if (e.key === "Alt" || e.key === "Option") {
+      this.isAltPressed = false;
+      this.updateMode();
+    } else if (e.key === "Shift") {
+      this.isShiftPressed = false;
+      this.updateMode();
+    }
+  }
+
+  updatePointerPosition(x, y) {
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
+
+    this.animationFrameId = requestAnimationFrame(() => {
+      if (this.isAltPressed && !this.isShiftPressed) {
+        this.pointer.style.left = `${x}px`;
+        this.pointer.style.top = `${y}px`;
+      }
+    });
+  }
+
+  handleMouseMove(e) {
+    // Always track the latest mouse position globally so that when Alt is pressed
+    // without moving the mouse, the pointer instantly appears at the correct location.
+    this.lastMouseX = e.clientX;
+    this.lastMouseY = e.clientY;
+
+    // Update pointer
+    this.updatePointerPosition(e.clientX, e.clientY);
+
+    // Handle drawing
+    if (this.isDrawing && this.isAltPressed && this.isShiftPressed) {
+      e.preventDefault(); // Prevent text selection/scrolling while drawing
+      this.draw(e.clientX, e.clientY);
+    }
+  }
+
+  handleMouseDown(e) {
+    if (this.isAltPressed && this.isShiftPressed) {
+      this.isDrawing = true;
+      this.lastX = e.clientX;
+      this.lastY = e.clientY;
+      this.draw(e.clientX, e.clientY); // Draw a dot
+    }
+  }
+
+  handleMouseUp() {
+    this.isDrawing = false;
+  }
+
+  handleTouchStart(e) {
+    if (this.isAltPressed && this.isShiftPressed) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      this.handleMouseDown({ clientX: touch.clientX, clientY: touch.clientY });
+    }
+  }
+
+  handleTouchMove(e) {
+    if (this.isDrawing && this.isAltPressed && this.isShiftPressed) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      this.handleMouseMove({
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        preventDefault: () => {},
+      });
+    }
+  }
+
+  draw(x, y) {
+    if (!this.isDrawing) return;
+
+    this.ctx.beginPath();
+    this.ctx.moveTo(this.lastX, this.lastY);
+    this.ctx.lineTo(x, y);
+    this.ctx.strokeStyle = `hsl(${this.hue}, 100%, 60%)`;
+    this.ctx.lineWidth = 12;
+    this.ctx.lineCap = "round";
+    this.ctx.lineJoin = "round";
+    this.ctx.stroke();
+
+    this.lastX = x;
+    this.lastY = y;
+    this.hue = (this.hue + 0.1) % 360; // Slowly cycle hue
+  }
+}
+
+if (!customElements.get("mono-brush")) {
+  customElements.define("mono-brush", MonoBrush);
+}
+
+// Automatically inject into page
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    if (!document.querySelector("mono-brush")) {
+      document.body.appendChild(document.createElement("mono-brush"));
+    }
+  });
+} else {
+  if (!document.querySelector("mono-brush")) {
+    document.body.appendChild(document.createElement("mono-brush"));
+  }
+}
+
+
+class MonoSync extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+    }
+
+    connectedCallback() {
+        this.mountTemplate();
+        this.setupDataRecovery();
+        this.setupFocusSync();
+    }
+
+    mountTemplate() {
+        const template = document.getElementById("mono-sync-template");
+        if (template) {
+            this.shadowRoot.appendChild(template.content.cloneNode(true));
+        }
+    }
+
+    getEnvironmentContext() {
+        return {
+            userAgent: navigator.userAgent,
+            windowWidth: window.innerWidth,
+            windowHeight: window.innerHeight,
+            url: window.location.href,
+        };
+    }
+
+    setupDataRecovery() {
+        // Listen for mono:vote events bubbling up to document
+        document.addEventListener("mono:vote", (e) => {
+            const data = {
+                ...e.detail,
+                environment: this.getEnvironmentContext(),
+            };
+            this.sendDataToServer(data);
+        });
+    }
+
+    async sendDataToServer(data) {
+        const apiMeta = document.querySelector('meta[name="mono-api-url"]');
+        const apiUrl = apiMeta ? apiMeta.content : null;
+        if (!apiUrl) {
+            console.info("💡 [Mono] スタンドアロンモードで動作しています。データはローカルにのみ保存されます。");
+            return;
+        }
+
+        try {
+            const response = await fetch(apiUrl + "/api/data", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) {
+                throw new Error("Server responded with an error");
+            }
+        } catch (error) {
+            console.info("💡 [Mono] サーバに接続できません（オフライン）。入力内容はブラウザに保存されているため、右下のボタンからJSONでダウンロードできます。");
+        }
+    }
+
+    setupFocusSync() {
+        const wsMeta = document.querySelector('meta[name="mono-ws-url"]');
+        const wsUrl = wsMeta ? wsMeta.content : null;
+        if (!wsUrl) return;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const isHost = urlParams.get("role") === "host";
+
+        try {
+            this.ws = new WebSocket(wsUrl + "/ws/sync");
+
+            this.ws.onopen = () => {
+                console.log("🟢 [Mono] リアルタイム同期に接続しました（Role: " + (isHost ? "Host" : "Participant") + "）");
+            };
+
+            this.ws.onerror = () => {
+                console.info("💡 [Mono] 同期サーバが見つかりません。ドキュメントは引き続き単独で閲覧可能です。");
+            };
+
+            this.ws.onclose = () => {
+                // Connection closed messages can be noisy if the server shuts down, so we use info.
+                console.info("💡 [Mono] 同期サーバとの接続が終了しました。");
+            };
+
+            if (isHost) {
+                this.setupHostObserver();
+            } else {
+                this.setupParticipantListener();
+            }
+        } catch (e) {
+             console.info("💡 [Mono] 同期機能を初期化できませんでした。スタンドアロンで実行します。");
+        }
+    }
+
+    setupHostObserver() {
+        let lastTargetId = null;
+
+        const observer = new IntersectionObserver((entries) => {
+            // Find the most visible heading
+            for (const entry of entries) {
+                if (entry.isIntersecting && entry.target.id) {
+                    if (lastTargetId !== entry.target.id) {
+                        lastTargetId = entry.target.id;
+                        this.broadcastFocus(lastTargetId);
+                    }
+                    break;
+                }
+            }
+        }, { threshold: 0.5 });
+
+        // Observe h1, h2, h3 tags
+        document.querySelectorAll("h1, h2, h3").forEach(el => {
+            if (el.id) observer.observe(el);
+        });
+    }
+
+    broadcastFocus(targetId) {
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+            this.ws.send(JSON.stringify({ type: "focus", targetId }));
+        }
+    }
+
+    setupParticipantListener() {
+        this.ws.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type === "focus" && data.targetId) {
+                    const el = document.getElementById(data.targetId);
+                    if (el) {
+                        el.scrollIntoView({ behavior: "smooth" });
+                    }
+                }
+            } catch (e) {
+                console.error("Focus Sync error:", e);
+            }
+        };
+    }
+}
+
+if (!customElements.get("mono-sync")) {
+    customElements.define("mono-sync", MonoSync);
+}
+// Automatically inject into page
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+        if (!document.querySelector("mono-sync")) {
+            document.body.appendChild(document.createElement("mono-sync"));
+        }
+    });
+} else {
+    if (!document.querySelector("mono-sync")) {
+        document.body.appendChild(document.createElement("mono-sync"));
+    }
+}
+
+</script>
+    </body>
+</html>
