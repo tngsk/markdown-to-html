@@ -25,6 +25,7 @@ from src.constants import (
     HTML_TABLE_STYLE_PATTERN,
     MATERIAL_SYMBOLS_URL,
     TEMPLATES_DIR,
+    COMPONENTS_DIR,
 )
 
 
@@ -351,7 +352,7 @@ class HTMLDocumentBuilder:
 
     def _get_used_component_dirs(self, html_body: str, should_enable_export: bool) -> List[Path]:
         """使用されているコンポーネントのディレクトリ一覧を取得する"""
-        components_dir = TEMPLATES_DIR / "components"
+        components_dir = COMPONENTS_DIR
         if not components_dir.exists() or not components_dir.is_dir():
             return []
 

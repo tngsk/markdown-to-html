@@ -17,6 +17,7 @@ from src.config import ConversionError
 from src.constants import (
     MARKDOWN_EXTENSIONS,
     TEMPLATES_DIR,
+    COMPONENTS_DIR,
 )
 from src.handlers.file import FileHandler
 
@@ -31,11 +32,11 @@ class MarkdownProcessor:
 
     def _load_component_parsers(self):
         """
-        src/templates/components/ 配下の各コンポーネントディレクトリにある
+        src/components/ 配下の各コンポーネントディレクトリにある
         parser.py を動的に読み込み、インスタンス化してリストで返す
         """
         parsers = []
-        components_dir = TEMPLATES_DIR / "components"
+        components_dir = COMPONENTS_DIR
         if not components_dir.exists() or not components_dir.is_dir():
             self.logger.warning(
                 f"コンポーネントディレクトリが見つかりません: {components_dir}"
@@ -50,7 +51,7 @@ class MarkdownProcessor:
             if parser_file.exists():
                 try:
                     module_name = (
-                        f"src.templates.components.{component_dir.name}.parser"
+                        f"src.components.{component_dir.name}.parser"
                     )
                     spec = importlib.util.spec_from_file_location(
                         module_name, parser_file

@@ -10,6 +10,9 @@ class TestConstants(unittest.TestCase):
         self.assertIsInstance(constants.TEMPLATES_DIR, Path)
         self.assertEqual(constants.TEMPLATES_DIR.name, "templates")
 
+        self.assertIsInstance(constants.COMPONENTS_DIR, Path)
+        self.assertEqual(constants.COMPONENTS_DIR.name, "components")
+
         self.assertIsInstance(constants.DEFAULT_TEMPLATE_PATH, Path)
         self.assertEqual(constants.DEFAULT_TEMPLATE_PATH.name, "default.html")
         self.assertEqual(constants.DEFAULT_TEMPLATE_PATH.parent, constants.TEMPLATES_DIR)

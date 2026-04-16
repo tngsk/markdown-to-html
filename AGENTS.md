@@ -15,11 +15,11 @@
 * **TOC拡張:** Markdownコンバーターには `toc` 拡張が含まれており、見出しのIDを自動生成する。これは `<mono-sync>` Webコンポーネントがスクロールやチャプターの同期に利用する。
 
 ## Webコンポーネントの仕様
-* **Vanilla JSによる実装:** Web Componentsは外部依存なしのVanilla JSを使用して実装され、「テンプレート注入戦略（Template Injection Strategy）」を活用する。コンポーネントファイルは `templates/components/<component-name>/` ディレクトリ内に `template.html` と `script.js` として構成されなければならない。
+* **Vanilla JSによる実装:** Web Componentsは外部依存なしのVanilla JSを使用して実装され、「テンプレート注入戦略（Template Injection Strategy）」を活用する。コンポーネントファイルは `components/<component-name>/` ディレクトリ内に `template.html` と `script.js` として構成されなければならない。
 * **スクリプトのインライン化の回避:** グローバルの `window` 変数を設定するインライン `<script>` タグを避けるため、バックエンド設定値（APIやWebSocket URLなど）は `<meta>` タグ（例：`<meta name="mono-api-url" content="...">`）を使ってフロントエンドに渡す。コンポーネントのスクリプトは `document.querySelector('meta[...]').content` を使ってこれらの値を読み取ること。
 * **データ保存:** `<mono-poll>`, `<mono-ab-test>`, `<mono-notebook-input>` のようなインタラクティブコンポーネントは、`mono_` をプレフィックスとしたキーを使用して `localStorage` にユーザーデータを保存する。
 * **エクスポート機能:** `<mono-export>` コンポーネントはこのデータを集約し、これらのインタラクティブコンポーネントが検出された場合、または `--export` CLIフラグが指定された場合に変換時に自動的に注入される。
-* **オプションコンポーネントの除外:** `templates/components/` 内のコンポーネントテンプレートとスクリプトは、`processors/html.py`（`_load_component_templates` と `_load_mono_components_script` 経由）によって自動的に結合され出力HTMLに注入されるため、無効化されたオプションコンポーネント（`mono-export`など）の生のHTML/JSが表示されないよう、この読み込みフェーズでそのディレクトリを明示的にフィルタリングで除外しなければならない。
+* **オプションコンポーネントの除外:** `components/` 内のコンポーネントテンプレートとスクリプトは、`processors/html.py`（`_load_component_templates` と `_load_mono_components_script` 経由）によって自動的に結合され出力HTMLに注入されるため、無効化されたオプションコンポーネント（`mono-export`など）の生のHTML/JSが表示されないよう、この読み込みフェーズでそのディレクトリを明示的にフィルタリングで除外しなければならない。
 * **エラーハンドリング:** フロントエンドのエラーハンドリング（特にネットワーク/オフラインの問題）では、ユーザーをガイドするために、生のスタックトレースや標準の `console.error` ログに依存するのではなく、状況に応じた親しみやすい日本語メッセージを使用すること（例：説明文を伴う `console.info` やユーザー向けの `alert`）。
 
 ## セキュリティに関する仕様
