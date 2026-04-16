@@ -1,0 +1,16 @@
+mono-score {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+mono-score svg {
+    height: 4em;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+mono-score svg * {
+    fill: currentColor;
+    stroke: currentColor;
+}
