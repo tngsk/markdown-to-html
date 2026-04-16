@@ -192,12 +192,12 @@ Used to create flexbox-based layouts such as rows and stacks (columns).
 **Column Layout inside Row/Stack:**
 Use the following markers to define columns within a layout block:
 ```markdown
-:::column
+@[column]
 Content for column 1
-:::
-:::column
+@[/column]
+@[column]
 Content for column 2
-:::
+@[/column]
 ```
 
 ### Spacer (`mono-spacer`)

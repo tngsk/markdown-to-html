@@ -178,13 +178,13 @@ class TestMarkdownProcessor(unittest.TestCase):
     def test_preprocess_layout(self):
         md_content = (
             "@[row: center gap-md]\n"
-            ":::column\n"
+            "@[column]\n"
             "A\n"
-            ":::\n"
+            "@[/column]\n"
             "@[stack]\n"
-            ":::column\n"
+            "@[column]\n"
             "B\n"
-            ":::\n"
+            "@[/column]\n"
             "@[/stack]\n"
             "@[/row]"
         )

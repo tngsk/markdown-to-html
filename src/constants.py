@@ -162,9 +162,9 @@ HTML_SPACER_COMPONENT_TEMPLATE = '<mono-spacer width="{width}" height="{height}"
 # レイアウトコンポーネントの正規表現パターン
 MARKDOWN_LAYOUT_ROW_PATTERN = r"@\[row(?::\s*(.+?))?\]"
 MARKDOWN_LAYOUT_STACK_PATTERN = r"@\[stack(?::\s*(.+?))?\]"
-MARKDOWN_LAYOUT_END_PATTERN = r"@\[end\]"
-MARKDOWN_COLUMN_START_PATTERN = r":::column"
-MARKDOWN_COLUMN_END_PATTERN = r":::(?!\S)"
+MARKDOWN_LAYOUT_END_PATTERN = r"@\[/(?:row|stack|layout)\]"
+MARKDOWN_COLUMN_START_PATTERN = r"@\[column\]"
+MARKDOWN_COLUMN_END_PATTERN = r"@\[/column\]"
 
 
 # ============================================================================

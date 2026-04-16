@@ -4,9 +4,9 @@ from src.processors.base_parser import BaseComponentParser
 class Parser(BaseComponentParser):
     ROW_PATTERN = r"@\[row(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     STACK_PATTERN = r"@\[stack(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
-    END_PATTERN = r"@\[(?:end|/row|/stack|/layout)\]"
-    COLUMN_START_PATTERN = r":::column"
-    COLUMN_END_PATTERN = r":::(?!\S)"
+    END_PATTERN = r"@\[/(?:row|stack|layout)\]"
+    COLUMN_START_PATTERN = r"@\[column\]"
+    COLUMN_END_PATTERN = r"@\[/column\]"
 
     def process(self, markdown_content: str) -> str:
         # row
