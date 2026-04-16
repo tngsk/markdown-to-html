@@ -15,11 +15,7 @@ import markdown.util
 
 from src.config import ConversionError
 from src.constants import (
-    HTML_ICON_COMPONENT_TEMPLATE,
-    HTML_SOUND_COMPONENT_TEMPLATE,
     MARKDOWN_EXTENSIONS,
-    MARKDOWN_ICON_PATTERN,
-    MARKDOWN_SOUND_PATTERN,
     TEMPLATES_DIR,
 )
 from src.handlers.file import FileHandler
@@ -32,60 +28,6 @@ class MarkdownProcessor:
         self.logger = logger
         self.file_handler = file_handler
         self.parsers = self._load_component_parsers()
-
-    def _preprocess_icon(self, markdown_content: str) -> str:
-        """
-        @[icon: name](size, color, display) を <mono-icon> に変換する
-        """
-        pattern = re.compile(MARKDOWN_ICON_PATTERN)
-
-        def replacer(match: re.Match) -> str:
-            name = match.group(1).strip()
-            args_str = match.group(2)
-
-            safe_name = html.escape(name)
-            size_attr = ""
-            color_attr = ""
-            display_attr = ""
-
-            if args_str is not None:
-                parts = []
-                current = ""
-                depth = 0
-                for char in args_str:
-                    if char == "(":
-                        depth += 1
-                        current += char
-                    elif char == ")":
-                        depth -= 1
-                        current += char
-                    elif char == "," and depth == 0:
-                        parts.append(current.strip())
-                        current = ""
-                    else:
-                        current += char
-                parts.append(current.strip())
-
-                args = parts
-
-                if len(args) > 0 and args[0]:
-                    size_attr = f' size="{html.escape(args[0])}"'
-                if len(args) > 1 and args[1]:
-                    color_attr = f' color="{html.escape(args[1])}"'
-                if len(args) > 2 and args[2]:
-                    display_attr = f' display="{html.escape(args[2])}"'
-
-            return HTML_ICON_COMPONENT_TEMPLATE.format(
-                name=safe_name,
-                size_attr=size_attr,
-                color_attr=color_attr,
-                display_attr=display_attr,
-            )
-
-        result = pattern.sub(replacer, markdown_content)
-        if markdown_content != result:
-            self.logger.debug("アイコンコンポーネント前処理完了: @[icon] → <mono-icon>")
-        return result
 
     def _load_component_parsers(self):
         """
@@ -139,31 +81,6 @@ class MarkdownProcessor:
                     )
 
         return parsers
-
-    def _preprocess_sound(self, markdown_content: str) -> str:
-        """
-        @[sound: ラベル](file) または @[sound](file) を <mono-sound> に変換する
-        """
-        pattern = re.compile(MARKDOWN_SOUND_PATTERN)
-        counter = 0
-
-        def replacer(match: re.Match) -> str:
-            nonlocal counter
-            counter += 1
-            label = match.group(1)
-            src = match.group(2).strip()
-
-            safe_label = html.escape(label.strip()) if label else ""
-            safe_src = html.escape(src)
-
-            return HTML_SOUND_COMPONENT_TEMPLATE.format(
-                id=f"sound-{counter}", label=safe_label, src=safe_src
-            )
-
-        result = pattern.sub(replacer, markdown_content)
-        if markdown_content != result:
-            self.logger.debug("効果音コンポーネント前処理完了: @[sound] → <mono-sound>")
-        return result
 
     def _protect_code_blocks(self, markdown_content: str) -> tuple[str, dict[str, str]]:
         """
