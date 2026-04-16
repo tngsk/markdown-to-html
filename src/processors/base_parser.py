@@ -6,6 +6,15 @@ class BaseComponentParser:
     def __init__(self):
         self.counter = 0
 
+    @property
+    def block_level_tags(self) -> list[str]:
+        """
+        このパーサーが生成するブロックレベル要素のタグ名リストを返す。
+        Markdown変換時に <p> タグで囲まれるのを防ぐために使用される。
+        サブクラスで必要に応じてオーバーライドする。
+        """
+        return []
+
     def get_next_id(self, prefix: str) -> str:
         """ユニークなIDを生成して返す"""
         self.counter += 1
