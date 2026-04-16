@@ -104,7 +104,16 @@ REGEX_FLAG_IGNORECASE = "IGNORECASE"
 # ============================================================================
 
 # Markdownの拡張機能リスト
-MARKDOWN_EXTENSIONS = ["fenced_code", "tables", "nl2br", "toc", "md_in_html"]
+MARKDOWN_EXTENSIONS = [
+    "fenced_code",
+    "tables",
+    "nl2br",
+    "toc",
+    "md_in_html",
+    "src.extensions.nowrap",
+    "src.extensions.colab",
+    "src.extensions.code_block",
+]
 
 
 # ============================================================================
