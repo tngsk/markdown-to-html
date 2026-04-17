@@ -54,5 +54,29 @@ class TestMediaEmbedderSecurity(unittest.TestCase):
         # And asset store should be empty
         self.assertEqual(len(asset_store), 0)
 
+    def test_allowed_relative_path_within_cwd(self):
+        # Create an HTML with a path traversal that resolves within cwd
+        html_content = '<img src="../assets/img.png" alt="valid">'
+
+        test_markdown_dir = (Path.cwd() / "tests" / "mock_markdown_dir").resolve()
+
+        self.file_handler.read_binary.return_value = b"fakeimage"
+
+        import unittest.mock
+        with unittest.mock.patch.object(Path, 'exists') as mock_exists:
+            mock_exists.return_value = True
+
+            with unittest.mock.patch.object(self.embedder, 'encode_media_to_base64') as mock_encode:
+                mock_encode.return_value = "base64data"
+
+                result_html, media_count, asset_store = self.embedder.embed_media_in_html(
+                    html_content, test_markdown_dir
+                )
+
+        # Then media count should be 1 because it was allowed
+        self.assertEqual(media_count, 1)
+        self.assertIn('asset-1', result_html)
+
+
 if __name__ == '__main__':
     unittest.main()
