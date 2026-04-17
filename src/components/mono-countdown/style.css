@@ -1,0 +1,74 @@
+:host {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: var(--countdown-size, 80px);
+    height: var(--countdown-size, 80px);
+    font-family: monospace;
+    --countdown-color: #3b82f6; /* Default color: blue */
+    --countdown-bg-color: #e5e7eb;
+}
+
+.countdown-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-ring {
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.progress-ring-bg {
+    fill: transparent;
+    stroke: var(--countdown-bg-color);
+    stroke-width: 6;
+}
+
+.progress-ring-circle {
+    fill: transparent;
+    stroke: var(--countdown-color);
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+}
+
+.time-display {
+    position: relative;
+    z-index: 1;
+    font-size: calc(var(--countdown-size, 80px) * 0.25);
+    font-weight: bold;
+    color: inherit;
+    user-select: none;
+    -webkit-user-select: none;
+    font-variant-numeric: tabular-nums;
+}
+
+:host(.time-up) .progress-ring-circle {
+    stroke: #ef4444; /* Default time-up color: red */
+    animation: pulse 1.5s infinite;
+}
+
+:host(.time-up) .time-display {
+    color: #ef4444;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+    }
+}
