@@ -1,0 +1,129 @@
+class MonoCountdown extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+        this._intervalId = null;
+        this.totalSeconds = 0;
+        this.remainingSeconds = 0;
+        this.circle = null;
+        this.circumference = 0;
+    }
+
+    connectedCallback() {
+        const template = document.getElementById('mono-countdown-template');
+        if (template) {
+            this.shadowRoot.appendChild(template.content.cloneNode(true));
+        } else {
+            console.error('mono-countdown-template not found');
+            return;
+        }
+
+        this.timeDisplayElement = this.shadowRoot.querySelector('.time-display');
+        this.circle = this.shadowRoot.querySelector('.progress-ring-circle');
+
+        if (this.circle) {
+            const radius = this.circle.r.baseVal.value;
+            this.circumference = radius * 2 * Math.PI;
+            this.circle.style.strokeDasharray = `${this.circumference} ${this.circumference}`;
+            this.circle.style.strokeDashoffset = this.circumference;
+        }
+
+        const color = this.getAttribute('color');
+        if (color) {
+            this.style.setProperty('--countdown-color', color);
+        }
+
+        const timeStr = this.getAttribute('time');
+        this.totalSeconds = this.parseTime(timeStr);
+        this.remainingSeconds = this.totalSeconds;
+
+        this.updateDisplay();
+
+        if (this.totalSeconds > 0) {
+            this.startCountdown();
+        } else {
+            this.handleTimeUp();
+        }
+    }
+
+    disconnectedCallback() {
+        if (this._intervalId) {
+            clearInterval(this._intervalId);
+            this._intervalId = null;
+        }
+    }
+
+    parseTime(timeStr) {
+        if (!timeStr) return 0;
+
+        const match = timeStr.trim().match(/^(\d+)(s|m|h)?$/i);
+        if (!match) return 0;
+
+        const value = parseInt(match[1], 10);
+        const unit = match[2] ? match[2].toLowerCase() : 's';
+
+        switch (unit) {
+            case 'h': return value * 3600;
+            case 'm': return value * 60;
+            case 's':
+            default: return value;
+        }
+    }
+
+    formatTime(seconds) {
+        if (seconds < 0) seconds = 0;
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+
+        if (h > 0) {
+            return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+        return `${m}:${String(s).padStart(2, '0')}`;
+    }
+
+    updateDisplay() {
+        if (this.timeDisplayElement) {
+            this.timeDisplayElement.textContent = this.formatTime(this.remainingSeconds);
+        }
+
+        if (this.circle && this.totalSeconds > 0) {
+            const progress = this.remainingSeconds / this.totalSeconds;
+            const offset = this.circumference - (progress * this.circumference);
+            this.circle.style.strokeDashoffset = offset;
+        }
+    }
+
+    startCountdown() {
+        if (this._intervalId) return;
+
+        const endTime = Date.now() + (this.remainingSeconds * 1000);
+
+        this._intervalId = setInterval(() => {
+            const now = Date.now();
+            this.remainingSeconds = Math.max(0, Math.ceil((endTime - now) / 1000));
+
+            if (this.remainingSeconds <= 0) {
+                this.remainingSeconds = 0;
+                this.updateDisplay();
+                this.handleTimeUp();
+            } else {
+                this.updateDisplay();
+            }
+        }, 1000);
+    }
+
+    handleTimeUp() {
+        if (this._intervalId) {
+            clearInterval(this._intervalId);
+            this._intervalId = null;
+        }
+        this.classList.add('time-up');
+        // Dispatch an event so other components can react
+        this.dispatchEvent(new CustomEvent('timeup', { bubbles: true, composed: true }));
+    }
+}
+
+if (!customElements.get('mono-countdown')) {
+    customElements.define('mono-countdown', MonoCountdown);
+}
