@@ -13,13 +13,16 @@
 
 /* Left Drawer */
 .drawer-container.left {
-  top: 50%;
+  top: 0;
   left: 0;
-  transform: translateY(-50%) translateX(-100%);
+  height: 100vh;
+  transform: translateX(-100%);
   border-radius: 0 8px 8px 0;
+  display: flex;
+  flex-direction: column;
 }
 .drawer-container.left.open {
-  transform: translateY(-50%) translateX(0);
+  transform: translateX(0);
 }
 .drawer-container.left .drawer-handle {
   position: absolute;
@@ -43,13 +46,16 @@
 
 /* Right Drawer */
 .drawer-container.right {
-  top: 50%;
+  top: 0;
   right: 0;
-  transform: translateY(-50%) translateX(100%);
+  height: 100vh;
+  transform: translateX(100%);
   border-radius: 8px 0 0 8px;
+  display: flex;
+  flex-direction: column;
 }
 .drawer-container.right.open {
-  transform: translateY(-50%) translateX(0);
+  transform: translateX(0);
 }
 .drawer-container.right .drawer-handle {
   position: absolute;
@@ -74,12 +80,15 @@
 /* Top Drawer */
 .drawer-container.top {
   top: 0;
-  left: 50%;
-  transform: translateX(-50%) translateY(-100%);
+  left: 0;
+  width: 100vw;
+  transform: translateY(-100%);
   border-radius: 0 0 8px 8px;
+  display: flex;
+  flex-direction: column;
 }
 .drawer-container.top.open {
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
 }
 .drawer-container.top .drawer-handle {
   position: absolute;
@@ -103,12 +112,15 @@
 /* Bottom Drawer */
 .drawer-container.bottom {
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%) translateY(100%);
+  left: 0;
+  width: 100vw;
+  transform: translateY(100%);
   border-radius: 8px 8px 0 0;
+  display: flex;
+  flex-direction: column;
 }
 .drawer-container.bottom.open {
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
 }
 .drawer-container.bottom .drawer-handle {
   position: absolute;
@@ -131,9 +143,18 @@
 
 .drawer-content {
   padding: 16px;
-  max-width: 80vw;
-  max-height: 80vh;
   overflow: auto;
+  box-sizing: border-box;
+}
+
+.drawer-container.left .drawer-content,
+.drawer-container.right .drawer-content {
+  width: 20vw;
+}
+
+.drawer-container.top .drawer-content,
+.drawer-container.bottom .drawer-content {
+  height: 20vh;
 }
 
 /* Material Symbols in Shadow DOM */
