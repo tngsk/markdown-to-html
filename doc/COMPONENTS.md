@@ -6,6 +6,21 @@ Below is the documentation for the available custom directives and their syntax.
 
 ## Interactive & Media Components
 
+### Flipcard (`mono-flipcard`)
+Used to create an interactive two-sided card that flips when clicked. Ideal for quizzes, flashcards, or term explanations.
+
+**Syntax:**
+```markdown
+@[flipcard: <front_text>](a: <back_text>)
+```
+*   `front_text`: The text to display on the front of the card.
+*   `back_text`: The text to display on the back of the card when flipped. Supported keys for the back text are `a`, `A`, `ans`, and `answer`.
+
+Result:
+@[flipcard: "徳川家康が江戸幕府を開いたのは何年？"](a: "1603年")
+
+---
+
 ### A/B Test (`mono-ab-test`)
 Used to present an A/B test between two media sources (images or audio).
 
