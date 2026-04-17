@@ -1,75 +1,76 @@
-# 🚀 Mono 究極のデモケース
+# 🚀 Mono Ultimate Showcase
 
-ようこそ！このドキュメントは、`Mono` が提供する全機能を駆使して作成されたインタラクティブなデモファイルです。
-参加者の皆さんは、このドキュメントを通じて様々な機能をご体験いただけます。
+Welcome! This document is an interactive showcase utilizing all available `Mono` Web Components.
 
-## 1. セッションの開始
+## 1. Landing (Hero & Clock)
 
-まずは、本日のセッションに参加しましょう！
+@[hero: "Welcome to Mono Showcase"](bg-color: #f8f9fa, text-color: #333)
+@[clock](display: block)
+Experience the power of Interactive Markdown.
+@[/hero]
 
-@[session-join: "MONO-MD ワークショップに参加する"]
+## 2. Session Management (Session Join & Group Assignment)
 
-セッションに参加できたら、ランダムにグループ分けを行ってみましょう。
+@[row]
+:::column
+@[session-join: "Join Today's Workshop"]
+:::
+@[spacer](width: 20px)
+:::column
+@[group-assignment: "Team Allocation"]
+:::
+@[/row]
 
-@[group-assignment: "グループを割り当てる"]
+## 3. Interactive Inputs (Textfield, Notebook, Poll)
 
-## 2. リアクションとフィードバック
+Let's gather some information!
 
-説明中に「わからないな」と思ったり、「なるほど！」と思ったら、いつでもリアクションを送ってください。
+@[row]
+:::column
+**Quick Question:**
+@[textfield: "What is your role?"](size: 30)
 
-@[reaction: "✋ 挙手,💡 なるほど,❓ 質問あり,👏 拍手"]
+**Your Thoughts:**
+@[notebook: "Notes"](id: showcase-notebook-1, placeholder: "Type your ideas here...")
+:::
+@[spacer](width: 20px)
+:::column
+**Feedback Poll:**
+@[poll: "How do you rate the layout?"](options: "Excellent, Good, Needs Improvement")
+:::
+@[/row]
 
-## 3. インタラクティブなアンケート (Live Polling)
+## 4. Media & Testing (A/B Test, Sound, Score, Reaction)
 
-ここまでのセッションはいかがですか？
+Listen to the audio, view the music score, and compare designs!
 
-@[poll: 今日の期待度はどれくらいですか？](非常に高い, 高い, 普通, 少し不安)
+@[row]
+:::column
+**A/B Image Test:**
+@[ab-test: "Design Comparison"](src-a: test.svg, src-b: test_xml.svg)
+@[reaction](options: "A is better, B is better")
+:::
+@[spacer](width: 20px)
+:::column
+**Audio & Score:**
+@[score: "C4 D4 E4 F4 | G4 A4 B4 C5"](clef: treble, time: 4/4)
+@[sound: "Play Note"](src: https://actions.google.com/sounds/v1/alarms/beep_short.ogg)
+:::
+@[/row]
 
-## 4. コードブロックとColab変換
+## 5. UI Elements (Drawer, Icon)
 
-Pythonのコード例です。右上の「Copy」ボタンをクリックしてコピーできます。
-
-```python
-import asyncio
-
-async def fetch_data():
-    print("Fetching data from the universe...")
-    await asyncio.sleep(1)
-    return {"status": 200, "message": "Success"}
-
-asyncio.run(fetch_data())
-```
-
-また、GitHub上のJupyter Notebookリンクは自動的にColabバッジに変換されます！
-[データ分析チュートリアルを開く](https://github.com/tngsk/markdown-to-html/blob/main/demo/notebook.ipynb)
-
-## 5. カスタム記法 (Nowrap)
-
-重要なキーワードである {{Mono}} や {{Web Components}} は、画面幅が狭くなっても途中で折り返されず、読みやすさが保たれます。
-
-## 6. 画像の最適化と遅延読み込み (SVG & WebP)
-
-画像はBase64で埋め込まれるか、SVGとして直接インライン化されます。
-以下はローカルにあるベクター画像です。
-
-![テスト画像](test.svg)
-
-## 7. A/B テスト (デザイン・音声)
-
-２つのデザインや音声の比較実験を行うことができます。
-
-@[ab-test: デザインの比較](test.svg, test_xml.svg)
-
-## 8. テキストとノートブック入力
-
-学習のメモや、自由記述のアンケートはこちらから入力できます。
-リロードしてもデータは保持されます！
-
-**ひとこと感想:**
-@[textfield: size:40 (感想をここに入力してください)]
-
-**詳細なノート:**
-@[notebook-input](demo-notebook-1)
+@[drawer: Additional Tools](position: right)
+Here are some icons you might find useful:
+@[row]
+:::column
+@[icon: "settings"](size: 32px) Settings
+:::
+:::column
+@[icon: "favorite"](size: 32px, color: red) Favorite
+:::
+@[/row]
+@[/drawer]
 
 ---
 *Created with [Mono]*
