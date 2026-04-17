@@ -112,6 +112,15 @@ Used to create a multi-line notebook-style input area.
 *   `id`: The unique identifier for this input block.
 *   `placeholder`: (Optional) The placeholder text to display in the input area.
 
+### Dice / Randomizer (`mono-dice`)
+Used to embed an interactive dice or simple randomizer that "rolls" a number when clicked.
+
+**Syntax:**
+```markdown
+@[dice](faces: <number>) or @[dice](number: <number>)
+```
+*   `faces` / `number`: (Optional) The maximum number to roll (default is 6).
+
 ### Poll (`mono-poll`)
 Used to create a polling interface with multiple options.
 
