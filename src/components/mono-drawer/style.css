@@ -6,9 +6,10 @@
   position: fixed;
   z-index: 9999;
   transition: transform 0.3s ease;
-  background: white;
+  background: var(--color-base-100, white);
+  color: var(--color-base-content, #333);
   box-shadow: 0 0 10px rgba(0,0,0,0.5);
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color, #ccc);
 }
 
 /* Left Drawer */
@@ -31,8 +32,8 @@
   transform: translateY(-50%);
   width: 30px;
   padding: 10px 0;
-  background: white;
-  border: 1px solid #ccc;
+  background: var(--color-base-100, white);
+  border: 1px solid var(--border-color, #ccc);
   border-left: none;
   cursor: pointer;
   display: flex;
@@ -64,8 +65,8 @@
   transform: translateY(-50%);
   width: 30px;
   padding: 10px 0;
-  background: white;
-  border: 1px solid #ccc;
+  background: var(--color-base-100, white);
+  border: 1px solid var(--border-color, #ccc);
   border-right: none;
   cursor: pointer;
   display: flex;
@@ -97,8 +98,8 @@
   transform: translateX(-50%);
   height: 30px;
   padding: 0 10px;
-  background: white;
-  border: 1px solid #ccc;
+  background: var(--color-base-100, white);
+  border: 1px solid var(--border-color, #ccc);
   border-top: none;
   cursor: pointer;
   display: flex;
@@ -129,8 +130,8 @@
   transform: translateX(-50%);
   height: 30px;
   padding: 0 10px;
-  background: white;
-  border: 1px solid #ccc;
+  background: var(--color-base-100, white);
+  border: 1px solid var(--border-color, #ccc);
   border-bottom: none;
   cursor: pointer;
   display: flex;

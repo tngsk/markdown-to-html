@@ -7,8 +7,8 @@
     box-sizing: border-box;
 }
 :root {
-    --font-color: #111827;
-    --font-color-light: #374151;
+    --font-color: var(--color-base-content, #111827);
+    --font-color-light: var(--color-base-content-muted, #374151);
 }
 
 html {
@@ -25,7 +25,7 @@ body {
         "Noto Sans JP", Meiryo, sans-serif;
     line-height: 1.9;
     color: var(--font-color);
-    background: #f3f4f6;
+    background: var(--color-base-200, #f3f4f6);
 }
 
 hr {
@@ -35,7 +35,7 @@ hr {
     margin-left: auto;
     margin-right: auto;
     border: none;
-    border-top: 2px dotted #ddd;
+    border-top: 2px dotted var(--border-color, #ddd);
 }
 
 /* 見出し -------------------------------------------------- */
@@ -101,9 +101,9 @@ img {
 
 /* リンク -------------------------------------------------- */
 a {
-    color: #2563eb;
+    color: var(--color-primary, #2563eb);
     text-decoration: none;
-    border-bottom: 1px solid rgba(37, 99, 235, 0.35);
+    border-bottom: 1px solid var(--color-primary-light, rgba(37, 99, 235, 0.35));
     padding-bottom: 0.05em;
     transition:
         color 0.15s ease,
@@ -111,8 +111,8 @@ a {
 }
 
 a:hover {
-    color: #1d4ed8;
-    border-bottom-color: rgba(37, 99, 235, 0.7);
+    color: var(--color-primary-dark, #1d4ed8);
+    border-bottom-color: var(--color-primary, rgba(37, 99, 235, 0.7));
 }
 
 /* リスト -------------------------------------------------- */
@@ -131,7 +131,7 @@ code {
     font-family:
         ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
         "Liberation Mono", "Courier New", monospace;
-    background: #fff;
+    background: var(--color-base-100, #fff);
     padding: 0.5rem;
 }
 
@@ -158,9 +158,9 @@ blockquote {
     padding-right: 1rem;
     padding-top: 0.1rem;
     padding-bottom: 0.1rem;
-    border-left: 4px solid #9ca3af;
-    background: #f9fafb;
-    color: #4b5563;
+    border-left: 4px solid var(--border-color, #9ca3af);
+    background: var(--color-base-100, #f9fafb);
+    color: var(--color-base-content-muted, #4b5563);
 }
 
 /* テーブル ------------------------------------------------ */
@@ -174,13 +174,13 @@ table {
 th,
 td {
     padding: 0.75rem;
-    border-bottom: 1px solid #666;
+    border-bottom: 1px solid var(--border-color, #666);
 }
 
 th {
     text-align: left;
     font-weight: 600;
-    border-bottom: 2px solid #222;
+    border-bottom: 2px solid var(--color-base-content, #222);
 }
 
 /* ============================================================================ */

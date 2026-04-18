@@ -16,8 +16,8 @@
 .dice {
     width: 4rem;
     height: 4rem;
-    background-color: var(--mono-bg-color, #ffffff);
-    border: 2px solid var(--mono-border-color, #333333);
+    background-color: var(--mono-bg-color, var(--color-base-100));
+    border: 2px solid var(--mono-border-color, var(--color-base-content));
     border-radius: 12px;
     display: flex;
     justify-content: center;
@@ -46,12 +46,12 @@
 .dice-number {
     font-size: 2rem;
     font-weight: bold;
-    color: var(--mono-text-color, #333333);
+    color: var(--mono-text-color, var(--color-base-content));
 }
 
 .dice-message {
     font-size: 0.9rem;
-    color: var(--mono-text-color, #666666);
+    color: var(--mono-text-color, var(--color-base-content-muted));
     min-height: 1.2rem;
 }
 

@@ -13,6 +13,7 @@ from typing import List, Optional
 from src.config import ConversionError
 from src.constants import (
     BASE_CSS_FILE,
+    THEMES_CSS_FILE,
     COLAB_BADGE_URL,
     COLAB_GITHUB_BASE_URL,
     DEFAULT_TEMPLATE_PATH,
@@ -251,17 +252,33 @@ class HTMLDocumentBuilder:
             return ""
 
     def _load_base_css(self) -> str:
-        """base.css ファイルを読み込んで <style> タグで返す"""
+        """base.css および themes.css ファイルを読み込んで <style> タグで返す"""
+        css_blocks = []
+
+        # themes.css の読み込み
+        themes_file = TEMPLATES_DIR / "core" / THEMES_CSS_FILE
+        try:
+            if themes_file.exists():
+                themes_content = themes_file.read_text(encoding="utf-8")
+                css_blocks.append(themes_content)
+        except Exception as e:
+            self.logger.warning(f"themes.css の読み込みエラー: {e}")
+
+        # base.css の読み込み
         css_file = TEMPLATES_DIR / "core" / BASE_CSS_FILE
         try:
             css_content = css_file.read_text(encoding="utf-8")
-            return f"<style>\n{css_content}\n</style>"
+            css_blocks.append(css_content)
         except FileNotFoundError:
             self.logger.warning(f"base.css が見つかりません: {css_file}")
-            return ""
         except Exception as e:
             self.logger.warning(f"base.css の読み込みエラー: {e}")
+
+        if not css_blocks:
             return ""
+
+        combined_css = "\n\n".join(css_blocks)
+        return f"<style>\n{combined_css}\n</style>"
 
     def _load_highlight_js_script(self) -> str:
         """Highlight.js スクリプトタグを構築"""
