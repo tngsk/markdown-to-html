@@ -1,0 +1,29 @@
+:host {
+    display: block;
+}
+
+.theme-switcher-container {
+    margin: 1rem 0;
+    padding: 1rem;
+    border: 1px solid var(--border-color, #ccc);
+    border-radius: 8px;
+    background-color: var(--color-base-100, #fff);
+    color: var(--color-base-content, #333);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.theme-switcher-container.hidden {
+    display: none;
+}
+
+select {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--border-color, #ccc);
+    border-radius: 4px;
+    background-color: var(--color-base-100, #fff);
+    color: var(--color-base-content, #333);
+    font-family: inherit;
+    font-size: 0.9rem;
+}

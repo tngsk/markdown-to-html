@@ -43,28 +43,15 @@ mono-flipcard {
 
 /* The front face */
 .flipcard-front {
-    background-color: var(--mono-flipcard-front-bg, #ffffff);
-    color: var(--mono-flipcard-front-color, #1f2937);
-    border: 1px solid var(--mono-flipcard-front-border, #e5e7eb);
+    background-color: var(--mono-flipcard-front-bg, var(--color-base-100));
+    color: var(--mono-flipcard-front-color, var(--color-base-content));
+    border: 1px solid var(--mono-flipcard-front-border, var(--border-color));
 }
 
 /* The back face, rotated 180deg initially */
 .flipcard-back {
-    background-color: var(--mono-flipcard-back-bg, #f3f4f6);
-    color: var(--mono-flipcard-back-color, #111827);
-    border: 1px solid var(--mono-flipcard-back-border, #d1d5db);
+    background-color: var(--mono-flipcard-back-bg, var(--color-base-200));
+    color: var(--mono-flipcard-back-color, var(--color-base-content));
+    border: 1px solid var(--mono-flipcard-back-border, var(--border-color));
     transform: rotateY(180deg);
-}
-
-@media (prefers-color-scheme: dark) {
-    .flipcard-front {
-        background-color: var(--mono-flipcard-front-bg, #1f2937);
-        color: var(--mono-flipcard-front-color, #f9fafb);
-        border-color: var(--mono-flipcard-front-border, #374151);
-    }
-    .flipcard-back {
-        background-color: var(--mono-flipcard-back-bg, #374151);
-        color: var(--mono-flipcard-back-color, #f9fafb);
-        border-color: var(--mono-flipcard-back-border, #4b5563);
-    }
 }

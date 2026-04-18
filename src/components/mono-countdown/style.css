@@ -6,8 +6,8 @@
     width: var(--countdown-size, 80px);
     height: var(--countdown-size, 80px);
     font-family: monospace;
-    --countdown-color: #3b82f6; /* Default color: blue */
-    --countdown-bg-color: #e5e7eb;
+    --countdown-color: var(--color-primary, #3b82f6);
+    --countdown-bg-color: var(--color-base-300, #e5e7eb);
 }
 
 .countdown-container {
@@ -53,12 +53,12 @@
 }
 
 :host(.time-up) .progress-ring-circle {
-    stroke: #ef4444; /* Default time-up color: red */
+    stroke: var(--color-error, #ef4444);
     animation: pulse 1.5s infinite;
 }
 
 :host(.time-up) .time-display {
-    color: #ef4444;
+    color: var(--color-error, #ef4444);
 }
 
 @keyframes pulse {

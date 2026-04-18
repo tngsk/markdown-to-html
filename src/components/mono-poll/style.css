@@ -4,9 +4,9 @@
     display: block;
     margin: 1.5rem 0;
     font-family: var(--mono-font-family, system-ui, -apple-system, sans-serif);
-    color: var(--mono-text-color, #333);
-    background: var(--mono-bg-color, #f9f9f9);
-    border: 1px solid var(--mono-border-color, #e0e0e0);
+    color: var(--mono-text-color, var(--color-base-content));
+    background: var(--mono-bg-color, var(--color-base-200));
+    border: 1px solid var(--mono-border-color, var(--border-color));
     border-radius: 8px;
     padding: 1.5rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -31,20 +31,20 @@
     display: flex;
     align-items: center;
     padding: 0.75rem 1rem;
-    border: 1px solid var(--mono-border-color, #d1d5db);
+    border: 1px solid var(--mono-border-color, var(--border-color));
     border-radius: 6px;
-    background: white;
+    background: var(--color-base-100);
     cursor: pointer;
     transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .option-label:hover:not(.voted) {
-    background: var(--mono-hover-bg, #f3f4f6);
+    background: var(--mono-hover-bg, var(--color-base-200));
 }
 
 .option-label.selected {
-    border-color: var(--mono-primary-color, #3b82f6);
-    background: var(--mono-primary-light, #eff6ff);
+    border-color: var(--mono-primary-color, var(--color-primary));
+    background: var(--mono-primary-light, var(--color-primary-light));
 }
 
 input[type="radio"] {
@@ -56,8 +56,8 @@ input[type="radio"] {
 button.submit-btn {
     margin-top: 1.5rem;
     padding: 0.5rem 1.5rem;
-    background-color: var(--mono-primary-color, #3b82f6);
-    color: white;
+    background-color: var(--mono-primary-color, var(--color-primary));
+    color: var(--color-primary-content);
     border: none;
     border-radius: 6px;
     font-size: 1rem;
@@ -70,11 +70,12 @@ button.submit-btn {
 }
 
 button.submit-btn:hover:not(:disabled) {
-    background-color: var(--mono-primary-dark, #2563eb);
+    background-color: var(--mono-primary-dark, var(--color-primary-dark));
 }
 
 button.submit-btn:disabled {
-    background-color: var(--mono-disabled-color, #9ca3af);
+    background-color: var(--mono-disabled-color, var(--color-base-300));
+    color: var(--color-base-content-muted);
     cursor: not-allowed;
 }
 
@@ -85,7 +86,7 @@ button.submit-btn:disabled {
 .voted-message {
     margin-top: 1rem;
     font-size: 0.9rem;
-    color: var(--mono-success-color, #059669);
+    color: var(--mono-success-color, var(--color-success));
     display: flex;
     align-items: center;
     gap: 0.5rem;

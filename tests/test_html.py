@@ -176,7 +176,9 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
     def test_load_base_css(self):
         with patch('pathlib.Path.read_text', return_value="body { color: red; }"):
             result = self.builder._load_base_css()
-            self.assertIn("<style>\nbody { color: red; }\n</style>", result)
+            self.assertIn("body { color: red; }", result)
+            self.assertIn("<style>\n", result)
+            self.assertIn("</style>", result)
 
         with patch('pathlib.Path.read_text', side_effect=FileNotFoundError):
             self.assertEqual(self.builder._load_base_css(), "")
