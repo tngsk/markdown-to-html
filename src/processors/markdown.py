@@ -117,10 +117,20 @@ class MarkdownProcessor:
     def _restore_code_blocks(self, processed_content: str, blocks: dict[str, str]) -> str:
         """
         保護されたプレースホルダーを元のコードブロックに戻す。
+
+        Note:
+            Performance optimization: Uses a single regex pass instead of O(M*N) sequential string replacements,
+            significantly improving render times for documents with many code blocks.
         """
-        for placeholder, original in blocks.items():
-            processed_content = processed_content.replace(placeholder, original)
-        return processed_content
+        if not blocks:
+            return processed_content
+
+        pattern = re.compile(r'@@(?:FENCED|INLINE)_CODE_BLOCK_\d+@@')
+
+        def replacer(match: re.Match) -> str:
+            return blocks.get(match.group(0), match.group(0))
+
+        return pattern.sub(replacer, processed_content)
 
     def convert_markdown_to_html(self, markdown_content: str) -> str:
         """
