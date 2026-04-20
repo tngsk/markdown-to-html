@@ -226,7 +226,7 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         mock_iterdir.return_value = [mock_sync, mock_brush, mock_export, mock_poll, mock_unknown, mock_not_dir]
 
         # Test 1: enable_export=False, html_body has <mono-poll>
-        result1 = self.builder._get_used_component_dirs(html_body="<mono-poll></mono-poll>", should_enable_export=False)
+        result1 = self.builder._get_used_component_dirs(found_mono_tags={"mono-poll"}, should_enable_export=False)
         names1 = [p.name for p in result1]
         self.assertIn('mono-sync', names1)  # Always included
         self.assertIn('mono-brush', names1) # Always included
@@ -236,7 +236,7 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         self.assertNotIn('not-a-dir', names1) # Not a directory
 
         # Test 2: enable_export=True, no components in HTML
-        result2 = self.builder._get_used_component_dirs(html_body="<p>test</p>", should_enable_export=True)
+        result2 = self.builder._get_used_component_dirs(found_mono_tags=set(), should_enable_export=True)
         names2 = [p.name for p in result2]
         self.assertIn('mono-sync', names2)
         self.assertIn('mono-brush', names2)
@@ -245,7 +245,7 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
 
     @patch('pathlib.Path.exists', return_value=False)
     def test_get_used_component_dirs_missing_dir(self, mock_exists):
-        result = self.builder._get_used_component_dirs(html_body="", should_enable_export=False)
+        result = self.builder._get_used_component_dirs(found_mono_tags=set(), should_enable_export=False)
         self.assertEqual(result, [])
 
     @patch('pathlib.Path.exists', return_value=True)

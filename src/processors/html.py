@@ -5,6 +5,7 @@ Generates complete HTML documents from markdown with template support.
 """
 
 import json
+import html
 import logging
 import re
 from pathlib import Path
@@ -74,17 +75,20 @@ class HTMLDocumentBuilder:
         safe_title = self._escape_html(title)
         css_block = self._build_css_block(css_content)
 
+        # 最適化: HTMLボディからコンポーネントタグを1回のパスで抽出する
+        found_mono_tags = set(re.findall(r"<(mono-[a-z0-9-]+)", html_body))
+
         # エクスポート機能の自動判定
         has_interactive_components = any(
-            tag in html_body
+            tag in found_mono_tags
             for tag in [
-                "<mono-poll",
-                "<mono-ab-test",
-                "<mono-notebook",
-                "<mono-textfield-input",
-                "<mono-reaction",
-                "<mono-session-join",
-                "<mono-group-assignment",
+                "mono-poll",
+                "mono-ab-test",
+                "mono-notebook",
+                "mono-textfield-input",
+                "mono-reaction",
+                "mono-session-join",
+                "mono-group-assignment",
             ]
         )
         should_enable_export = enable_export or has_interactive_components
@@ -93,7 +97,7 @@ class HTMLDocumentBuilder:
             html_body += "\n<mono-export></mono-export>"
 
         # 使用されているコンポーネントを特定
-        used_component_dirs = self._get_used_component_dirs(html_body, should_enable_export)
+        used_component_dirs = self._get_used_component_dirs(found_mono_tags, should_enable_export)
 
         # コードブロック用リソース（CSS/JS）を読み込む
         base_css = self._load_base_css()
@@ -175,16 +179,9 @@ class HTMLDocumentBuilder:
     @staticmethod
     def _escape_html(text: str) -> str:
         """HTML特殊文字をエスケープ"""
-        replacements = {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#39;",
-        }
-        for char, escaped in replacements.items():
-            text = text.replace(char, escaped)
-        return text
+        # 最適化: C実装の高速な `html.escape` を使用
+        # `&#x27;` と `&#39;` の違いはあるが、どちらも有効なアポストロフィのエスケープ
+        return html.escape(text, quote=True).replace("&#x27;", "&#39;")
 
     def _remove_table_inline_styles(self, html_content: str) -> str:
         """
@@ -214,17 +211,21 @@ class HTMLDocumentBuilder:
         if not excluded_tags:
             return html_content
 
+        # 最適化: すべての除外タグを1つの正規表現で処理する
+        tags_pattern = "|".join(re.escape(tag) for tag in excluded_tags)
+
+        # 自己終了タグ（<hr /> など）
+        pattern_self_closing = re.compile(rf"<(?:{tags_pattern})[^>]*/?\s*>", re.IGNORECASE)
+        html_content = pattern_self_closing.sub("", html_content)
+
+        # 開閉タグ（<div>...</div> など）
+        # 後方参照 (\1) を使って、開始タグと終了タグが一致するようにする
+        pattern_paired = re.compile(
+            rf"<({tags_pattern})[^>]*>.*?</\1>", re.IGNORECASE | re.DOTALL
+        )
+        html_content = pattern_paired.sub("", html_content)
+
         for tag in excluded_tags:
-            # 自己終了タグ（<hr /> など）
-            pattern_self_closing = re.compile(rf"<{tag}[^>]*/?\s*>", re.IGNORECASE)
-            html_content = pattern_self_closing.sub("", html_content)
-
-            # 開閉タグ（<div>...</div> など）
-            pattern_paired = re.compile(
-                rf"<{tag}[^>]*>.*?</{tag}>", re.IGNORECASE | re.DOTALL
-            )
-            html_content = pattern_paired.sub("", html_content)
-
             self.logger.debug(f"タグ削除完了: {tag}")
 
         return html_content
@@ -278,7 +279,7 @@ class HTMLDocumentBuilder:
         """Highlight.js スクリプトタグを構築"""
         return f'<script src="{HIGHLIGHT_JS_CDN_JS}"></script>'
 
-    def _get_used_component_dirs(self, html_body: str, should_enable_export: bool) -> List[Path]:
+    def _get_used_component_dirs(self, found_mono_tags: set, should_enable_export: bool) -> List[Path]:
         """使用されているコンポーネントのディレクトリ一覧を取得する"""
         components_dir = COMPONENTS_DIR
         if not components_dir.exists() or not components_dir.is_dir():
@@ -303,7 +304,7 @@ class HTMLDocumentBuilder:
                 continue
 
             # HTML内で使用されているかチェック
-            if f"<{name}" in html_body:
+            if name in found_mono_tags:
                 used_dirs.append(component_dir)
 
         return used_dirs
