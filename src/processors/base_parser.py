@@ -52,20 +52,21 @@ class BaseComponentParser:
                 current.append(char)
             elif char == ',' and paren_depth == 0:
                 parts.append(''.join(current).strip())
-                current = []
+                current.clear()
             else:
                 current.append(char)
         if current:
             parts.append(''.join(current).strip())
 
         for part in parts:
-            if ':' in part:
-                k, v = part.split(':', 1)
-                k = k.strip()
-                v = v.strip()
-                if (v.startswith('"') and v.endswith('"')) or (v.startswith("'") and v.endswith("'")):
-                    v = v[1:-1]
-                result[k] = v
+            if part:
+                split_idx = part.find(':')
+                if split_idx != -1:
+                    k = part[:split_idx].strip()
+                    v = part[split_idx+1:].strip()
+                    if len(v) >= 2 and v[0] == v[-1] and v[0] in "\"'":
+                        v = v[1:-1]
+                    result[k] = v
         return result
 
     def process(self, markdown_content: str) -> str:
