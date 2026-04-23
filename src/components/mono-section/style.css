@@ -1,0 +1,57 @@
+:host {
+    display: block;
+    /* Break out of normal body padding */
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    /* Default to base theme color if no color or image is specified */
+    background-color: var(--section-bg-color, var(--color-base-100, transparent));
+    background-image: var(--section-bg-image, none);
+    background-size: var(--section-bg-mode, cover);
+    background-position: center;
+    background-repeat: no-repeat;
+    /* Default to content color */
+    color: var(--section-text-color, var(--color-base-content, inherit));
+
+    /* Override global font color variable so light DOM elements (like h2) inherit it */
+    --font-color: var(--section-text-color, var(--color-base-content, inherit));
+}
+
+.section-container {
+    width: 100%;
+    /* Allow custom height, default to auto */
+    min-height: var(--section-height, auto);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: cover; /* Default */
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 3rem 2rem;
+    box-sizing: border-box;
+}
+
+.section-content {
+    /* Keep the internal content width constrained so it doesn't span entire 100vw */
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    z-index: 1;
+}
+
+/* Ensure text inside doesn't inherit hero styles, use default sizes */
+::slotted(h1),
+::slotted(h2),
+::slotted(h3),
+::slotted(h4),
+::slotted(p),
+.section-content h2,
+.section-content p {
+    color: inherit;
+}
