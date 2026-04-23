@@ -35,7 +35,6 @@ class HTMLDocumentBuilder:
     def build_document(
         self,
         html_body: str,
-        css_content: Optional[str] = None,
         title: str = "Document",
         excluded_tags: Optional[List[str]] = None,
         connect_src: str = "",
@@ -48,7 +47,6 @@ class HTMLDocumentBuilder:
 
         Args:
             html_body: <body>に挿入するHTML
-            css_content: <head>に挿入するCSS（オプション）
             title: ドキュメントのタイトル
 
         Returns:
@@ -73,7 +71,6 @@ class HTMLDocumentBuilder:
 
         # プレースホルダーを置換
         safe_title = self._escape_html(title)
-        css_block = self._build_css_block(css_content)
 
         # 最適化: HTMLボディからコンポーネントタグを1回のパスで抽出する
         found_mono_tags = set(re.findall(r"<(mono-[a-z0-9-]+)", html_body))
@@ -98,9 +95,6 @@ class HTMLDocumentBuilder:
 
         # 使用されているコンポーネントを特定
         used_component_dirs = self._get_used_component_dirs(found_mono_tags, should_enable_export)
-
-        # コードブロック用リソース（CSS/JS）を読み込む
-        base_css = self._load_base_css()
 
         has_code_block = "<mono-code-block" in html_body
         highlight_js_css = self._build_highlight_js_link() if has_code_block else ""
@@ -129,9 +123,7 @@ class HTMLDocumentBuilder:
 
         doc = template_content.replace("{TITLE}", safe_title)
         doc = doc.replace("{CSP_META}", csp_meta + fonts_link)
-        doc = doc.replace("{CSS_BLOCK}", css_block)
         doc = doc.replace("{HIGHLIGHT_JS_CSS}", highlight_js_css)
-        doc = doc.replace("{CODE_BLOCK_CSS}", base_css)
         doc = doc.replace("{HIGHLIGHT_JS}", highlight_js)
 
         if asset_store:
@@ -152,12 +144,6 @@ class HTMLDocumentBuilder:
         )  # Ensure BODY is replaced after appending asset store
 
         return doc
-
-    def _build_css_block(self, css_content: Optional[str]) -> str:
-        """CSSブロックを構築（ない場合は空文字列）"""
-        if not css_content:
-            return ""
-        return f"    <style>\n{css_content}\n    </style>\n"
 
     def extract_title_from_html(self, html_content: str) -> str:
         """
@@ -244,35 +230,6 @@ class HTMLDocumentBuilder:
         except Exception as e:
             self.logger.warning(f"lazy_load.js の読み込みエラー: {e}")
             return ""
-
-    def _load_base_css(self) -> str:
-        """base.css および themes.css ファイルを読み込んで <style> タグで返す"""
-        css_blocks = []
-
-        # themes.css の読み込み
-        themes_file = TEMPLATES_DIR / "core" / THEMES_CSS_FILE
-        try:
-            if themes_file.exists():
-                themes_content = themes_file.read_text(encoding="utf-8")
-                css_blocks.append(themes_content)
-        except Exception as e:
-            self.logger.warning(f"themes.css の読み込みエラー: {e}")
-
-        # base.css の読み込み
-        css_file = TEMPLATES_DIR / "core" / BASE_CSS_FILE
-        try:
-            css_content = css_file.read_text(encoding="utf-8")
-            css_blocks.append(css_content)
-        except FileNotFoundError:
-            self.logger.warning(f"base.css が見つかりません: {css_file}")
-        except Exception as e:
-            self.logger.warning(f"base.css の読み込みエラー: {e}")
-
-        if not css_blocks:
-            return ""
-
-        combined_css = "\n\n".join(css_blocks)
-        return f"<style>\n{combined_css}\n</style>"
 
     def _load_highlight_js_script(self) -> str:
         """Highlight.js スクリプトタグを構築"""

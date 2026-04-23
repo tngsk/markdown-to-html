@@ -14,11 +14,10 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
 
     @patch('pathlib.Path.read_text')
     def test_build_document_success(self, mock_read_text):
-        mock_read_text.return_value = "<html><head>{CSP_META}{CSS_BLOCK}{HIGHLIGHT_JS_CSS}{CODE_BLOCK_CSS}</head><body>{TITLE}{BODY}{HIGHLIGHT_JS}{COPY_BUTTON_JS}</body></html>"
+        mock_read_text.return_value = "<html><head>{CSP_META}{HIGHLIGHT_JS_CSS}</head><body>{TITLE}{BODY}{HIGHLIGHT_JS}{COPY_BUTTON_JS}</body></html>"
 
         with patch.object(self.builder, '_get_used_component_dirs', return_value=[]), \
              patch.object(self.builder, '_load_highlight_js_script', return_value="<script></script>"), \
-             patch.object(self.builder, '_load_base_css', return_value="<style></style>"), \
              patch.object(self.builder, '_build_highlight_js_link', return_value="<link>"):
 
             result = self.builder.build_document(html_body="<p>test</p>", title="Test Title")
@@ -55,7 +54,6 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         mock_read_text.return_value = "{BODY}{COPY_BUTTON_JS}"
         with patch.object(self.builder, '_get_used_component_dirs', return_value=[]), \
              patch.object(self.builder, '_load_highlight_js_script', return_value=""), \
-             patch.object(self.builder, '_load_base_css', return_value=""), \
              patch.object(self.builder, '_build_highlight_js_link', return_value=""), \
              patch.object(self.builder, '_load_component_templates', return_value=""), \
              patch.object(self.builder, '_load_mono_components_script', return_value=""):
@@ -73,7 +71,6 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         mock_read_text.return_value = "{CSP_META}{COPY_BUTTON_JS}"
         with patch.object(self.builder, '_get_used_component_dirs', return_value=[]), \
              patch.object(self.builder, '_load_highlight_js_script', return_value=""), \
-             patch.object(self.builder, '_load_base_css', return_value=""), \
              patch.object(self.builder, '_build_highlight_js_link', return_value=""), \
              patch.object(self.builder, '_load_component_templates', return_value=""), \
              patch.object(self.builder, '_load_mono_components_script', return_value=""):
@@ -92,7 +89,6 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         mock_read_text.return_value = "{BODY}{COPY_BUTTON_JS}"
         with patch.object(self.builder, '_get_used_component_dirs', return_value=[]), \
              patch.object(self.builder, '_load_highlight_js_script', return_value=""), \
-             patch.object(self.builder, '_load_base_css', return_value=""), \
              patch.object(self.builder, '_build_highlight_js_link', return_value=""), \
              patch.object(self.builder, '_load_lazy_load_script', return_value="console.log('lazy');"), \
              patch.object(self.builder, '_load_component_templates', return_value=""), \
@@ -103,16 +99,6 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
 
             self.assertIn('<template id="mono-asset-store">{"image1.png": "data:image/png;base64,1234"}</template>', result)
             self.assertIn("console.log('lazy');", result)
-
-    def test_build_css_block(self):
-        css = "body { color: red; }"
-        result = self.builder._build_css_block(css)
-        self.assertIn("<style>", result)
-        self.assertIn("body { color: red; }", result)
-        self.assertIn("</style>", result)
-
-        self.assertEqual(self.builder._build_css_block(None), "")
-        self.assertEqual(self.builder._build_css_block(""), "")
 
     def test_extract_title_from_html(self):
         html_with_title = "<html><body><h1>My Title</h1><p>content</p></body></html>"
@@ -172,19 +158,6 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
 
         with patch('pathlib.Path.read_text', side_effect=Exception("Read error")):
             self.assertEqual(self.builder._load_lazy_load_script(), "")
-
-    def test_load_base_css(self):
-        with patch('pathlib.Path.read_text', return_value="body { color: red; }"):
-            result = self.builder._load_base_css()
-            self.assertIn("body { color: red; }", result)
-            self.assertIn("<style>\n", result)
-            self.assertIn("</style>", result)
-
-        with patch('pathlib.Path.read_text', side_effect=FileNotFoundError):
-            self.assertEqual(self.builder._load_base_css(), "")
-
-        with patch('pathlib.Path.read_text', side_effect=Exception("Read error")):
-            self.assertEqual(self.builder._load_base_css(), "")
 
     @patch('pathlib.Path.exists', return_value=True)
     @patch('pathlib.Path.is_dir', return_value=True)

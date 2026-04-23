@@ -82,7 +82,6 @@ class MarkdownToHTMLConverter:
             title = self.html_document_builder.extract_title_from_html(html_body)
             html_document = self.html_document_builder.build_document(
                 html_body=html_body,
-                css_content=css_content if css_content else None,
                 title=title,
                 excluded_tags=self.config.excluded_tags,
                 connect_src=self.config.connect_src,
@@ -93,6 +92,9 @@ class MarkdownToHTMLConverter:
             self.logger.info(
                 f"✓ HTMLドキュメント構造を生成しました (タイトル: {title})"
             )
+
+            # Step 5.5: CSS埋め込み
+            html_document = self.css_embedder.embed_css_in_html(html_document, css_content)
 
             # Validate Size
             total_size = len(html_document.encode("utf-8"))
