@@ -1,0 +1,45 @@
+import unittest
+import importlib.util
+import os
+
+class TestMonoSectionParser(unittest.TestCase):
+    def setUp(self):
+        # Dynamically load the parser module
+        parser_path = os.path.join(
+            os.path.dirname(__file__),
+            "../../src/components/mono-section/parser.py"
+        )
+        spec = importlib.util.spec_from_file_location("mono_section_parser", parser_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        self.parser = module.Parser()
+
+    def test_basic_parsing(self):
+        markdown = "@[section: My Section](bg-color: red, height: 300px)\nContent\n@[/section]"
+        html = self.parser.process(markdown)
+
+        self.assertIn('<mono-section markdown="1" bg-color="red" height="300px">', html)
+        self.assertIn("<h2>My Section</h2>", html)
+        self.assertIn("Content", html)
+        self.assertIn("</mono-section>", html)
+
+    def test_no_title(self):
+        markdown = "@[section](bg-color: blue)\nContent\n@[/section]"
+        html = self.parser.process(markdown)
+
+        self.assertIn('<mono-section markdown="1" bg-color="blue">', html)
+        self.assertNotIn("<h2>", html)
+        self.assertIn("Content", html)
+        self.assertIn("</mono-section>", html)
+
+    def test_all_attributes(self):
+        markdown = "@[section: Full](image: img.png, mode: contain, bg-color: #000, text-color: #fff, height: 50vh)\nContent\n@[/section]"
+        html = self.parser.process(markdown)
+
+        self.assertIn('<mono-section markdown="1" image="img.png" mode="contain" bg-color="#000" text-color="#fff" height="50vh">', html)
+        self.assertIn("<h2>Full</h2>", html)
+        self.assertIn("Content", html)
+        self.assertIn("</mono-section>", html)
+
+if __name__ == '__main__':
+    unittest.main()
