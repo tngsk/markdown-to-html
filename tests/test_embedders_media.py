@@ -42,7 +42,11 @@ def test_encode_media_cache(media_embedder, mock_file_handler):
     media_path.exists.return_value = True
     media_path.resolve.return_value = "/path/to/media.jpg"
 
-    media_embedder._base64_cache["/path/to/media.jpg"] = "cached_base64_data"
+    mock_stat = MagicMock()
+    mock_stat.st_mtime = 12345.6
+    media_path.stat.return_value = mock_stat
+
+    media_embedder._base64_cache["/path/to/media.jpg_12345.6"] = "cached_base64_data"
 
     result = media_embedder.encode_media_to_base64(media_path)
 
@@ -57,13 +61,17 @@ def test_encode_media_standard_file(media_embedder, mock_file_handler):
     media_path.resolve.return_value = "/path/to/file.svg"
     media_path.suffix.lower.return_value = ".svg"
 
+    mock_stat = MagicMock()
+    mock_stat.st_mtime = 12345.6
+    media_path.stat.return_value = mock_stat
+
     mock_file_handler.read_binary.return_value = b"test_data"
     expected_base64 = base64.b64encode(b"test_data").decode("utf-8")
 
     result = media_embedder.encode_media_to_base64(media_path)
 
     assert result == expected_base64
-    assert media_embedder._base64_cache["/path/to/file.svg"] == expected_base64
+    assert media_embedder._base64_cache["/path/to/file.svg_12345.6"] == expected_base64
 
 
 @patch("src.embedders.media.Image.open")
@@ -73,6 +81,10 @@ def test_encode_media_webp_conversion(mock_image_open, media_embedder, mock_file
     media_path.exists.return_value = True
     media_path.resolve.return_value = "/path/to/image.png"
     media_path.suffix.lower.return_value = ".png"
+
+    mock_stat = MagicMock()
+    mock_stat.st_mtime = 12345.6
+    media_path.stat.return_value = mock_stat
 
     mock_file_handler.read_binary.return_value = b"original_png_data"
 
@@ -89,7 +101,7 @@ def test_encode_media_webp_conversion(mock_image_open, media_embedder, mock_file
 
     expected_base64 = base64.b64encode(b"webp_data").decode("utf-8")
     assert result == expected_base64
-    assert media_embedder._base64_cache["/path/to/image.png"] == expected_base64
+    assert media_embedder._base64_cache["/path/to/image.png_12345.6"] == expected_base64
 
 
 @patch("src.embedders.media.Image.open")
@@ -100,6 +112,10 @@ def test_encode_media_webp_conversion_fallback(mock_image_open, media_embedder, 
     media_path.resolve.return_value = "/path/to/image.png"
     media_path.suffix.lower.return_value = ".png"
 
+    mock_stat = MagicMock()
+    mock_stat.st_mtime = 12345.6
+    media_path.stat.return_value = mock_stat
+
     mock_file_handler.read_binary.return_value = b"original_png_data"
 
     mock_image_open.side_effect = Exception("Mocked conversion error")
@@ -108,7 +124,7 @@ def test_encode_media_webp_conversion_fallback(mock_image_open, media_embedder, 
 
     expected_base64 = base64.b64encode(b"original_png_data").decode("utf-8")
     assert result == expected_base64
-    assert media_embedder._base64_cache["/path/to/image.png"] == expected_base64
+    assert media_embedder._base64_cache["/path/to/image.png_12345.6"] == expected_base64
     mock_logger.warning.assert_called_once()
 
 

@@ -33,7 +33,8 @@ class MediaEmbedder:
         if not media_path.exists():
             raise ImageEmbeddingError(f"メディアファイルが見つかりません: {media_path}")
 
-        cache_key = str(media_path.resolve())
+        mtime = media_path.stat().st_mtime
+        cache_key = f"{media_path.resolve()}_{mtime}"
         if cache_key in self._base64_cache:
             return self._base64_cache[cache_key]
 
@@ -80,7 +81,7 @@ class MediaEmbedder:
 
         def resolve_and_encode(src_value: str) -> str:
             nonlocal media_count
-            if src_value.startswith(("http://", "https://", "data:")):
+            if src_value.strip().lower().startswith(("http://", "https://", "data:")):
                 return src_value
 
             media_path = (markdown_dir / src_value).resolve()
