@@ -20,7 +20,7 @@ from src.logger import configure_logging
 def create_argument_parser() -> argparse.ArgumentParser:
     """コマンドラインパーサーを構築"""
     parser = argparse.ArgumentParser(
-        prog="markdown-to-html",
+        prog="Mono",
         description="Markdown をBase64埋め込み画像・CSS対応の単一HTMLファイルに変換します。",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""

@@ -1,0 +1,1 @@
+[{ "label": "Run Mono: ${ZED_FILE}", "command": "uv run main.py ${ZED_FILE}" }]
