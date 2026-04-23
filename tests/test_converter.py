@@ -111,6 +111,7 @@ class TestMarkdownToHTMLConverter(unittest.TestCase):
         # Build a large document > 30MB
         large_content = "A" * (31 * 1024 * 1024)
         self.converter.html_document_builder.build_document.return_value = large_content
+        self.converter.css_embedder.embed_css_in_html.return_value = large_content
 
         with self.assertLogs(self.logger, level='ERROR') as cm:
             result = self.converter.convert()
@@ -127,6 +128,7 @@ class TestMarkdownToHTMLConverter(unittest.TestCase):
 
         large_content = "A" * (31 * 1024 * 1024)
         self.converter.html_document_builder.build_document.return_value = large_content
+        self.converter.css_embedder.embed_css_in_html.return_value = large_content
 
         result = self.converter.convert()
 
@@ -143,6 +145,7 @@ class TestMarkdownToHTMLConverter(unittest.TestCase):
         # Build a document > 20MB but < 30MB
         content = "A" * (21 * 1024 * 1024)
         self.converter.html_document_builder.build_document.return_value = content
+        self.converter.css_embedder.embed_css_in_html.return_value = content
 
         with self.assertLogs(self.logger, level='WARNING') as cm:
             result = self.converter.convert()

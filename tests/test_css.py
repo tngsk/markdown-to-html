@@ -82,39 +82,61 @@ class TestCSSEmbedder(unittest.TestCase):
         self.mock_logger.error.assert_called_once()
         self.assertEqual(self.mock_file_handler.read_text.call_count, 2)
 
-    def test_embed_css_in_html_empty_css(self):
+    @patch.object(CSSEmbedder, 'get_base_css')
+    def test_embed_css_in_html_empty_css(self, mock_get_base_css):
+        mock_get_base_css.return_value = ""
         html = "<html><body>Test</body></html>"
         result = self.css_embedder.embed_css_in_html(html, "")
         self.assertEqual(result, html)
 
-    def test_embed_css_in_html_with_head_closing(self):
+    @patch.object(CSSEmbedder, 'get_base_css')
+    def test_embed_css_in_html_with_head_closing(self, mock_get_base_css):
+        mock_get_base_css.return_value = ""
         html = "<!DOCTYPE html><html><head><title>Test</title></head><body>Hello</body></html>"
         css = "body { color: black; }"
 
         result = self.css_embedder.embed_css_in_html(html, css)
 
-        expected_tag = f"<style>\n{css}\n</style>\n"
+        expected_tag = f"    <style>\n{css}\n    </style>\n"
         self.assertIn(expected_tag, result)
         self.assertTrue(result.find(expected_tag) < result.find("</head>"))
 
-    def test_embed_css_in_html_with_html_opening_only(self):
+    @patch.object(CSSEmbedder, 'get_base_css')
+    def test_embed_css_in_html_with_html_opening_only(self, mock_get_base_css):
+        mock_get_base_css.return_value = ""
         html = "<html><body>Hello</body></html>"
         css = "body { color: black; }"
 
         result = self.css_embedder.embed_css_in_html(html, css)
 
-        expected_tag = f"\n<style>\n{css}\n</style>\n"
+        expected_tag = f"    <style>\n{css}\n    </style>\n"
         self.assertIn(expected_tag, result)
         self.assertTrue(result.find("<html>") < result.find(expected_tag))
 
-    def test_embed_css_in_html_no_tags(self):
+    @patch.object(CSSEmbedder, 'get_base_css')
+    def test_embed_css_in_html_no_tags(self, mock_get_base_css):
+        mock_get_base_css.return_value = ""
         html = "Hello World"
         css = "body { color: black; }"
 
         result = self.css_embedder.embed_css_in_html(html, css)
 
-        expected = f"<style>\n{css}\n</style>\n{html}"
+        expected_tag = f"    <style>\n{css}\n    </style>\n"
+        expected = f"{expected_tag}\n{html}"
         self.assertEqual(result, expected)
+
+    @patch.object(CSSEmbedder, 'get_base_css')
+    def test_embed_css_in_html_with_placeholders(self, mock_get_base_css):
+        mock_get_base_css.return_value = "<style>base css</style>"
+        html = "<html><head>{CODE_BLOCK_CSS}{CSS_BLOCK}</head><body>Hello</body></html>"
+        css = "body { color: black; }"
+
+        result = self.css_embedder.embed_css_in_html(html, css)
+
+        self.assertIn("<style>base css</style>", result)
+        self.assertIn(f"    <style>\n{css}\n    </style>\n", result)
+        self.assertNotIn("{CODE_BLOCK_CSS}", result)
+        self.assertNotIn("{CSS_BLOCK}", result)
 
 
 if __name__ == '__main__':
