@@ -1,12 +1,9 @@
 :host {
     display: block;
-    /* Break out of normal body padding */
-    width: 100vw;
+    /* Span entire grid width */
+    grid-column: 1 / -1;
+    width: 100%;
     position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
     margin-top: 2rem;
     margin-bottom: 2rem;
     overflow: hidden;

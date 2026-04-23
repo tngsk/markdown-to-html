@@ -4,7 +4,7 @@
 
 .drawer-container {
   position: fixed;
-  z-index: 9999;
+  z-index: var(--z-index-modal, 1000);
   transition: transform 0.3s ease;
   background: var(--color-base-100, white);
   color: var(--color-base-content, #333);

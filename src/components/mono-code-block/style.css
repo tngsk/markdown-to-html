@@ -66,78 +66,80 @@
 }
 
 /* Style the projected/slotted <pre> and <code> content */
-::slotted(pre),
-.code-content-slot pre {
-    margin: 0 !important;
-    padding: 1em !important;
-    overflow-x: auto;
-    background: transparent !important;
-    color: var(--mono-code-text, var(--color-base-content));
-    line-height: 1.5;
-}
+@layer overrides {
+    ::slotted(pre),
+    .code-content-slot pre {
+        margin: 0;
+        padding: 1em;
+        overflow-x: auto;
+        background: transparent;
+        color: var(--mono-code-text, var(--color-base-content));
+        line-height: 1.5;
+    }
 
-::slotted(code),
-.code-content-slot code {
-    font-family: "Courier New", Courier, monospace !important;
-    font-size: 0.95em !important;
-    line-height: 1.5 !important;
-}
+    ::slotted(code),
+    .code-content-slot code {
+        font-family: "Courier New", Courier, monospace;
+        font-size: 0.95em;
+        line-height: 1.5;
+    }
 
-/* Highlight.js theme overrides - matching original user design exactly */
-::slotted(.hljs),
-.code-content-slot .hljs {
-    background: transparent !important;
-    color: #abb2bf !important;
-}
+    /* Highlight.js theme overrides - matching original user design exactly */
+    ::slotted(.hljs),
+    .code-content-slot .hljs {
+        background: transparent;
+        color: #abb2bf;
+    }
 
-::slotted(.hljs-attr),
-.code-content-slot .hljs-attr {
-    color: #e06c75 !important;
-}
+    ::slotted(.hljs-attr),
+    .code-content-slot .hljs-attr {
+        color: #e06c75;
+    }
 
-::slotted(.hljs-string),
-.code-content-slot .hljs-string {
-    color: #98c379 !important;
-}
+    ::slotted(.hljs-string),
+    .code-content-slot .hljs-string {
+        color: #98c379;
+    }
 
-::slotted(.hljs-number),
-.code-content-slot .hljs-number {
-    color: #d19a66 !important;
-}
+    ::slotted(.hljs-number),
+    .code-content-slot .hljs-number {
+        color: #d19a66;
+    }
 
-::slotted(.hljs-literal),
-.code-content-slot .hljs-literal {
-    color: #56b6c2 !important;
-}
+    ::slotted(.hljs-literal),
+    .code-content-slot .hljs-literal {
+        color: #56b6c2;
+    }
 
-::slotted(.hljs-title),
-.code-content-slot .hljs-title {
-    color: #61afef !important;
-}
+    ::slotted(.hljs-title),
+    .code-content-slot .hljs-title {
+        color: #61afef;
+    }
 
-::slotted(.hljs-params),
-.code-content-slot .hljs-params {
-    color: #abb2bf !important;
-}
+    ::slotted(.hljs-params),
+    .code-content-slot .hljs-params {
+        color: #abb2bf;
+    }
 
-::slotted(.hljs-comment),
-.code-content-slot .hljs-comment {
-    color: #5c6370 !important;
-}
+    ::slotted(.hljs-comment),
+    .code-content-slot .hljs-comment {
+        color: #5c6370;
+    }
 
-::slotted(.hljs-keyword),
-.code-content-slot .hljs-keyword {
-    color: #c678dd !important;
-}
+    ::slotted(.hljs-keyword),
+    .code-content-slot .hljs-keyword {
+        color: #c678dd;
+    }
 
-::slotted(.hljs-function),
-.code-content-slot .hljs-function {
-    color: #61afef !important;
-}
+    ::slotted(.hljs-function),
+    .code-content-slot .hljs-function {
+        color: #61afef;
+    }
 
-::slotted(.hljs-built_in),
-.code-content-slot .hljs-built_in {
-    color: #e06c75 !important;
+    ::slotted(.hljs-built_in),
+    .code-content-slot .hljs-built_in {
+        color: #e06c75;
+    }
 }
 
 /* Scrollbar styling for the code block */

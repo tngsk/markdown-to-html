@@ -9,6 +9,9 @@
 :root {
     --font-color: var(--color-base-content, #111827);
     --font-color-light: var(--color-base-content-muted, #374151);
+    --body-padding-y: 5rem;
+    --z-index-overlay: 999;
+    --z-index-modal: 1000;
 }
 
 html {
@@ -17,7 +20,8 @@ html {
 
 body {
     margin: 0;
-    padding: 5rem;
+    padding: 0;
+    padding-block: var(--body-padding-y);
     width: 100%;
     font-family:
         -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
@@ -26,10 +30,19 @@ body {
     line-height: 1.9;
     color: var(--font-color);
     background: var(--color-base-200, #f3f4f6);
+
+    /* CSS Grid Layout */
+    display: grid;
+    grid-template-columns: minmax(1rem, 1fr) minmax(auto, 800px) minmax(1rem, 1fr);
+}
+
+body > * {
+    grid-column: 2;
 }
 
 hr {
-    width: 10%;
+    width: 100%;
+    max-width: 10%;
     margin-top: 5rem;
     margin-bottom: 5rem;
     margin-left: auto;
