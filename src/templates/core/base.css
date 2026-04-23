@@ -40,6 +40,11 @@ body > * {
     grid-column: 2;
 }
 
+mono-hero,
+mono-section {
+    grid-column: 1 / -1;
+}
+
 hr {
     width: 100%;
     max-width: 10%;
