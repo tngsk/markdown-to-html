@@ -225,8 +225,7 @@ class HTMLDocumentBuilder:
         )
         html_content = pattern_paired.sub("", html_content)
 
-        for tag in excluded_tags:
-            self.logger.debug(f"タグ削除完了: {tag}")
+        self.logger.debug(f"除外タグの一括削除処理を実行: {excluded_tags}")
 
         return html_content
 
