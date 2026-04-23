@@ -79,8 +79,9 @@ button.submit-btn:disabled {
     cursor: not-allowed;
 }
 
+button.submit-btn.hidden,
 .hidden {
-    display: none !important;
+    display: none;
 }
 
 .voted-message {
