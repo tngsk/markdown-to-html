@@ -169,7 +169,7 @@ class HTMLDocumentBuilder:
         Returns:
             抽出されたタイトル（デフォルト: "Document"）
         """
-        match = re.search(r"<h1>(.+?)</h1>", html_content)
+        match = re.search(r"<h1[^>]*>(.+?)</h1>", html_content)
         if match:
             # HTMLタグを削除
             title = re.sub(r"<[^>]+>", "", match.group(1))

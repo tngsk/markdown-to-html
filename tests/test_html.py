@@ -124,6 +124,9 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         html_with_nested_tags = "<h1><span>Complex</span> Title</h1>"
         self.assertEqual(self.builder.extract_title_from_html(html_with_nested_tags), "Complex Title")
 
+        html_with_attributes = '<h1 id="main-title" class="title-class">My Styled Title</h1>'
+        self.assertEqual(self.builder.extract_title_from_html(html_with_attributes), "My Styled Title")
+
     def test_escape_html(self):
         self.assertEqual(self.builder._escape_html("AT&T"), "AT&amp;T")
         self.assertEqual(self.builder._escape_html("<script>"), "&lt;script&gt;")
