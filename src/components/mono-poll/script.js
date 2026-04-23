@@ -6,7 +6,7 @@
  * This file relies on HTML templates injected into the main document.
  */
 
-class MonoPoll extends HTMLElement {
+class MonoPoll extends MonoInteractiveElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -29,10 +29,19 @@ class MonoPoll extends HTMLElement {
   }
 
   connectedCallback() {
+    super.connectedCallback();
     this.checkPreviousVote();
     this.mountTemplate();
     this.setupEventListeners();
     this.updateView();
+  }
+
+  onAuthStateChanged(user) {
+    if (user) {
+      console.log(`[mono-poll] User logged in: ${user.name}`);
+    } else {
+      console.log("[mono-poll] Running in guest/standalone mode");
+    }
   }
 
   checkPreviousVote() {

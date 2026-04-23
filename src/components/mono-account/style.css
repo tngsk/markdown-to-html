@@ -1,0 +1,39 @@
+:host {
+    display: inline-block;
+    font-family: var(--font-family-base, sans-serif);
+}
+
+.mono-account-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border: 1px solid var(--color-base-300, #ccc);
+    border-radius: 6px;
+    background-color: var(--color-base-100, #fff);
+}
+
+.mono-account-status {
+    font-size: 0.9em;
+    color: var(--color-base-content, #333);
+}
+
+.mono-account-btn {
+    padding: 4px 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--color-primary, #007bff);
+    color: var(--color-primary-content, #fff);
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s;
+}
+
+.mono-account-btn:hover {
+    background-color: var(--color-primary-focus, #0056b3);
+}
+
+.mono-account-btn:disabled {
+    background-color: var(--color-base-300, #ccc);
+    cursor: not-allowed;
+}

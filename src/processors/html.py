@@ -315,6 +315,15 @@ class HTMLDocumentBuilder:
             return ""
 
         js_contents = []
+
+        # Base interactive element script
+        base_script_file = TEMPLATES_DIR / "core" / "mono-interactive-element.js"
+        if base_script_file.exists():
+            try:
+                js_contents.append(base_script_file.read_text(encoding="utf-8"))
+            except Exception as e:
+                self.logger.warning(f"JS読み込みエラー ({base_script_file}): {e}")
+
         for component_dir in used_component_dirs:
             js_file = component_dir / "script.js"
             if js_file.exists():

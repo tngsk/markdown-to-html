@@ -1,4 +1,4 @@
-class MonoReaction extends HTMLElement {
+class MonoReaction extends MonoInteractiveElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -9,6 +9,7 @@ class MonoReaction extends HTMLElement {
   }
 
   connectedCallback() {
+    super.connectedCallback();
     this.options = (this.getAttribute("options") || "")
       .split(",")
       .map((opt) => opt.trim())
@@ -34,6 +35,14 @@ class MonoReaction extends HTMLElement {
     }
 
     this.render();
+  }
+
+  onAuthStateChanged(user) {
+    if (user) {
+      console.log(`[mono-reaction] User logged in: ${user.name}`);
+    } else {
+      console.log("[mono-reaction] Running in guest/standalone mode");
+    }
   }
 
   render() {
