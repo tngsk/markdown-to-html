@@ -2,7 +2,9 @@ import json
 import logging
 import aiofiles
 import tomllib
+import asyncio
 from typing import List
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,7 +23,38 @@ def get_allowed_origins() -> List[str]:
         logger.warning(f"Could not load CORS origins from config: {e}")
     return origins
 
-app = FastAPI(title="Mono Sync Server")
+
+data_queue = None
+worker_task = None
+
+async def data_writer_worker():
+    while True:
+        data = None
+        try:
+            data = await data_queue.get()
+            if data is None:
+                data_queue.task_done()
+                break
+            async with aiofiles.open("data.jsonl", "a", encoding="utf-8") as f:
+                await f.write(json.dumps(data) + "\n")
+            data_queue.task_done()
+        except Exception as e:
+            logger.error(f"Error in data_writer_worker: {e}")
+            if data is not None:
+                data_queue.task_done()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global worker_task, data_queue
+    data_queue = asyncio.Queue()
+    worker_task = asyncio.create_task(data_writer_worker())
+    yield
+    await data_queue.put(None)
+    if worker_task:
+        await worker_task
+
+app = FastAPI(title="Mono Sync Server", lifespan=lifespan)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -86,9 +119,7 @@ async def websocket_endpoint(websocket: WebSocket):
 async def receive_data(request: Request):
     try:
         data = await request.json()
-        # Use aiofiles for asynchronous file I/O to avoid blocking the event loop
-        async with aiofiles.open("data.jsonl", "a", encoding="utf-8") as f:
-            await f.write(json.dumps(data) + "\n")
+        await data_queue.put(data)
         return {"status": "success"}
     except Exception as e:
         logger.error(f"Error saving data: {e}")
