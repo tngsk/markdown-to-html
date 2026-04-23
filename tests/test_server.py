@@ -206,15 +206,20 @@ def test_websocket_endpoint_general_error(client, caplog):
 
 @patch("src.server.aiofiles.open")
 def test_receive_data_success(mock_file, client):
-    # Mock the asynchronous context manager returned by aiofiles.open
     mock_file_instance = AsyncMock()
     mock_file.return_value.__aenter__.return_value = mock_file_instance
 
     test_data = {"user_id": "123", "action": "click"}
-    response = client.post("/api/data", json=test_data)
 
-    assert response.status_code == 200
-    assert response.json() == {"status": "success"}
+    # We must start the lifespan events using the TestClient as a context manager
+    with TestClient(app) as test_client:
+        response = test_client.post("/api/data", json=test_data)
+        assert response.status_code == 200
+        assert response.json() == {"status": "success"}
+
+        # Give the background task time to process the queue
+        import time
+        time.sleep(0.1)
 
     # Verify file was written to
     mock_file_instance.write.assert_called_once()
@@ -223,17 +228,19 @@ def test_receive_data_success(mock_file, client):
     assert written_data == test_data
 
 
-@patch("src.server.aiofiles.open")
-def test_receive_data_error(mock_file, client):
-    mock_file_instance = AsyncMock()
-    mock_file.return_value.__aenter__.return_value = mock_file_instance
-    mock_file_instance.write.side_effect = Exception("Disk full")
+@patch("src.server.data_queue")
+def test_receive_data_error(mock_queue, client):
+    mock_queue.put = AsyncMock(side_effect=Exception("Queue full"))
 
     test_data = {"user_id": "123", "action": "click"}
-    response = client.post("/api/data", json=test_data)
+    # we don't necessarily need lifespan context here if we mock the queue
+    with TestClient(app) as test_client:
+        # Patching inside the test to be safe since lifespan resets data_queue
+        with patch("src.server.data_queue", mock_queue):
+            response = test_client.post("/api/data", json=test_data)
 
     assert response.status_code == 200
-    assert response.json() == {"status": "error", "message": "Disk full"}
+    assert response.json() == {"status": "error", "message": "Queue full"}
 
 
 @patch("uvicorn.run")
