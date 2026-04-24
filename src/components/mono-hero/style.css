@@ -1,7 +1,7 @@
 :host {
     display: block;
     /* Span entire grid width */
-    grid-column: 1 / -1;
+    --component-grid-column: 1 / -1;
     width: 100%;
     position: relative;
     min-height: 100vh;
