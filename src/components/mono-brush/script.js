@@ -2,8 +2,7 @@ class MonoBrush extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-    this.isAltPressed = false;
-    this.isShiftPressed = false;
+    this.isDrawingModeActive = false;
     this.isDrawing = false;
     this.hue = 0;
     this.lastX = 0;
@@ -82,8 +81,7 @@ class MonoBrush extends HTMLElement {
   }
 
   handleBlur() {
-    this.isAltPressed = false;
-    this.isShiftPressed = false;
+    this.isDrawingModeActive = false;
     this.updateMode();
   }
 
@@ -101,19 +99,14 @@ class MonoBrush extends HTMLElement {
   }
 
   updateMode() {
-    const inPointerMode = this.isAltPressed && !this.isShiftPressed;
-    const inDrawingMode = this.isAltPressed && this.isShiftPressed;
+    const inDrawingMode = this.isDrawingModeActive;
 
-    if (inPointerMode) {
-      this.pointer.classList.remove("hidden");
-    } else {
-      this.pointer.classList.add("hidden");
-    }
+    // Pointer mode is disabled
+    this.pointer.classList.add("hidden");
 
     if (inDrawingMode) {
       this.canvas.classList.add("drawing-mode");
       this.canvas.classList.remove("hidden");
-      this.pointer.classList.add("hidden"); // Hide pointer when drawing
     } else {
       this.canvas.classList.remove("drawing-mode");
       this.isDrawing = false;
@@ -130,59 +123,30 @@ class MonoBrush extends HTMLElement {
   }
 
   handleKeyDown(e) {
-    if (e.key === "Alt" || e.key === "Option") {
-      this.isAltPressed = true;
-      this.updateMode();
-      if (this.lastMouseX !== undefined && this.lastMouseY !== undefined) {
-        this.updatePointerPosition(this.lastMouseX, this.lastMouseY);
-      }
-    } else if (e.key === "Shift") {
-      this.isShiftPressed = true;
+    if (e.key === "CapsLock" || e.code === "CapsLock") {
+      this.isDrawingModeActive = !this.isDrawingModeActive;
       this.updateMode();
     }
   }
 
   handleKeyUp(e) {
-    if (e.key === "Alt" || e.key === "Option") {
-      this.isAltPressed = false;
-      this.updateMode();
-    } else if (e.key === "Shift") {
-      this.isShiftPressed = false;
-      this.updateMode();
-    }
+    // No-op for now, as drawing mode is toggled on keydown
   }
 
   updatePointerPosition(x, y) {
-    if (this.animationFrameId) {
-      cancelAnimationFrame(this.animationFrameId);
-    }
-
-    this.animationFrameId = requestAnimationFrame(() => {
-      if (this.isAltPressed && !this.isShiftPressed) {
-        this.pointer.style.left = `${x}px`;
-        this.pointer.style.top = `${y}px`;
-      }
-    });
+    // Pointer mode is disabled, so we don't need to update pointer position
   }
 
   handleMouseMove(e) {
-    // Always track the latest mouse position globally so that when Alt is pressed
-    // without moving the mouse, the pointer instantly appears at the correct location.
-    this.lastMouseX = e.clientX;
-    this.lastMouseY = e.clientY;
-
-    // Update pointer
-    this.updatePointerPosition(e.clientX, e.clientY);
-
     // Handle drawing
-    if (this.isDrawing && this.isAltPressed && this.isShiftPressed) {
+    if (this.isDrawing && this.isDrawingModeActive) {
       e.preventDefault(); // Prevent text selection/scrolling while drawing
       this.draw(e.clientX, e.clientY);
     }
   }
 
   handleMouseDown(e) {
-    if (this.isAltPressed && this.isShiftPressed) {
+    if (this.isDrawingModeActive) {
       this.isDrawing = true;
       this.lastX = e.clientX;
       this.lastY = e.clientY;
@@ -195,7 +159,7 @@ class MonoBrush extends HTMLElement {
   }
 
   handleTouchStart(e) {
-    if (this.isAltPressed && this.isShiftPressed) {
+    if (this.isDrawingModeActive) {
       e.preventDefault();
       const touch = e.touches[0];
       this.handleMouseDown({ clientX: touch.clientX, clientY: touch.clientY });
@@ -203,7 +167,7 @@ class MonoBrush extends HTMLElement {
   }
 
   handleTouchMove(e) {
-    if (this.isDrawing && this.isAltPressed && this.isShiftPressed) {
+    if (this.isDrawing && this.isDrawingModeActive) {
       e.preventDefault();
       const touch = e.touches[0];
       this.handleMouseMove({
