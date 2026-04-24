@@ -135,3 +135,10 @@
     background-color: color-mix(in srgb, var(--color-error, #ef4444) 10%, transparent);
     color: var(--color-error, #ef4444);
 }
+
+@media print {
+    .mono-badge {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
