@@ -94,7 +94,7 @@ class MarkdownToHTMLConverter:
             )
 
             # Step 5.5: CSS埋め込み
-            html_document = self.css_embedder.embed_css_in_html(html_document, css_content)
+            html_document = self.css_embedder.embed_css_in_html(html_document, css_content, markdown_dir=markdown_dir)
 
             # Validate Size
             total_size = len(html_document.encode("utf-8"))

@@ -22,7 +22,7 @@ DEFAULT_TEMPLATE_PATH = TEMPLATES_DIR / "default.html"
 
 # テンプレートファイル名
 BASE_CSS_FILE = "base.css"
-THEMES_CSS_FILE = "themes.css"
+THEMES_TOML_FILE = "themes.toml"
 
 # ============================================================================
 # Highlight.js Configuration
