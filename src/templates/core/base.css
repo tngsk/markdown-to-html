@@ -33,7 +33,7 @@ body {
 
     /* CSS Grid Layout */
     display: grid;
-    grid-template-columns: minmax(1rem, 1fr) minmax(auto, 500px) minmax(
+    grid-template-columns: minmax(1rem, 1fr) minmax(auto, 900px) minmax(
             1rem,
             1fr
         );
