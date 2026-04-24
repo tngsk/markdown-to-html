@@ -43,6 +43,8 @@ class CSSEmbeddingError(ConversionError):
 # ============================================================================
 
 
+from typing import Union
+
 @dataclass
 class ConversionConfig:
     """変換処理の設定を保持するデータクラス"""
@@ -57,6 +59,7 @@ class ConversionConfig:
     connect_src: str = ""
     ws_src: str = ""
     enable_export: bool = False
+    pdf_output: Union[Path, bool, None] = None
 
     def __post_init__(self):
         try:
@@ -72,6 +75,14 @@ class ConversionConfig:
         if self.output_file:
             return self.output_file
         return self.input_file.with_suffix(".html")
+
+    def resolve_pdf_output_file(self) -> Optional[Path]:
+        """PDF出力ファイルパスを決定する"""
+        if self.pdf_output is None:
+            return None
+        if isinstance(self.pdf_output, bool) and self.pdf_output:
+            return self.input_file.with_suffix(".pdf")
+        return self.pdf_output
 
 
 @dataclass

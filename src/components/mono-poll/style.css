@@ -98,3 +98,21 @@ button.submit-btn.hidden,
     cursor: default;
     opacity: 0.8;
 }
+
+/* Print specific styles */
+@media print {
+    .poll-options {
+        display: none !important;
+    }
+    .poll-container::after {
+        content: "📊 (Interactive Poll - Print View)\nOptions are available in the interactive version.";
+        display: block;
+        margin-top: 1rem;
+        padding: 1rem;
+        border: 1px dashed #ccc;
+        color: #666;
+        text-align: center;
+        background-color: #f5f5f5;
+        border-radius: 8px;
+    }
+}

@@ -55,3 +55,40 @@ mono-flipcard {
     border: 1px solid var(--mono-flipcard-back-border, var(--border-color));
     transform: rotateY(180deg);
 }
+
+/* Print specific styles */
+@media print {
+    .flip-card-inner {
+        transform: none !important; /* Disable flipping */
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .flip-card {
+        height: auto;
+        perspective: none;
+    }
+    .flip-card-front, .flip-card-back {
+        position: relative !important;
+        transform: none !important;
+        backface-visibility: visible !important;
+        height: auto !important;
+        min-height: 100px;
+        box-shadow: none !important;
+        border: 1px solid #ddd;
+    }
+    .flip-card-front::before {
+        content: "Front:";
+        display: block;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #666;
+    }
+    .flip-card-back::before {
+        content: "Back:";
+        display: block;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #666;
+    }
+}

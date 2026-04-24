@@ -18,7 +18,7 @@ from src.embedders.media import MediaEmbedder
 from src.handlers.file import FileHandler
 from src.processors.html import HTMLDocumentBuilder
 from src.processors.markdown import MarkdownProcessor
-
+from src.processors.pdf import PDFProcessor
 
 class MarkdownToHTMLConverter:
     """Markdown → 単一HTML変換の統合オーケストレータ"""
@@ -33,6 +33,7 @@ class MarkdownToHTMLConverter:
         self.html_document_builder = HTMLDocumentBuilder(
             logger, template_path=config.template_path
         )
+        self.pdf_processor = PDFProcessor(logger)
         self.stats = ConversionStats()
 
     def convert(self) -> bool:
@@ -121,6 +122,11 @@ class MarkdownToHTMLConverter:
             # Step 6: 出力
             output_file = self.config.resolve_output_file()
             self._write_output(html_document, output_file)
+
+            # Step 7: PDF出力 (オプション)
+            pdf_file = self.config.resolve_pdf_output_file()
+            if pdf_file:
+                self.pdf_processor.export_html_to_pdf(output_file, pdf_file)
 
             return True
 

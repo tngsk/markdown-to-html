@@ -110,6 +110,15 @@ def create_argument_parser() -> argparse.ArgumentParser:
         help="外部エクスポートモジュール（mono-export）を強制的に有効にする",
     )
 
+    parser.add_argument(
+        "--pdf",
+        type=Path,
+        nargs='?',
+        const=True,
+        default=None,
+        help="出力されたHTMLからPDFを生成します。ファイルパスを指定しない場合、{入力ファイル名}.pdf になります。",
+    )
+
     return parser
 
 
@@ -150,6 +159,7 @@ def main() -> int:
         excluded_tags=args.excluded_tags,
         force=args.force,
         enable_export=args.export,
+        pdf_output=args.pdf,
     )
 
     # ヘッダー表示

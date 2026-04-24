@@ -38,3 +38,20 @@
   font-weight: bold;
   color: var(--color-primary, #0366d6);
 }
+
+/* Print specific styles */
+@media print {
+    .group-assignment-container {
+        border: 1px dashed #ccc;
+    }
+    .group-actions, .join-form {
+        display: none !important;
+    }
+    .group-assignment-container::after {
+        content: "👥 (Group Assignment - Print View)";
+        display: block;
+        text-align: center;
+        color: #666;
+        margin-top: 1rem;
+    }
+}

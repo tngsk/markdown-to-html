@@ -27,3 +27,10 @@ select {
     font-family: inherit;
     font-size: 0.9rem;
 }
+
+/* Print specific styles */
+@media print {
+    .theme-switcher-container {
+        display: none !important;
+    }
+}
