@@ -33,7 +33,10 @@ body {
 
     /* CSS Grid Layout */
     display: grid;
-    grid-template-columns: minmax(1rem, 1fr) minmax(auto, 800px) minmax(1rem, 1fr);
+    grid-template-columns: minmax(1rem, 1fr) minmax(auto, 500px) minmax(
+            1rem,
+            1fr
+        );
 }
 
 body > * {
@@ -198,7 +201,10 @@ th {
 
 /* ============================================================================ */
 
-.nowrap { white-space: nowrap; display: inline; }
+.nowrap {
+    white-space: nowrap;
+    display: inline;
+}
 
 /* レイアウト ---------------------------------------------- */
 .column {
@@ -222,7 +228,8 @@ th {
 
 /* Print specific global adjustments */
 @media print {
-    html, body {
+    html,
+    body {
         /* Print background colors */
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
