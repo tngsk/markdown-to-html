@@ -40,6 +40,7 @@ body > * {
     grid-column: 2;
 }
 
+/* Exception: Web Components needing full-bleed layout (impossible to set via :host due to specificity) */
 mono-hero,
 mono-section {
     grid-column: 1 / -1;
