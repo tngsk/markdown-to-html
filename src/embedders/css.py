@@ -10,12 +10,15 @@ from pathlib import Path
 from typing import List
 
 from src.config import FileProcessingError
+import tomllib
+from typing import Optional
+
 from src.constants import (
     BASE_CSS_FILE,
     HTML_HEAD_CLOSING_TAG,
     HTML_OPENING_TAG,
     TEMPLATES_DIR,
-    THEMES_CSS_FILE,
+    THEMES_TOML_FILE,
 )
 from src.handlers.file import FileHandler
 
@@ -27,18 +30,44 @@ class CSSEmbedder:
         self.logger = logger
         self.file_handler = file_handler
 
-    def get_base_css(self) -> str:
-        """base.css および themes.css ファイルを読み込んで <style> タグで返す"""
+    def get_base_css(self, html_content: str = "", markdown_dir: Optional[Path] = None) -> str:
+        """base.css および themes.toml ファイルを読み込んで <style> タグで返す"""
         css_blocks = []
 
-        # themes.css の読み込み
-        themes_file = TEMPLATES_DIR / "core" / THEMES_CSS_FILE
+        # テーマ設定の決定
+        themes_toml_path = TEMPLATES_DIR / "core" / THEMES_TOML_FILE
+
+        # html_content からカスタム設定ファイル指定を探す
+        if html_content and markdown_dir:
+            match = re.search(r'<mono-theme[^>]*config=[\'"]([^\'"]+)[\'"]', html_content)
+            if match:
+                custom_config = match.group(1).strip()
+                if custom_config:
+                    custom_path = markdown_dir / custom_config
+                    if custom_path.exists() and custom_path.is_file():
+                        self.logger.info(f"カスタムテーマ設定ファイルを読み込みます: {custom_path}")
+                        themes_toml_path = custom_path
+                    else:
+                        self.logger.warning(f"指定されたカスタムテーマ設定ファイルが見つかりません: {custom_path}")
+
+        # TOMLファイルの読み込みとCSS変換
         try:
-            if themes_file.exists():
-                themes_content = self.file_handler.read_text(themes_file)
-                css_blocks.append(themes_content)
+            if themes_toml_path.exists():
+                with open(themes_toml_path, "rb") as f:
+                    themes_data = tomllib.load(f)
+
+                for theme_name, theme_vars in themes_data.items():
+                    is_default = theme_vars.pop("is_default", False)
+                    selector = ":root" if is_default else f'[data-theme="{theme_name}"]'
+
+                    css_rule = f"{selector} {{\n"
+                    for var_name, var_value in theme_vars.items():
+                        css_rule += f"  --{var_name}: {var_value};\n"
+                    css_rule += "}"
+
+                    css_blocks.append(css_rule)
         except Exception as e:
-            self.logger.warning(f"themes.css の読み込みエラー: {e}")
+            self.logger.warning(f"テーマ設定({themes_toml_path})の読み込みエラー: {e}")
 
         # base.css の読み込み
         css_file = TEMPLATES_DIR / "core" / BASE_CSS_FILE
@@ -84,7 +113,7 @@ class CSSEmbedder:
 
         return "\n".join(css_contents)
 
-    def embed_css_in_html(self, html_content: str, css_content: str) -> str:
+    def embed_css_in_html(self, html_content: str, css_content: str, markdown_dir: Optional[Path] = None) -> str:
         """
         CSSコンテンツを埋め込む
         テンプレートプレースホルダーが存在すれば置換し、なければタグベースで挿入する
@@ -92,11 +121,12 @@ class CSSEmbedder:
         Args:
             html_content: 対象のHTML
             css_content: 埋め込むカスタムCSS
+            markdown_dir: Markdownファイルのあるディレクトリ（カスタムテーマ設定の検索用）
 
         Returns:
             CSS埋め込み後のHTML
         """
-        base_css = self.get_base_css()
+        base_css = self.get_base_css(html_content=html_content, markdown_dir=markdown_dir)
         css_block = f"    <style>\n{css_content}\n    </style>\n" if css_content else ""
 
         # プレースホルダーの置換を試みる

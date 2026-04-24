@@ -60,7 +60,10 @@ class BaseComponentParser:
 
         for part in parts:
             if part:
-                split_idx = part.find(':')
+                split_idx = part.find('=')
+                if split_idx == -1:
+                    split_idx = part.find(':')
+
                 if split_idx != -1:
                     k = part[:split_idx].strip()
                     v = part[split_idx+1:].strip()

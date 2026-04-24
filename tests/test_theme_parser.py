@@ -16,12 +16,12 @@ class TestThemeParser(unittest.TestCase):
     def test_parse_theme(self):
         markdown = "Some text @[theme: dark]() more text"
         html = self.parser.process(markdown)
-        self.assertIn('<mono-theme theme="dark" show-ui="false"></mono-theme>', html)
+        self.assertIn('<mono-theme theme="dark" show-ui="false" config=""></mono-theme>', html)
 
     def test_parse_theme_with_ui(self):
         markdown = "Some text @[theme: corporate](show_ui: true) more text"
         html = self.parser.process(markdown)
-        self.assertIn('<mono-theme theme="corporate" show-ui="true"></mono-theme>', html)
+        self.assertIn('<mono-theme theme="corporate" show-ui="true" config=""></mono-theme>', html)
 
 if __name__ == '__main__':
     unittest.main()
