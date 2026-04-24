@@ -41,5 +41,14 @@ class TestMonoSectionParser(unittest.TestCase):
         self.assertIn("Content", html)
         self.assertIn("</mono-section>", html)
 
+    def test_width_attribute(self):
+        markdown = "@[section: Fit Width](width: fit, bg-color: yellow)\nContent\n@[/section]"
+        html = self.parser.process(markdown)
+
+        self.assertIn('<mono-section markdown="1" bg-color="yellow" width="fit">', html)
+        self.assertIn("<h2>Fit Width</h2>", html)
+        self.assertIn("Content", html)
+        self.assertIn("</mono-section>", html)
+
 if __name__ == '__main__':
     unittest.main()

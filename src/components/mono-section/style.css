@@ -21,6 +21,11 @@
     --font-color-light: var(--section-text-color, var(--color-base-content-muted, inherit));
 }
 
+:host([width="fit"]) {
+    --component-grid-column: 2;
+    border-radius: 8px;
+}
+
 .section-container {
     width: 100%;
     /* Allow custom height, default to auto */

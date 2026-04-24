@@ -42,6 +42,10 @@ class Parser(BaseComponentParser):
                 height_val = args['height'].strip("'\"")
                 attrs.append(f'height="{html.escape(height_val)}"')
 
+            if 'width' in args:
+                width_val = args['width'].strip("'\"")
+                attrs.append(f'width="{html.escape(width_val)}"')
+
             attrs_str = " ".join(attrs)
 
             result = f'<mono-section {attrs_str}>'
