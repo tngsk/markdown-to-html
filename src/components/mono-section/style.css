@@ -18,6 +18,7 @@
 
     /* Override global font color variable so light DOM elements (like h2) inherit it */
     --font-color: var(--section-text-color, var(--color-base-content, inherit));
+    --font-color-light: var(--section-text-color, var(--color-base-content-muted, inherit));
 }
 
 .section-container {
@@ -40,15 +41,4 @@
     max-width: 800px;
     margin: 0 auto;
     z-index: 1;
-}
-
-/* Ensure text inside doesn't inherit hero styles, use default sizes */
-::slotted(h1),
-::slotted(h2),
-::slotted(h3),
-::slotted(h4),
-::slotted(p),
-.section-content h2,
-.section-content p {
-    color: inherit;
 }
