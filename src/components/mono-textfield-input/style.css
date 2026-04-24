@@ -37,3 +37,16 @@
 .status-indicator.error {
   color: var(--color-error, #F44336);
 }
+
+/* Print specific styles */
+@media print {
+    input[type="text"] {
+        display: none !important;
+    }
+    .textfield-container::after {
+        content: "___ (Text Input)";
+        color: #999;
+        display: inline-block;
+        padding: 0.5rem;
+    }
+}

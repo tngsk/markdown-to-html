@@ -51,3 +51,9 @@
 .menu button:last-child {
     border-bottom: none;
 }
+/* Print specific styles */
+@media print {
+    .mono-export-container {
+        display: none !important;
+    }
+}

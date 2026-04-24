@@ -1,0 +1,22 @@
+
+/* Print specific styles */
+@media print {
+    .notebook-container {
+        border: 1px solid #ccc;
+        box-shadow: none;
+    }
+    .notebook-textarea {
+        display: none !important;
+    }
+    .notebook-content::after {
+        content: "📝 (Notebook Input Area - Print View)\n\n\n\n";
+        white-space: pre-wrap;
+        display: block;
+        min-height: 100px;
+        color: #999;
+        font-style: italic;
+    }
+    .notebook-controls {
+        display: none !important;
+    }
+}

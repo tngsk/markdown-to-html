@@ -37,3 +37,10 @@
     background-color: var(--color-base-300, #ccc);
     cursor: not-allowed;
 }
+
+/* Print specific styles */
+@media print {
+    .account-container {
+        display: none !important;
+    }
+}

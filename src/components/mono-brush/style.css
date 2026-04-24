@@ -43,3 +43,10 @@
     pointer-events: auto; /* Intercept events when drawing */
     cursor: crosshair;
 }
+
+/* Print specific styles */
+@media print {
+    .brush-container {
+        display: none !important;
+    }
+}

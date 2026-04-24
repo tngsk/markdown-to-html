@@ -329,3 +329,18 @@
 .hidden {
     display: none !important;
 }
+
+/* Print specific styles */
+@media print {
+    .ab-test-controls, .vote-results {
+        display: none !important;
+    }
+    .ab-test-container::after {
+        content: "⚖️ (A/B Test - Print View)";
+        display: block;
+        margin-top: 1rem;
+        text-align: center;
+        color: #666;
+        font-style: italic;
+    }
+}
