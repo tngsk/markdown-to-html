@@ -32,44 +32,54 @@ class BaseComponentParser:
         if not args_str:
             return {}
         result = {}
+
+        # Fast path for simple cases without nested parens or complex quotes
+        if '(' not in args_str and '"' not in args_str and "'" not in args_str:
+            for part in args_str.split(','):
+                part = part.strip()
+                if not part:
+                    continue
+                split_idx = part.find('=')
+                if split_idx == -1:
+                    split_idx = part.find(':')
+                if split_idx != -1:
+                    result[part[:split_idx].strip()] = part[split_idx+1:].strip()
+            return result
+
         parts = []
-        current = []
         paren_depth = 0
         in_quote = None
-        for char in args_str:
+        start_idx = 0
+        for i, char in enumerate(args_str):
             if in_quote:
-                current.append(char)
                 if char == in_quote:
                     in_quote = None
             elif char in "\"'":
                 in_quote = char
-                current.append(char)
             elif char == '(':
                 paren_depth += 1
-                current.append(char)
             elif char == ')':
                 paren_depth -= 1
-                current.append(char)
             elif char == ',' and paren_depth == 0:
-                parts.append(''.join(current).strip())
-                current.clear()
-            else:
-                current.append(char)
-        if current:
-            parts.append(''.join(current).strip())
+                parts.append(args_str[start_idx:i].strip())
+                start_idx = i + 1
+
+        if start_idx < len(args_str):
+            parts.append(args_str[start_idx:].strip())
 
         for part in parts:
-            if part:
-                split_idx = part.find('=')
-                if split_idx == -1:
-                    split_idx = part.find(':')
+            if not part:
+                continue
+            split_idx = part.find('=')
+            if split_idx == -1:
+                split_idx = part.find(':')
 
-                if split_idx != -1:
-                    k = part[:split_idx].strip()
-                    v = part[split_idx+1:].strip()
-                    if len(v) >= 2 and v[0] == v[-1] and v[0] in "\"'":
-                        v = v[1:-1]
-                    result[k] = v
+            if split_idx != -1:
+                k = part[:split_idx].strip()
+                v = part[split_idx+1:].strip()
+                if len(v) >= 2 and v[0] == v[-1] and (v[0] == '"' or v[0] == "'"):
+                    v = v[1:-1]
+                result[k] = v
         return result
 
     def process(self, markdown_content: str) -> str:
