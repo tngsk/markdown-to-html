@@ -5,6 +5,7 @@ import tomllib
 import asyncio
 from typing import List
 from contextlib import asynccontextmanager
+from functools import lru_cache
 
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+@lru_cache(maxsize=1)
 def get_security_config() -> dict:
     config = {
         "origins": ["http://localhost:8000", "http://127.0.0.1:8000"],

@@ -34,6 +34,8 @@ class MockWebSocket:
 
 
 def test_get_allowed_origins_exception(caplog):
+    from src.server import get_security_config
+    get_security_config.cache_clear()
     with patch("tomllib.load", side_effect=Exception("Mocked tomllib error")):
         origins = get_allowed_origins()
         assert origins == ["http://localhost:8000", "http://127.0.0.1:8000"]
@@ -62,6 +64,8 @@ async def test_connection_manager_disconnect():
 
 
 def test_get_allowed_origins_open_error(caplog):
+    from src.server import get_security_config
+    get_security_config.cache_clear()
     with patch("builtins.open", side_effect=Exception("Test open error")):
         with caplog.at_level(logging.WARNING):
             origins = get_allowed_origins()
