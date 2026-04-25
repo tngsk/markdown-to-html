@@ -9,3 +9,7 @@
 ## 2024-05-18 - Optimizing String Iteration Parsing
 **Learning:** When optimizing character-by-character string parsing loops in Python (especially for complex structures like nested parentheses where regular expressions fall short or introduce bugs), character-by-character list appending and `"".join()` (even with `.clear()`) is a bottleneck due to excessive object allocations.
 **Action:** Implement a fast path using `str.split(',')` for simple cases without nested quotes/parentheses. For the fallback parser, use index-based string slicing (`string[start_idx:i]`) instead of list appending to significantly improve performance.
+
+## 2024-05-24 - Sync I/O in Async Route
+**Learning:** Calling synchronous blocking I/O (like reading and parsing a config file) inside an async FastAPI route (like `/api/data`) causes severe performance bottlenecks, blocking the entire event loop.
+**Action:** Use `functools.lru_cache` for configuration loading to cache the parsed data so subsequent requests don't hit the disk and parse the file again.
