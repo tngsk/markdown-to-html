@@ -1,0 +1,80 @@
+:host {
+  display: block;
+  margin: 1.5rem 0;
+  --flow-bg-color: var(--mono-bg-color, #ffffff);
+  --flow-border-color: var(--mono-border-color, #e5e7eb);
+  --flow-text-color: var(--mono-text-color, #374151);
+  --flow-line-color: var(--mono-primary-color, #4f46e5);
+  --flow-line-width: 2px;
+  --flow-node-bg: var(--mono-bg-color, #ffffff);
+  --flow-node-border: var(--mono-border-color, #d1d5db);
+  --flow-node-border-width: 2px;
+  --flow-node-radius: 0.25rem;
+  --flow-node-padding: 0.75rem 1.25rem;
+  --flow-gap-x: 3rem;
+  --flow-gap-y: 1.5rem;
+}
+
+.flow-wrapper {
+  background-color: var(--flow-bg-color);
+  border: 1px solid var(--flow-border-color);
+  border-radius: var(--flow-node-radius);
+  padding: 1.5rem;
+  overflow-x: auto;
+  position: relative;
+}
+
+.flow-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--flow-text-color);
+  margin-bottom: 1rem;
+  display: none; /* Shown by JS if title exists */
+}
+
+.flow-content-wrapper {
+  position: relative;
+  display: inline-block; /* To contain absolute SVG and flex layout */
+  min-width: 100%;
+}
+
+/* Because mono-flow children are slotted inside .flow-content-wrapper,
+   we inject styles for them from JS, or we can use global styles.
+   Actually, the simplest is to have the parser inject these into the light DOM,
+   but since mono injects components CSS globally if needed, we can just style :host slots.
+   Wait, the reviewer mentioned ::slotted() only targets direct children.
+   Let's fix this by moving these styles into light DOM dynamically via JS. */
+
+.flow-svg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Let clicks pass through to nodes */
+  z-index: 1;
+  overflow: visible;
+}
+
+.flow-path {
+  fill: none;
+  stroke: var(--flow-line-color);
+  stroke-width: var(--flow-line-width);
+}
+
+.flow-label {
+  fill: var(--flow-text-color);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  background-color: var(--flow-bg-color);
+  pointer-events: auto;
+}
+
+.flow-label-bg {
+  fill: var(--flow-bg-color);
+  stroke: var(--flow-border-color);
+  stroke-width: 1px;
+  rx: 4px;
+}
