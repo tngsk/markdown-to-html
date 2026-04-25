@@ -12,16 +12,27 @@ from fastapi.middleware.cors import CORSMiddleware
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def get_allowed_origins() -> List[str]:
-    origins = ["http://localhost:8000", "http://127.0.0.1:8000"]
+def get_security_config() -> dict:
+    config = {
+        "origins": ["http://localhost:8000", "http://127.0.0.1:8000"],
+        "max_upload_size": 1024 * 1024  # Default 1MB
+    }
     try:
         with open("config.toml", "rb") as f:
             config_data = tomllib.load(f)
-            if "security" in config_data and "cors-allowed-origins" in config_data["security"]:
-                origins = config_data["security"]["cors-allowed-origins"]
+            if "security" in config_data:
+                sec = config_data["security"]
+                if "cors-allowed-origins" in sec:
+                    config["origins"] = sec["cors-allowed-origins"]
+                if "max-upload-size" in sec:
+                    config["max_upload_size"] = sec["max-upload-size"]
     except Exception as e:
-        logger.warning(f"Could not load CORS origins from config: {e}")
-    return origins
+        logger.warning(f"Could not load security config from config.toml: {e}")
+    return config
+
+def get_allowed_origins() -> List[str]:
+    # Keeping this for backward compatibility with tests
+    return get_security_config()["origins"]
 
 
 data_queue = None
@@ -58,7 +69,7 @@ app = FastAPI(title="Mono Sync Server", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=get_allowed_origins(),
+    allow_origins=get_security_config()["origins"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -118,9 +129,24 @@ async def websocket_endpoint(websocket: WebSocket):
 @app.post("/api/data")
 async def receive_data(request: Request):
     try:
-        data = await request.json()
+        config = get_security_config()
+        max_size = config["max_upload_size"]
+
+        content_length = request.headers.get("content-length")
+        if content_length and int(content_length) > max_size:
+            return {"status": "error", "message": "Payload too large"}
+
+        body = b""
+        async for chunk in request.stream():
+            body += chunk
+            if len(body) > max_size:
+                return {"status": "error", "message": "Payload too large"}
+
+        data = json.loads(body)
         await data_queue.put(data)
         return {"status": "success"}
+    except json.JSONDecodeError:
+        return {"status": "error", "message": "Invalid JSON"}
     except Exception as e:
         logger.error(f"Error saving data: {e}")
         return {"status": "error", "message": str(e)}
