@@ -2,6 +2,7 @@
 
 :host {
     display: block;
+    height: 100%;
     margin: 0;
     font-family: var(--mono-font-family, system-ui, -apple-system, sans-serif);
     outline: none;
@@ -17,6 +18,10 @@
 
 .ab-test-wrapper {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
     background: var(--mono-ab-bg, var(--color-base-100));
     border-radius: 8px;
     padding: 1.5rem;
@@ -225,6 +230,7 @@
     border-radius: 6px;
     padding: 1.25rem;
     text-align: center;
+    margin-top: auto;
 }
 
 .eval-prompt {
