@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
 .mono-session-join-container {
   margin: 0;
   padding: 15px;
@@ -5,6 +10,16 @@
   border-radius: 8px;
   border: 1px solid var(--border-color, #c8e1ff);
   font-family: inherit;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+#join-view, #joined-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .mono-session-join-title {
@@ -52,6 +67,7 @@
   cursor: pointer;
   font-size: 0.9em;
   margin-top: 10px;
+  align-self: flex-start;
 }
 
 .mono-session-btn-secondary:hover {
