@@ -8,6 +8,10 @@ class Parser(BaseComponentParser):
     # The second group matches the arguments inside parentheses.
     PATTERN = r"@\[flipcard(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
 
+    @property
+    def block_level_tags(self) -> list[str]:
+        return ["mono-flipcard"]
+
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
 
