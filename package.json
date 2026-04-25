@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "playwright": "^1.59.1"
+  },
+  "dependencies": {
+    "vexflow": "^5.0.0"
+  }
+}
