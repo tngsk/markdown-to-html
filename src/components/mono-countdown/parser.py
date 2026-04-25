@@ -4,7 +4,7 @@ from src.processors.base_parser import BaseComponentParser
 class Parser(BaseComponentParser):
     # OPTIONS: time, color
     PATTERN = r"@\[countdown\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
-    TEMPLATE = '<mono-countdown{time_attr}{color_attr}></mono-countdown>'
+    TEMPLATE = '<mono-countdown{time_attr}{color_attr}{common_attr}></mono-countdown>'
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
@@ -24,6 +24,6 @@ class Parser(BaseComponentParser):
             return self.TEMPLATE.format(
                 time_attr=time_attr,
                 color_attr=color_attr
-            )
+            , common_attr=self.get_common_attributes(args))
 
         return pattern.sub(replacer, markdown_content)

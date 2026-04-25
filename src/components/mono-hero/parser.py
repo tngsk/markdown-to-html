@@ -42,7 +42,7 @@ class Parser(BaseComponentParser):
 
             attrs_str = " ".join(attrs)
 
-            result = f'<mono-hero {attrs_str}>'
+            result = f'<mono-hero {attrs_str}{self.get_common_attributes(args)}>'
 
             # If a title was provided, inject it as an h1 inside the hero component
             if title and title.strip():

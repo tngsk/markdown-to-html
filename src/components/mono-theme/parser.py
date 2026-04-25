@@ -22,6 +22,6 @@ class Parser(BaseComponentParser):
             safe_show_ui = "true" if show_ui else "false"
             safe_config = self.escape_html(config_file)
 
-            return f'<mono-theme theme="{safe_theme}" show-ui="{safe_show_ui}" config="{safe_config}"></mono-theme>'
+            return f'<mono-theme theme="{safe_theme}" show-ui="{safe_show_ui}" config="{safe_config}"{self.get_common_attributes(args)}></mono-theme>'
 
         return pattern.sub(replacer, markdown_content)

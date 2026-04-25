@@ -19,5 +19,5 @@ class Parser(BaseComponentParser):
             safe_title = self.escape_html(title) if title else ""
             safe_options = self.escape_html(options)
             component_id = self.get_next_id("poll")
-            return f'<mono-poll id="{component_id}" title="{safe_title}" options="{safe_options}"></mono-poll>'
+            return f'<mono-poll id="{component_id}" title="{safe_title}" options="{safe_options}"{self.get_common_attributes(args)}></mono-poll>'
         return pattern.sub(replacer, markdown_content)

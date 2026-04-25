@@ -24,6 +24,6 @@ class Parser(BaseComponentParser):
                 attributes.append(f'faces="{self.escape_html(faces)}"')
 
             attr_str = " " + " ".join(attributes) if attributes else ""
-            return f'<mono-dice{attr_str}></mono-dice>'
+            return f'<mono-dice{attr_str}{self.get_common_attributes(args)}></mono-dice>'
 
         return pattern.sub(replacer, markdown_content)

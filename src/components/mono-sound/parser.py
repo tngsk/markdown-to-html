@@ -19,5 +19,5 @@ class Parser(BaseComponentParser):
             safe_label = self.escape_html(label) if label else ""
             safe_src = self.escape_html(src)
             component_id = self.get_next_id("sound")
-            return f'<mono-sound id="{component_id}" label="{safe_label}" src="{safe_src}"></mono-sound>'
+            return f'<mono-sound id="{component_id}" label="{safe_label}" src="{safe_src}"{self.get_common_attributes(args)}></mono-sound>'
         return pattern.sub(replacer, markdown_content)

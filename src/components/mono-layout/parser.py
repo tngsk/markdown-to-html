@@ -26,8 +26,8 @@ class Parser(BaseComponentParser):
                 classes = args['class']
 
             if classes:
-                return f'<mono-layout type="row" class="{classes}" markdown="1">'
-            return '<mono-layout type="row" markdown="1">'
+                return f'<mono-layout type="row" class="{classes}" markdown="1"{self.get_common_attributes(args)}>'
+            return f'<mono-layout type="row" markdown="1"{self.get_common_attributes(args)}>'
         result = pattern.sub(row_replacer, markdown_content)
 
         # stack
@@ -42,8 +42,8 @@ class Parser(BaseComponentParser):
                 classes = args['class']
 
             if classes:
-                return f'<mono-layout type="stack" class="{classes}" markdown="1">'
-            return '<mono-layout type="stack" markdown="1">'
+                return f'<mono-layout type="stack" class="{classes}" markdown="1"{self.get_common_attributes(args)}>'
+            return f'<mono-layout type="stack" markdown="1"{self.get_common_attributes(args)}>'
         result = pattern.sub(stack_replacer, result)
 
         # end

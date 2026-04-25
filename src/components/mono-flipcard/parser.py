@@ -33,6 +33,6 @@ class Parser(BaseComponentParser):
             safe_front = self.escape_html(front_text)
             safe_back = self.escape_html(back_text)
 
-            return f'<mono-flipcard front="{safe_front}" back="{safe_back}"></mono-flipcard>'
+            return f'<mono-flipcard front="{safe_front}" back="{safe_back}"{self.get_common_attributes(args)}></mono-flipcard>'
 
         return pattern.sub(replacer, markdown_content)

@@ -16,5 +16,5 @@ class Parser(BaseComponentParser):
 
             safe_width = self.escape_html(width)
             safe_height = self.escape_html(height)
-            return f'<mono-spacer width="{safe_width}" height="{safe_height}"></mono-spacer>'
+            return f'<mono-spacer width="{safe_width}" height="{safe_height}"{self.get_common_attributes(args)}></mono-spacer>'
         return pattern.sub(replacer, markdown_content)

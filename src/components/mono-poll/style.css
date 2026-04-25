@@ -8,7 +8,7 @@
     background: var(--mono-bg-color, var(--color-base-200));
     border: 1px solid var(--mono-border-color, var(--border-color));
     border-radius: 8px;
-    padding: 1.5rem;
+    padding: var(--padding-md);
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     max-width: 600px;
 }
@@ -30,7 +30,7 @@
 .option-label {
     display: flex;
     align-items: center;
-    padding: 0.75rem 1rem;
+    padding: var(--padding-sm) var(--padding-md);
     border: 1px solid var(--mono-border-color, var(--border-color));
     border-radius: 6px;
     background: var(--color-base-100);
@@ -55,7 +55,7 @@ input[type="radio"] {
 
 button.submit-btn {
     margin-top: 1.5rem;
-    padding: 0.5rem 1.5rem;
+    padding: var(--padding-sm) var(--padding-md);
     background-color: var(--mono-primary-color, var(--color-primary));
     color: var(--color-primary-content);
     border: none;
@@ -108,7 +108,7 @@ button.submit-btn.hidden,
         content: "📊 (Interactive Poll - Print View)\nOptions are available in the interactive version.";
         display: block;
         margin-top: 1rem;
-        padding: 1rem;
+        padding: var(--padding-md);
         border: 1px dashed #ccc;
         color: #666;
         text-align: center;

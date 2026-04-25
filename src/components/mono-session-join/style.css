@@ -5,7 +5,7 @@
 
 .mono-session-join-container {
   margin: 0;
-  padding: 15px;
+  padding: var(--padding-md);
   background-color: var(--color-info-content, #f1f8ff);
   border-radius: 8px;
   border: 1px solid var(--border-color, #c8e1ff);
@@ -35,7 +35,7 @@
 
 .mono-session-input {
   flex: 1;
-  padding: 8px 12px;
+  padding: var(--padding-sm) var(--padding-md);
   border: 1px solid var(--border-color, #d1d5da);
   border-radius: 4px;
   font-size: 1em;
@@ -44,7 +44,7 @@
 }
 
 .mono-session-btn {
-  padding: 8px 16px;
+  padding: var(--padding-sm) var(--padding-md);
   background-color: var(--color-success, #2ea44f);
   color: var(--color-success-content, white);
   border: none;
@@ -59,7 +59,7 @@
 }
 
 .mono-session-btn-secondary {
-  padding: 6px 12px;
+  padding: var(--padding-sm) var(--padding-md);
   background-color: var(--color-base-200, #fafbfc);
   color: var(--color-base-content, #24292e);
   border: 1px solid var(--border-color, #d1d5da);

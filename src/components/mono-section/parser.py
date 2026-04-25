@@ -49,7 +49,7 @@ class Parser(BaseComponentParser):
 
             attrs_str = " ".join(attrs)
 
-            result = f'<mono-section {attrs_str}>'
+            result = f'<mono-section {attrs_str}{self.get_common_attributes(args)}>'
 
             if title and title.strip():
                 safe_title = html.escape(title.strip())

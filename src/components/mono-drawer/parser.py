@@ -41,7 +41,7 @@ class Parser(BaseComponentParser):
             if open_state.lower() == 'true':
                 open_attr = ' open="true"'
 
-            return f'<mono-drawer label="{safe_label}" position="{safe_position}"{open_attr} markdown="1">'
+            return f'<mono-drawer label="{safe_label}" position="{safe_position}"{open_attr} markdown="1"{self.get_common_attributes(args)}>'
 
         result = pattern.sub(drawer_replacer, markdown_content)
 

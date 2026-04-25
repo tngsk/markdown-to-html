@@ -10,7 +10,7 @@
   --flow-node-border: var(--mono-border-color, #d1d5db);
   --flow-node-border-width: 2px;
   --flow-node-radius: 0.25rem;
-  --flow-node-padding: 0.75rem 1.25rem;
+  --flow-node-padding: var(--padding-md);
   --flow-gap-x: 3rem;
   --flow-gap-y: 1.5rem;
 }
@@ -19,7 +19,7 @@
     background-color: var(--flow-bg-color);
     border: 1px solid var(--flow-border-color);
     border-radius: var(--flow-node-radius);
-    padding: 1.5rem;
+    padding: var(--padding-md);
     overflow-x: auto;
     position: relative;
 }

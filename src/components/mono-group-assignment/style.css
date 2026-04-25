@@ -18,7 +18,7 @@
 }
 
 .mono-group-alert {
-  padding: 15px;
+  padding: var(--padding-md);
   background-color: var(--color-warning, #fff3cd);
   color: var(--color-warning-content, #856404);
   border: 1px solid var(--border-color, #ffeeba);
@@ -38,7 +38,7 @@
 }
 
 .mono-group-card {
-  padding: 20px;
+  padding: var(--padding-md);
   background-color: var(--color-base-100, #ffffff);
   border: 2px solid var(--color-primary, #0366d6);
   border-radius: 8px;

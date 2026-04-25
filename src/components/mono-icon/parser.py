@@ -4,7 +4,7 @@ from src.processors.base_parser import BaseComponentParser
 class Parser(BaseComponentParser):
     # OPTIONS: name, size, color, display
     PATTERN = r"@\[icon(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
-    TEMPLATE = '<mono-icon name="{name}"{size_attr}{color_attr}{display_attr}></mono-icon>'
+    TEMPLATE = '<mono-icon name="{name}"{size_attr}{color_attr}{display_attr}{common_attr}></mono-icon>'
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
@@ -40,6 +40,6 @@ class Parser(BaseComponentParser):
                 size_attr=size_attr,
                 color_attr=color_attr,
                 display_attr=display_attr
-            )
+            , common_attr=self.get_common_attributes(args))
 
         return pattern.sub(replacer, markdown_content)

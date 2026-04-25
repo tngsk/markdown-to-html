@@ -24,7 +24,7 @@
     box-sizing: border-box;
     background: var(--mono-ab-bg, var(--color-base-100));
     border-radius: 8px;
-    padding: 1.5rem;
+    padding: var(--padding-md);
     color: var(--mono-ab-text, var(--color-base-content));
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
     border: 1px solid var(--mono-ab-border, var(--border-color));
@@ -91,7 +91,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem;
+    padding: var(--padding-sm);
     background: var(--color-error, rgba(239, 68, 68, 0.1));
     border: 1px solid var(--color-error, rgba(239, 68, 68, 0.3));
     color: var(--color-error-content, #ef4444);
@@ -109,7 +109,7 @@
     justify-content: space-between;
     align-items: center;
     background: var(--mono-ab-controls-bg, var(--color-base-300));
-    padding: 1rem;
+    padding: var(--padding-md);
     border-radius: 6px;
     margin-bottom: 1rem;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -228,7 +228,7 @@
     background: rgba(255, 255, 255, 0.03);
     border: 1px dashed var(--border-color, #444);
     border-radius: 6px;
-    padding: 1.25rem;
+    padding: var(--padding-md);
     text-align: center;
     margin-top: auto;
 }
@@ -246,7 +246,7 @@
 }
 
 .btn-vote {
-    padding: 0.5rem 1.5rem;
+    padding: var(--padding-sm) var(--padding-md);
     background: var(--color-base-200, #374151);
     color: var(--color-base-content, #f9fafb);
     border-radius: 4px;

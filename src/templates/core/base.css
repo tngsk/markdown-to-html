@@ -13,6 +13,11 @@
     --z-index-overlay: 999;
     --z-index-modal: 1000;
 
+    /* Padding variables */
+    --padding-sm: 0.5rem;
+    --padding-md: 1.5rem;
+    --padding-lg: 3rem;
+
     /* Spacing variables */
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;
@@ -54,6 +59,19 @@ body > * {
 body > * + * {
     margin-top: var(--spacing-md);
 }
+
+/* 共通コンポーネントパディング属性 */
+[padding="sm"] { padding: var(--padding-sm) !important; }
+[padding="md"] { padding: var(--padding-md) !important; }
+[padding="lg"] { padding: var(--padding-lg) !important; }
+
+[padding-x="sm"] { padding-left: var(--padding-sm) !important; padding-right: var(--padding-sm) !important; }
+[padding-x="md"] { padding-left: var(--padding-md) !important; padding-right: var(--padding-md) !important; }
+[padding-x="lg"] { padding-left: var(--padding-lg) !important; padding-right: var(--padding-lg) !important; }
+
+[padding-y="sm"] { padding-top: var(--padding-sm) !important; padding-bottom: var(--padding-sm) !important; }
+[padding-y="md"] { padding-top: var(--padding-md) !important; padding-bottom: var(--padding-md) !important; }
+[padding-y="lg"] { padding-top: var(--padding-lg) !important; padding-bottom: var(--padding-lg) !important; }
 
 /*
   Specific exceptional spacing for Mono Section.

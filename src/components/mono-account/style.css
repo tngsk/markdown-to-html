@@ -7,7 +7,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 8px 12px;
+    padding: var(--padding-sm) var(--padding-md);
     border: 1px solid var(--color-base-300, #ccc);
     border-radius: 6px;
     background-color: var(--color-base-100, #fff);
@@ -19,7 +19,7 @@
 }
 
 .mono-account-btn {
-    padding: 4px 10px;
+    padding: var(--padding-xs, 0.25rem) var(--padding-sm);
     border: none;
     border-radius: 4px;
     background-color: var(--color-primary, #007bff);
