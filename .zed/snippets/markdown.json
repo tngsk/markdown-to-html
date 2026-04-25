@@ -1,0 +1,205 @@
+{
+  "Markdown attr_list (class, id)": {
+    "prefix": "[",
+    "body": [
+      "[${1:text}]{${2:.class #id}}"
+    ],
+    "description": "Markdown attr_list extension for custom CSS classes and IDs"
+  },
+  "Mono Component: badge": {
+    "prefix": "@[badge",
+    "body": [
+      "@[badge](color: \"${1:blue}\", soft: \"${2:true}\", outline: \"${3:true}\")"
+    ],
+    "description": "Badge component"
+  },
+  "Mono Component: icon": {
+    "prefix": "@[icon",
+    "body": [
+      "@[icon](name: \"${1:lucide-icon-name}\", size: \"${2:24}\", color: \"${3:currentColor}\")"
+    ],
+    "description": "Icon component using Lucide"
+  },
+  "Mono Component: row": {
+    "prefix": "@[row",
+    "body": [
+      "@[row](class: \"${1:gap-md center}\")"
+    ],
+    "description": "Row layout component"
+  },
+  "Mono Component: stack": {
+    "prefix": "@[stack",
+    "body": [
+      "@[stack](class: \"${1:gap-md center}\")"
+    ],
+    "description": "Stack (column) layout component"
+  },
+  "Mono Component: theme": {
+    "prefix": "@[theme",
+    "body": [
+      "@[theme](name: \"${1:theme-name}\", config: \"${2:custom.toml}\")"
+    ],
+    "description": "Theme component to apply CSS variables"
+  },
+  "Mono Component: ab-test": {
+    "prefix": "@[ab-test",
+    "body": [
+      "@[ab-test](name: \"${1:test-name}\")"
+    ],
+    "description": "A/B test component"
+  },
+  "Mono Component: account": {
+    "prefix": "@[account",
+    "body": [
+      "@[account]"
+    ],
+    "description": "Account management component"
+  },
+  "Mono Component: brush": {
+    "prefix": "@[brush",
+    "body": [
+      "@[brush]"
+    ],
+    "description": "Brush component"
+  },
+  "Mono Component: clock": {
+    "prefix": "@[clock",
+    "body": [
+      "@[clock]"
+    ],
+    "description": "Clock component"
+  },
+  "Mono Component: code-block": {
+    "prefix": "@[code-block",
+    "body": [
+      "@[code-block](language: \"${1:python}\")"
+    ],
+    "description": "Code block component"
+  },
+  "Mono Component: countdown": {
+    "prefix": "@[countdown",
+    "body": [
+      "@[countdown](target: \"${1:2025-01-01T00:00:00}\")"
+    ],
+    "description": "Countdown timer component"
+  },
+  "Mono Component: dice": {
+    "prefix": "@[dice",
+    "body": [
+      "@[dice](sides: \"${1:6}\")"
+    ],
+    "description": "Dice roller component"
+  },
+  "Mono Component: drawer": {
+    "prefix": "@[drawer",
+    "body": [
+      "@[drawer](open: \"${1:false}\")"
+    ],
+    "description": "Drawer component"
+  },
+  "Mono Component: export": {
+    "prefix": "@[export",
+    "body": [
+      "@[export](filename: \"${1:export.pdf}\")"
+    ],
+    "description": "Export button component"
+  },
+  "Mono Component: flipcard": {
+    "prefix": "@[flipcard",
+    "body": [
+      "@[flipcard]"
+    ],
+    "description": "Flipcard component"
+  },
+  "Mono Component: flow": {
+    "prefix": "@[flow",
+    "body": [
+      "@[flow]"
+    ],
+    "description": "Flow diagram component"
+  },
+  "Mono Component: group-assignment": {
+    "prefix": "@[group-assignment",
+    "body": [
+      "@[group-assignment]"
+    ],
+    "description": "Group assignment component"
+  },
+  "Mono Component: hero": {
+    "prefix": "@[hero",
+    "body": [
+      "@[hero](title: \"${1:Hero Title}\", subtitle: \"${2:Hero Subtitle}\")"
+    ],
+    "description": "Hero section component"
+  },
+  "Mono Component: notebook": {
+    "prefix": "@[notebook",
+    "body": [
+      "@[notebook]"
+    ],
+    "description": "Notebook component"
+  },
+  "Mono Component: poll": {
+    "prefix": "@[poll",
+    "body": [
+      "@[poll](question: \"${1:Question?}\")"
+    ],
+    "description": "Poll component"
+  },
+  "Mono Component: reaction": {
+    "prefix": "@[reaction",
+    "body": [
+      "@[reaction]"
+    ],
+    "description": "Reaction component"
+  },
+  "Mono Component: score": {
+    "prefix": "@[score",
+    "body": [
+      "@[score]"
+    ],
+    "description": "Score component"
+  },
+  "Mono Component: section": {
+    "prefix": "@[section",
+    "body": [
+      "@[section](class: \"${1:bg-primary}\")"
+    ],
+    "description": "Section layout component"
+  },
+  "Mono Component: session-join": {
+    "prefix": "@[session-join",
+    "body": [
+      "@[session-join]"
+    ],
+    "description": "Session join component"
+  },
+  "Mono Component: sound": {
+    "prefix": "@[sound",
+    "body": [
+      "@[sound](src: \"${1:audio.mp3}\")"
+    ],
+    "description": "Sound player component"
+  },
+  "Mono Component: spacer": {
+    "prefix": "@[spacer",
+    "body": [
+      "@[spacer](height: \"${1:2rem}\")"
+    ],
+    "description": "Spacer component"
+  },
+  "Mono Component: sync": {
+    "prefix": "@[sync",
+    "body": [
+      "@[sync]"
+    ],
+    "description": "Sync component"
+  },
+  "Mono Component: textfield-input": {
+    "prefix": "@[textfield-input",
+    "body": [
+      "@[textfield-input](placeholder: \"${1:Enter text...}\")"
+    ],
+    "description": "Textfield input component"
+  }
+}
