@@ -1,7 +1,7 @@
 class MonoFlow extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    this.attachShadow({ mode: "open" });
     this.edges = [];
     this.nodes = new Map(); // id -> element
     this.resizeObserver = null;
@@ -15,24 +15,24 @@ class MonoFlow extends HTMLElement {
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
     }
-    window.removeEventListener('resize', this.drawEdgesBound);
+    window.removeEventListener("resize", this.drawEdgesBound);
   }
 
   render() {
-    const template = document.getElementById('template-mono-flow');
+    const template = document.getElementById("template-mono-flow");
     if (!template) {
-      console.error('Template for mono-flow not found.');
+      console.error("Template for mono-flow not found.");
       return;
     }
     this.shadowRoot.appendChild(template.content.cloneNode(true));
 
     // Handle title
-    const title = this.getAttribute('title');
+    const title = this.getAttribute("title");
     if (title) {
-      const titleEl = this.shadowRoot.getElementById('title');
+      const titleEl = this.shadowRoot.getElementById("title");
       if (titleEl) {
         titleEl.textContent = title;
-        titleEl.style.display = 'block';
+        titleEl.style.display = "block";
       }
     }
 
@@ -48,10 +48,10 @@ class MonoFlow extends HTMLElement {
 
   injectLightDOMStyles() {
     // Only inject once per document to avoid style duplication
-    if (document.getElementById('mono-flow-light-styles')) return;
+    if (document.getElementById("mono-flow-light-styles")) return;
 
-    const style = document.createElement('style');
-    style.id = 'mono-flow-light-styles';
+    const style = document.createElement("style");
+    style.id = "mono-flow-light-styles";
     style.textContent = `
       mono-flow .flow-container {
         display: flex;
@@ -79,6 +79,7 @@ class MonoFlow extends HTMLElement {
         width: 100%;
         box-sizing: border-box;
         color: var(--flow-text-color, #374151);
+        font-size: 0.75rem;
         font-weight: 500;
         text-align: center;
         box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -97,19 +98,19 @@ class MonoFlow extends HTMLElement {
 
   initGraph() {
     // Find the JSON script tag in the light DOM
-    const scriptEl = this.querySelector('script.flow-connections');
+    const scriptEl = this.querySelector("script.flow-connections");
     if (scriptEl) {
       try {
         this.edges = JSON.parse(scriptEl.textContent);
       } catch (e) {
-        console.error('Failed to parse mono-flow edges JSON:', e);
+        console.error("Failed to parse mono-flow edges JSON:", e);
       }
     }
 
     // Collect all nodes
-    const nodeEls = this.querySelectorAll('.flow-node');
-    nodeEls.forEach(el => {
-      const id = el.getAttribute('data-id');
+    const nodeEls = this.querySelectorAll(".flow-node");
+    nodeEls.forEach((el) => {
+      const id = el.getAttribute("data-id");
       if (id) {
         this.nodes.set(id, el);
       }
@@ -121,10 +122,10 @@ class MonoFlow extends HTMLElement {
     this.drawEdges();
 
     // Redraw on resize
-    window.addEventListener('resize', this.drawEdgesBound);
+    window.addEventListener("resize", this.drawEdgesBound);
 
     // Also observe the wrapper for size changes (e.g., if a parent container changes size)
-    const wrapper = this.shadowRoot.querySelector('.flow-content-wrapper');
+    const wrapper = this.shadowRoot.querySelector(".flow-content-wrapper");
     if (wrapper && window.ResizeObserver) {
       this.resizeObserver = new ResizeObserver(() => {
         this.drawEdges();
@@ -134,38 +135,43 @@ class MonoFlow extends HTMLElement {
   }
 
   drawEdges() {
-    const svg = this.shadowRoot.querySelector('.flow-svg-overlay');
-    const wrapper = this.shadowRoot.querySelector('.flow-content-wrapper');
+    const svg = this.shadowRoot.querySelector(".flow-svg-overlay");
+    const wrapper = this.shadowRoot.querySelector(".flow-content-wrapper");
     if (!svg || !wrapper) return;
 
     // Clear existing SVGs
-    svg.innerHTML = '';
+    svg.innerHTML = "";
 
     // Calculate wrapper bounds to make absolute coordinates relative to the wrapper
     const wrapperRect = wrapper.getBoundingClientRect();
 
     // Define marker for arrowheads
-    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-    const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
-    marker.setAttribute('id', 'arrow');
-    marker.setAttribute('viewBox', '0 0 10 10');
-    marker.setAttribute('refX', '8');
-    marker.setAttribute('refY', '5');
-    marker.setAttribute('markerWidth', '6');
-    marker.setAttribute('markerHeight', '6');
-    marker.setAttribute('orient', 'auto-start-reverse');
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    const marker = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "marker",
+    );
+    marker.setAttribute("id", "arrow");
+    marker.setAttribute("viewBox", "0 0 10 10");
+    marker.setAttribute("refX", "8");
+    marker.setAttribute("refY", "5");
+    marker.setAttribute("markerWidth", "6");
+    marker.setAttribute("markerHeight", "6");
+    marker.setAttribute("orient", "auto-start-reverse");
 
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z');
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
     // Read the line color variable from the host
-    const lineColor = getComputedStyle(this).getPropertyValue('--flow-line-color').trim() || '#4f46e5';
-    path.setAttribute('fill', lineColor);
+    const lineColor =
+      getComputedStyle(this).getPropertyValue("--flow-line-color").trim() ||
+      "#4f46e5";
+    path.setAttribute("fill", lineColor);
 
     marker.appendChild(path);
     defs.appendChild(marker);
     svg.appendChild(defs);
 
-    this.edges.forEach(edge => {
+    this.edges.forEach((edge) => {
       const fromEl = this.nodes.get(edge.from);
       const toEl = this.nodes.get(edge.to);
 
@@ -175,18 +181,18 @@ class MonoFlow extends HTMLElement {
       const toRect = toEl.getBoundingClientRect();
 
       // Calculate center points relative to the wrapper
-      const fromX = fromRect.left - wrapperRect.left + (fromRect.width / 2);
-      const fromY = fromRect.top - wrapperRect.top + (fromRect.height / 2);
+      const fromX = fromRect.left - wrapperRect.left + fromRect.width / 2;
+      const fromY = fromRect.top - wrapperRect.top + fromRect.height / 2;
 
-      const toX = toRect.left - wrapperRect.left + (toRect.width / 2);
-      const toY = toRect.top - wrapperRect.top + (toRect.height / 2);
+      const toX = toRect.left - wrapperRect.left + toRect.width / 2;
+      const toY = toRect.top - wrapperRect.top + toRect.height / 2;
 
       // Determine connection points based on layout direction (LR by default)
       // For horizontal layout: from right center to left center
-      const startX = fromX + (fromRect.width / 2);
+      const startX = fromX + fromRect.width / 2;
       const startY = fromY;
 
-      const endX = toX - (toRect.width / 2);
+      const endX = toX - toRect.width / 2;
       const endY = toY;
 
       // Create an S-curve path
@@ -200,10 +206,13 @@ class MonoFlow extends HTMLElement {
 
       const d = `M ${startX} ${startY} C ${control1X} ${control1Y}, ${control2X} ${control2Y}, ${endX} ${endY}`;
 
-      const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      pathEl.setAttribute('d', d);
-      pathEl.setAttribute('class', 'flow-path');
-      pathEl.setAttribute('marker-end', 'url(#arrow)');
+      const pathEl = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "path",
+      );
+      pathEl.setAttribute("d", d);
+      pathEl.setAttribute("class", "flow-path");
+      pathEl.setAttribute("marker-end", "url(#arrow)");
       svg.appendChild(pathEl);
 
       // Add label if it exists
@@ -213,17 +222,26 @@ class MonoFlow extends HTMLElement {
         const midX = startX + (endX - startX) / 2;
         const midY = startY + (endY - startY) / 2;
 
-        const groupEl = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        const groupEl = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "g",
+        );
 
-        const textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        textEl.setAttribute('x', midX);
-        textEl.setAttribute('y', midY);
-        textEl.setAttribute('class', 'flow-label');
+        const textEl = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "text",
+        );
+        textEl.setAttribute("x", midX);
+        textEl.setAttribute("y", midY);
+        textEl.setAttribute("class", "flow-label");
         textEl.textContent = edge.label;
 
         // Create a background rect for the text
-        const rectEl = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rectEl.setAttribute('class', 'flow-label-bg');
+        const rectEl = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "rect",
+        );
+        rectEl.setAttribute("class", "flow-label-bg");
 
         groupEl.appendChild(rectEl);
         groupEl.appendChild(textEl);
@@ -235,10 +253,10 @@ class MonoFlow extends HTMLElement {
           try {
             const bbox = textEl.getBBox();
             const padding = 4;
-            rectEl.setAttribute('x', bbox.x - padding);
-            rectEl.setAttribute('y', bbox.y - padding);
-            rectEl.setAttribute('width', bbox.width + padding * 2);
-            rectEl.setAttribute('height', bbox.height + padding * 2);
+            rectEl.setAttribute("x", bbox.x - padding);
+            rectEl.setAttribute("y", bbox.y - padding);
+            rectEl.setAttribute("width", bbox.width + padding * 2);
+            rectEl.setAttribute("height", bbox.height + padding * 2);
           } catch (e) {
             // getBBox might fail if the SVG is not fully visible/rendered
           }
@@ -248,4 +266,4 @@ class MonoFlow extends HTMLElement {
   }
 }
 
-customElements.define('mono-flow', MonoFlow);
+customElements.define("mono-flow", MonoFlow);
