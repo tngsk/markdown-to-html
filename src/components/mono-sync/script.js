@@ -27,14 +27,16 @@ class MonoSync extends HTMLElement {
     }
 
     setupDataRecovery() {
-        // Listen for mono:vote events bubbling up to document
-        document.addEventListener("mono:vote", (e) => {
+        // Listen for mono:vote and mono-data events bubbling up to document
+        const handleDataEvent = (e) => {
             const data = {
                 ...e.detail,
                 environment: this.getEnvironmentContext(),
             };
             this.sendDataToServer(data);
-        });
+        };
+        document.addEventListener("mono:vote", handleDataEvent);
+        document.addEventListener("mono-data", handleDataEvent);
     }
 
     async sendDataToServer(data) {

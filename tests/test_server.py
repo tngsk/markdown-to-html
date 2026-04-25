@@ -37,7 +37,7 @@ def test_get_allowed_origins_exception(caplog):
     with patch("tomllib.load", side_effect=Exception("Mocked tomllib error")):
         origins = get_allowed_origins()
         assert origins == ["http://localhost:8000", "http://127.0.0.1:8000"]
-        assert "Could not load CORS origins from config" in caplog.text
+        assert "Could not load security config from config.toml" in caplog.text
 
 
 @pytest.mark.asyncio
@@ -67,7 +67,7 @@ def test_get_allowed_origins_open_error(caplog):
             origins = get_allowed_origins()
 
     assert origins == ["http://localhost:8000", "http://127.0.0.1:8000"]
-    assert "Could not load CORS origins from config: Test open error" in caplog.text
+    assert "Could not load security config from config.toml: Test open error" in caplog.text
 
 
 @pytest.mark.asyncio
