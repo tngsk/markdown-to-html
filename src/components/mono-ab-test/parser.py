@@ -22,5 +22,5 @@ class Parser(BaseComponentParser):
             safe_src_a = self.escape_html(src_a)
             safe_src_b = self.escape_html(src_b)
             component_id = self.get_next_id("abtest")
-            return f'<mono-ab-test id="{component_id}" title="{safe_title}" src-a="{safe_src_a}" src-b="{safe_src_b}"></mono-ab-test>'
+            return f'<mono-ab-test id="{component_id}" title="{safe_title}" src-a="{safe_src_a}" src-b="{safe_src_b}"{self.get_common_attributes(args)}></mono-ab-test>'
         return pattern.sub(replacer, markdown_content)

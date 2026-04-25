@@ -115,6 +115,20 @@ class BaseComponentParser:
                 result[k] = v
         return result
 
+    def get_common_attributes(self, args: dict) -> str:
+        """
+        全コンポーネント共通の属性（例: padding）を抽出し、HTML属性文字列として返す。
+        """
+        attrs = []
+        if 'padding' in args:
+            attrs.append(f'padding="{self.escape_html(args["padding"])}"')
+        if 'padding-x' in args:
+            attrs.append(f'padding-x="{self.escape_html(args["padding-x"])}"')
+        if 'padding-y' in args:
+            attrs.append(f'padding-y="{self.escape_html(args["padding-y"])}"')
+
+        return " " + " ".join(attrs) if attrs else ""
+
     def process(self, markdown_content: str) -> str:
         """
         Markdownテキストを受け取り、コンポーネント固有の前処理（置換）を行った結果を返す。

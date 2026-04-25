@@ -20,7 +20,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5em 1em;
+    padding: var(--padding-sm) var(--padding-md);
     background: var(--mono-code-header-bg, var(--color-base-200));
     border-bottom: 1px solid var(--mono-code-header-border, var(--border-color));
     font-size: 0.85em;
@@ -70,7 +70,7 @@
     ::slotted(pre),
     .code-content-slot pre {
         margin: 0;
-        padding: 1em;
+        padding: var(--padding-md);
         overflow-x: auto;
         background: transparent;
         color: var(--mono-code-text, var(--color-base-content));

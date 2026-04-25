@@ -19,5 +19,5 @@ class Parser(BaseComponentParser):
                 title = args['title']
 
             safe_title = self.escape_html(title) if title else ""
-            return f'<mono-group-assignment title="{safe_title}"></mono-group-assignment>'
+            return f'<mono-group-assignment title="{safe_title}"{self.get_common_attributes(args)}></mono-group-assignment>'
         return pattern.sub(replacer, markdown_content)

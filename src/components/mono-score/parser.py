@@ -3,7 +3,7 @@ from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
     PATTERN = r"@\[score(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
-    TEMPLATE = '<mono-score{notes_attr}{clef_attr}{time_signature_attr}></mono-score>'
+    TEMPLATE = '<mono-score{notes_attr}{clef_attr}{time_signature_attr}{common_attr}></mono-score>'
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
@@ -37,6 +37,6 @@ class Parser(BaseComponentParser):
                 notes_attr=notes_attr,
                 clef_attr=clef_attr,
                 time_signature_attr=time_signature_attr
-            )
+            , common_attr=self.get_common_attributes(args))
 
         return pattern.sub(replacer, markdown_content)

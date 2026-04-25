@@ -20,5 +20,5 @@ class Parser(BaseComponentParser):
 
             safe_options = self.escape_html(options)
             component_id = self.get_next_id("reaction")
-            return f'<mono-reaction id="{component_id}" options="{safe_options}"></mono-reaction>'
+            return f'<mono-reaction id="{component_id}" options="{safe_options}"{self.get_common_attributes(args)}></mono-reaction>'
         return pattern.sub(replacer, markdown_content)

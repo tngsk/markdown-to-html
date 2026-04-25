@@ -29,6 +29,6 @@ class Parser(BaseComponentParser):
                 attrs.append(f'placeholder="{safe_placeholder}"')
 
             attrs_str = " ".join(attrs)
-            return f'<mono-notebook {attrs_str}></mono-notebook>'
+            return f'<mono-notebook {attrs_str}{self.get_common_attributes(args)}></mono-notebook>'
 
         return pattern.sub(replacer, markdown_content)

@@ -71,7 +71,7 @@
 @media print {
     .dice-wrapper {
         border: 2px dashed #999;
-        padding: 0.5rem;
+        padding: var(--padding-sm);
         background-color: #f9f9f9;
         border-radius: 8px;
     }

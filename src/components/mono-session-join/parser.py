@@ -19,5 +19,5 @@ class Parser(BaseComponentParser):
                 title = args['title']
 
             safe_title = self.escape_html(title) if title else ""
-            return f'<mono-session-join title="{safe_title}"></mono-session-join>'
+            return f'<mono-session-join title="{safe_title}"{self.get_common_attributes(args)}></mono-session-join>'
         return pattern.sub(replacer, markdown_content)

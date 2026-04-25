@@ -30,7 +30,7 @@
     background-size: cover; /* Default */
     background-position: center;
     background-repeat: no-repeat;
-    padding: 2rem;
+    padding: var(--padding-lg);
     box-sizing: border-box;
 }
 

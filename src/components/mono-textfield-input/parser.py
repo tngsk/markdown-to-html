@@ -21,5 +21,5 @@ class Parser(BaseComponentParser):
             size_attr = f' size="{self.escape_html(size)}"' if size else ""
             safe_placeholder = self.escape_html(placeholder)
             component_id = self.get_next_id("textfield")
-            return f'<mono-textfield-input id="{component_id}" placeholder="{safe_placeholder}"{size_attr}></mono-textfield-input>'
+            return f'<mono-textfield-input id="{component_id}" placeholder="{safe_placeholder}"{size_attr}{self.get_common_attributes(args)}></mono-textfield-input>'
         return pattern.sub(replacer, markdown_content)

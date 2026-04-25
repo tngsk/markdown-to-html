@@ -3,7 +3,7 @@ from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
     PATTERN = r"@\[clock(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
-    TEMPLATE = '<mono-clock{format_attr}{display_attr}></mono-clock>'
+    TEMPLATE = '<mono-clock{format_attr}{display_attr}{common_attr}></mono-clock>'
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
@@ -23,6 +23,6 @@ class Parser(BaseComponentParser):
             return self.TEMPLATE.format(
                 format_attr=format_attr,
                 display_attr=display_attr
-            )
+            , common_attr=self.get_common_attributes(args))
 
         return pattern.sub(replacer, markdown_content)

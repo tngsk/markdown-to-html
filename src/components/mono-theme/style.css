@@ -4,7 +4,7 @@
 
 .theme-switcher-container {
     margin: 0;
-    padding: 1rem;
+    padding: var(--padding-md);
     border: 1px solid var(--border-color, #ccc);
     border-radius: 8px;
     background-color: var(--color-base-100, #fff);

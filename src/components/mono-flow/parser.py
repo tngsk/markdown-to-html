@@ -76,7 +76,7 @@ class Parser(BaseComponentParser):
             attrs.append(f'direction="{html.escape(direction)}"')
             attrs_str = " ".join(attrs)
 
-            result = f'<mono-flow {attrs_str}>\n'
+            result = f'<mono-flow {attrs_str}{self.get_common_attributes(args)}>\n'
             result += '<div class="flow-container">\n'
 
             # Calculate max layer

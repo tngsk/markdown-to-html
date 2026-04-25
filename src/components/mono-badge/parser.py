@@ -3,7 +3,7 @@ from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
     PATTERN = r"@\[badge(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
-    TEMPLATE = '<mono-badge{color_attr}{soft_attr}{outline_attr}>{text}</mono-badge>'
+    TEMPLATE = '<mono-badge{color_attr}{soft_attr}{outline_attr}{common_attr}>{text}</mono-badge>'
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
@@ -38,7 +38,8 @@ class Parser(BaseComponentParser):
                 text=safe_text,
                 color_attr=color_attr,
                 soft_attr=soft_attr,
-                outline_attr=outline_attr
+                outline_attr=outline_attr,
+            common_attr=self.get_common_attributes(args)
             )
 
         return pattern.sub(replacer, markdown_content)
