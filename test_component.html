@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { color: black; background: white; }
+  </style>
+</head>
+<body>
+  <template id="mono-score-template">
+    <div class="score-container"></div>
+  </template>
+  <mono-score notes="C4/q"></mono-score>
+
+  <script src="/src/components/mono-score/script.js"></script>
+  <script>
+    window.onerror = function(msg, url, line) {
+        console.error(msg, url, line);
+    };
+  </script>
+</body>
+</html>

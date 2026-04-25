@@ -75,7 +75,7 @@ class MonoScore extends HTMLElement {
                 if (parts.length >= 2) {
                     const duration = parts.pop();
                     const keysStr = parts.join('/');
-                    const keyParts = keysStr.match(/([a-zA-Z]+)(#|b)?(\d+)/);
+                    const keyParts = keysStr.match(/([a-zA-Z]+)(#|b)?\/?(\d+)/);
                     if (keyParts) {
                         const [, noteName, accidental, octave] = keyParts;
                         const key = `${noteName.toLowerCase()}${accidental || ''}/${octave}`;
