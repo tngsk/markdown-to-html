@@ -49,7 +49,7 @@
 **使用例:**
 
 ```markdown
-@[row](class="gap-md")
+@[row](class: "gap-md")
 :::column
 要素A
 :::
@@ -72,7 +72,7 @@
 **使用例（中央揃えで余白も指定する場合）:**
 
 ```markdown
-@[row](class="gap-md center")
+@[row](class: "gap-md center")
 :::column
 要素A
 :::
@@ -90,7 +90,7 @@
 **使用例:**
 
 ```markdown
-@[row](class="gap-lg")
+@[row](class: "gap-lg")
 :::column
 <p style="font-size: 0.75rem;">
   Z：通常ページの視線移動。左上から右方向に移動し、中身をざっと確認しながら、最終的に右下へ辿り着く。
