@@ -1,4 +1,8 @@
 import html
+import logging
+
+logger = logging.getLogger("markdown_converter")
+
 
 class BaseComponentParser:
     """コンポーネント用Markdownパーサーの基底クラス"""
@@ -39,10 +43,25 @@ class BaseComponentParser:
                 part = part.strip()
                 if not part:
                     continue
-                split_idx = part.find('=')
-                if split_idx == -1:
-                    split_idx = part.find(':')
+
+                idx_colon = part.find(':')
+                idx_equal = part.find('=')
+
+                # Find the earliest occurrence
+                if idx_colon != -1 and idx_equal != -1:
+                    split_idx = min(idx_colon, idx_equal)
+                elif idx_colon != -1:
+                    split_idx = idx_colon
+                elif idx_equal != -1:
+                    split_idx = idx_equal
+                else:
+                    split_idx = -1
+
                 if split_idx != -1:
+                    if split_idx == idx_equal:
+                        logger.warning(
+                            f"Deprecated syntax: Use ':' instead of '=' for component options. Found in: '{part}'"
+                        )
                     result[part[:split_idx].strip()] = part[split_idx+1:].strip()
             return result
 
@@ -70,11 +89,25 @@ class BaseComponentParser:
         for part in parts:
             if not part:
                 continue
-            split_idx = part.find('=')
-            if split_idx == -1:
-                split_idx = part.find(':')
+
+            idx_colon = part.find(':')
+            idx_equal = part.find('=')
+
+            # Find the earliest occurrence
+            if idx_colon != -1 and idx_equal != -1:
+                split_idx = min(idx_colon, idx_equal)
+            elif idx_colon != -1:
+                split_idx = idx_colon
+            elif idx_equal != -1:
+                split_idx = idx_equal
+            else:
+                split_idx = -1
 
             if split_idx != -1:
+                if split_idx == idx_equal:
+                    logger.warning(
+                        f"Deprecated syntax: Use ':' instead of '=' for component options. Found in: '{part}'"
+                    )
                 k = part[:split_idx].strip()
                 v = part[split_idx+1:].strip()
                 if len(v) >= 2 and v[0] == v[-1] and (v[0] == '"' or v[0] == "'"):
