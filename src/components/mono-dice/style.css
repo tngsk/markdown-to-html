@@ -2,7 +2,7 @@
 
 :host {
     display: inline-block;
-    margin: 1rem;
+    margin: 0;
     font-family: var(--mono-font-family, system-ui, -apple-system, sans-serif);
 }
 

@@ -1,18 +1,18 @@
 :host {
-    display: block;
-    margin: 1.5rem 0;
-    --flow-bg-color: var(--mono-bg-color, #ffffff);
-    --flow-border-color: var(--mono-border-color, #e5e7eb);
-    --flow-text-color: var(--mono-text-color, #374151);
-    --flow-line-color: var(--mono-primary-color, #4f46e5);
-    --flow-line-width: 2px;
-    --flow-node-bg: var(--mono-bg-color, #ffffff);
-    --flow-node-border: var(--mono-border-color, #d1d5db);
-    --flow-node-border-width: 2px;
-    --flow-node-radius: 0.25rem;
-    --flow-node-padding: 0.75rem 1.25rem;
-    --flow-gap-x: 3rem;
-    --flow-gap-y: 1.5rem;
+  display: block;
+  margin: 0;
+  --flow-bg-color: var(--mono-bg-color, #ffffff);
+  --flow-border-color: var(--mono-border-color, #e5e7eb);
+  --flow-text-color: var(--mono-text-color, #374151);
+  --flow-line-color: var(--mono-primary-color, #4f46e5);
+  --flow-line-width: 2px;
+  --flow-node-bg: var(--mono-bg-color, #ffffff);
+  --flow-node-border: var(--mono-border-color, #d1d5db);
+  --flow-node-border-width: 2px;
+  --flow-node-radius: 0.25rem;
+  --flow-node-padding: 0.75rem 1.25rem;
+  --flow-gap-x: 3rem;
+  --flow-gap-y: 1.5rem;
 }
 
 .flow-wrapper {

@@ -3,7 +3,7 @@
 }
 
 .theme-switcher-container {
-    margin: 1rem 0;
+    margin: 0;
     padding: 1rem;
     border: 1px solid var(--border-color, #ccc);
     border-radius: 8px;
