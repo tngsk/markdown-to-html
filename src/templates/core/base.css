@@ -226,6 +226,19 @@ th {
     text-decoration: none;
 }
 
+/* テキストサイズバリエーション ------------------------------------ */
+.text-small {
+    font-size: 0.5rem;
+}
+
+.text-large {
+    font-size: 1.5rem;
+}
+
+.text-xlarge {
+    font-size: 3rem;
+}
+
 /* Print specific global adjustments */
 @media print {
     html,
