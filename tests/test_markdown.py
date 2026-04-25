@@ -3,9 +3,8 @@ from unittest.mock import MagicMock, patch
 import sys
 import logging
 
-try:
-    import markdown
-except ImportError:
+import importlib.util
+if importlib.util.find_spec("markdown") is None:
     # Fallback to mock if the dependency is missing in the test environment
     sys.modules['markdown'] = MagicMock()
 

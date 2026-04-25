@@ -3,27 +3,26 @@ from unittest.mock import MagicMock, patch
 import sys
 
 # Mocking missing dependencies only if they are not installed
-try:
-    import markdown
-    import PIL
-    import requests
-    import fastapi
-    import uvicorn
-    import websockets
-except ImportError:
-    mock_markdown = MagicMock()
-    mock_pil = MagicMock()
-    mock_requests = MagicMock()
-    mock_fastapi = MagicMock()
-    mock_uvicorn = MagicMock()
-    mock_websockets = MagicMock()
+import importlib.util
 
+if importlib.util.find_spec("markdown") is None:
+    mock_markdown = MagicMock()
     sys.modules['markdown'] = mock_markdown
+if importlib.util.find_spec("PIL") is None:
+    mock_pil = MagicMock()
     sys.modules['PIL'] = mock_pil
     sys.modules['PIL.Image'] = mock_pil.Image
+if importlib.util.find_spec("requests") is None:
+    mock_requests = MagicMock()
     sys.modules['requests'] = mock_requests
+if importlib.util.find_spec("fastapi") is None:
+    mock_fastapi = MagicMock()
     sys.modules['fastapi'] = mock_fastapi
+if importlib.util.find_spec("uvicorn") is None:
+    mock_uvicorn = MagicMock()
     sys.modules['uvicorn'] = mock_uvicorn
+if importlib.util.find_spec("websockets") is None:
+    mock_websockets = MagicMock()
     sys.modules['websockets'] = mock_websockets
 
 from pathlib import Path

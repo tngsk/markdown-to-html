@@ -13,8 +13,6 @@ from typing import List, Optional
 
 from src.config import ConversionError
 from src.constants import (
-    BASE_CSS_FILE,
-    THEMES_TOML_FILE,
     DEFAULT_TEMPLATE_PATH,
     HIGHLIGHT_JS_CDN_CSS,
     HIGHLIGHT_JS_CDN_JS,

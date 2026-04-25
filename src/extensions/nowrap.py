@@ -1,4 +1,3 @@
-import re
 from markdown.inlinepatterns import InlineProcessor
 from markdown.extensions import Extension
 

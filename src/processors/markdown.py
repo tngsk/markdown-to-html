@@ -4,7 +4,6 @@ Markdown Processor
 Converts Markdown content to intermediate HTML.
 """
 
-import html
 import importlib.util
 import logging
 import re
@@ -16,7 +15,6 @@ import markdown.util
 from src.config import ConversionError
 from src.constants import (
     MARKDOWN_EXTENSIONS,
-    TEMPLATES_DIR,
     COMPONENTS_DIR,
 )
 from src.handlers.file import FileHandler
