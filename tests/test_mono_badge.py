@@ -17,19 +17,19 @@ class TestMonoBadgeParser(unittest.TestCase):
         self.assertIn('<mono-badge>New!</mono-badge>', html)
 
     def test_badge_with_color(self):
-        markdown = '@[badge: "Update"](color="primary")'
+        markdown = '@[badge: "Update"](color: "primary")'
         html = self.parser.process(markdown)
         self.assertIn('color="primary"', html)
         self.assertIn('Update', html)
 
     def test_badge_soft(self):
-        markdown = '@[badge: "Soft"](color="secondary", soft="true")'
+        markdown = '@[badge: "Soft"](color: "secondary", soft: "true")'
         html = self.parser.process(markdown)
         self.assertIn('color="secondary"', html)
         self.assertIn('soft=""', html)
 
     def test_badge_outline(self):
-        markdown = '@[badge: "Outline"](color="accent", outline="true")'
+        markdown = '@[badge: "Outline"](color: "accent", outline: "true")'
         html = self.parser.process(markdown)
         self.assertIn('color="accent"', html)
         self.assertIn('outline=""', html)
