@@ -56,16 +56,19 @@ class MonoFlow extends HTMLElement {
       mono-flow .flow-container {
         display: flex;
         flex-direction: row;
-        align-items: center;
+        align-items: stretch;
         gap: var(--flow-gap-x, 3rem);
         position: relative;
         z-index: 2;
+        width: 100%;
       }
       mono-flow .flow-layer {
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: space-around;
         gap: var(--flow-gap-y, 1.5rem);
+        flex: 1;
+        min-width: 0;
         z-index: 2;
       }
       mono-flow .flow-node {
@@ -73,6 +76,8 @@ class MonoFlow extends HTMLElement {
         border: var(--flow-node-border-width, 2px) solid var(--flow-node-border, #d1d5db);
         border-radius: var(--flow-node-radius, 0.25rem);
         padding: var(--flow-node-padding, 0.75rem 1.25rem);
+        width: 100%;
+        box-sizing: border-box;
         color: var(--flow-text-color, #374151);
         font-weight: 500;
         text-align: center;
