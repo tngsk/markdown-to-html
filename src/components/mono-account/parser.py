@@ -3,6 +3,7 @@ from typing import Dict, Any, List
 from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
+    # OPTIONS:
     @property
     def pattern(self) -> re.Pattern:
         return re.compile(r"\[@account\]\(\)")

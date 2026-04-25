@@ -3,6 +3,7 @@ from src.processors.base_parser import BaseComponentParser
 import html
 
 class Parser(BaseComponentParser):
+    # OPTIONS: image, mode, bg-color, text-color, height, width
     # Match @[section: title](key: value, ...) or @[section](key: value, ...)
     START_PATTERN = r"@\[section(?:\:\s*([^\]]*))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     END_PATTERN = r"@\[/section\]"

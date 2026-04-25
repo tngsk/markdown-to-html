@@ -2,6 +2,7 @@ import re
 from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
+    # OPTIONS: width, height
     PATTERN = r"@\[spacer(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
 
     def process(self, markdown_content: str) -> str:

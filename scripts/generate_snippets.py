@@ -1,144 +1,66 @@
 import json
 import os
+import glob
 from pathlib import Path
 
 def generate_snippets():
     snippets = {}
 
-    # Basic markdown extensions / attr_list
+    # 1. Basic markdown extensions / attr_list
     snippets["Markdown attr_list (class, id)"] = {
         "prefix": "[",
         "body": ["[${1:text}]{${2:.class #id}}"],
         "description": "Markdown attr_list extension for custom CSS classes and IDs"
     }
 
-    # Components
-    components = {
-        "badge": {
-            "attrs": "color: \"${1:blue}\", soft: \"${2:true}\", outline: \"${3:true}\"",
-            "desc": "Badge component"
-        },
-        "icon": {
-            "attrs": "name: \"${1:lucide-icon-name}\", size: \"${2:24}\", color: \"${3:currentColor}\"",
-            "desc": "Icon component using Lucide"
-        },
-        "row": {
-            "attrs": "class: \"${1:gap-md center}\"",
-            "desc": "Row layout component"
-        },
-        "stack": {
-            "attrs": "class: \"${1:gap-md center}\"",
-            "desc": "Stack (column) layout component"
-        },
-        "theme": {
-            "attrs": "name: \"${1:theme-name}\", config: \"${2:custom.toml}\"",
-            "desc": "Theme component to apply CSS variables"
-        },
-        "ab-test": {
-            "attrs": "name: \"${1:test-name}\"",
-            "desc": "A/B test component"
-        },
-        "account": {
-            "attrs": "",
-            "desc": "Account management component"
-        },
-        "brush": {
-            "attrs": "",
-            "desc": "Brush component"
-        },
-        "clock": {
-            "attrs": "",
-            "desc": "Clock component"
-        },
-        "code-block": {
-            "attrs": "language: \"${1:python}\"",
-            "desc": "Code block component"
-        },
-        "countdown": {
-            "attrs": "target: \"${1:2025-01-01T00:00:00}\"",
-            "desc": "Countdown timer component"
-        },
-        "dice": {
-            "attrs": "sides: \"${1:6}\"",
-            "desc": "Dice roller component"
-        },
-        "drawer": {
-            "attrs": "open: \"${1:false}\"",
-            "desc": "Drawer component"
-        },
-        "export": {
-            "attrs": "filename: \"${1:export.pdf}\"",
-            "desc": "Export button component"
-        },
-        "flipcard": {
-            "attrs": "",
-            "desc": "Flipcard component"
-        },
-        "flow": {
-            "attrs": "",
-            "desc": "Flow diagram component"
-        },
-        "group-assignment": {
-            "attrs": "",
-            "desc": "Group assignment component"
-        },
-        "hero": {
-            "attrs": "title: \"${1:Hero Title}\", subtitle: \"${2:Hero Subtitle}\"",
-            "desc": "Hero section component"
-        },
-        "notebook": {
-            "attrs": "",
-            "desc": "Notebook component"
-        },
-        "poll": {
-            "attrs": "question: \"${1:Question?}\"",
-            "desc": "Poll component"
-        },
-        "reaction": {
-            "attrs": "",
-            "desc": "Reaction component"
-        },
-        "score": {
-            "attrs": "",
-            "desc": "Score component"
-        },
-        "section": {
-            "attrs": "class: \"${1:bg-primary}\"",
-            "desc": "Section layout component"
-        },
-        "session-join": {
-            "attrs": "",
-            "desc": "Session join component"
-        },
-        "sound": {
-            "attrs": "src: \"${1:audio.mp3}\"",
-            "desc": "Sound player component"
-        },
-        "spacer": {
-            "attrs": "height: \"${1:2rem}\"",
-            "desc": "Spacer component"
-        },
-        "sync": {
-            "attrs": "",
-            "desc": "Sync component"
-        },
-        "textfield-input": {
-            "attrs": "placeholder: \"${1:Enter text...}\"",
-            "desc": "Textfield input component"
-        }
+    # 2. Dynamically gather options from parser.py files
+    components_with_parsers = {}
+    for parser_path in glob.glob("src/components/*/parser.py"):
+        comp_name = os.path.basename(os.path.dirname(parser_path)).replace("mono-", "")
+        options = []
+        with open(parser_path, "r") as f:
+            for line in f:
+                if "# OPTIONS:" in line:
+                    opt_str = line.split("# OPTIONS:")[1].strip()
+                    if opt_str:
+                        options = [o.strip() for o in opt_str.split(",")]
+                    break
+        components_with_parsers[comp_name] = options
+
+    # Some components might not have parser.py (e.g. implicitly injected ones)
+    # or we might want to manually define them if they don't take markdown arguments.
+    # Currently mono-brush, mono-sync, mono-export are mostly parameter-less from a markdown perspective,
+    # but we can add them to the dictionary for completion.
+    implicit_components = {
+        "brush": [],
+        "sync": [],
+        "export": ["filename"],
+        "code-block": ["language"]
     }
 
-    for comp, data in components.items():
+    # Merge them together (parsers take precedence)
+    all_components = {**implicit_components, **components_with_parsers}
+
+    for comp, options in all_components.items():
         prefix = f"@[{comp}"
-        if data["attrs"]:
-            body = f"@[{comp}]({data['attrs']})"
+
+        # Build the arguments string
+        # e.g., color: "${1:val}", soft: "${2:val}"
+        if options:
+            attr_parts = []
+            for i, opt in enumerate(options, start=1):
+                # Provide a generic placeholder based on the option name
+                attr_parts.append(f'{opt}: \"${{{i}:val}}\"')
+
+            attrs = ", ".join(attr_parts)
+            body = f"@[{comp}]({attrs})"
         else:
             body = f"@[{comp}]"
 
         snippets[f"Mono Component: {comp}"] = {
             "prefix": prefix,
             "body": [body],
-            "description": data["desc"]
+            "description": f"Mono {comp} component"
         }
 
     # Ensure directories exist

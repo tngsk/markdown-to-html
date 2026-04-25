@@ -2,6 +2,7 @@ import re
 from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
+    # OPTIONS: show_ui, config
     # Pattern to match @[theme: THEME_NAME]()
     PATTERN = r"@\[theme:\s*([^\]]+)\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
 

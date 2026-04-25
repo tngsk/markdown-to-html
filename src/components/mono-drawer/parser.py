@@ -2,6 +2,7 @@ import re
 from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
+    # OPTIONS: label, position, open
     # Fixed to allow nested brackets if needed, but standard is just stop at ']'
     # Actually standard pattern in base_parser is usually r"@\[type(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     # If the label has brackets, we might have issues, but let's stick to the standard for now.

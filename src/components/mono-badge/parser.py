@@ -2,6 +2,7 @@ import re
 from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
+    # OPTIONS: text, color, soft, outline
     PATTERN = r"@\[badge(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     TEMPLATE = '<mono-badge{color_attr}{soft_attr}{outline_attr}>{text}</mono-badge>'
 
