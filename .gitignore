@@ -215,3 +215,6 @@ doc/*.html
 /watch_and_run.sh
 .zed/snippets/markdown.json
 .vscode/mono.code-snippets
+
+# Node.js
+node_modules/
