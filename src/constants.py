@@ -111,6 +111,7 @@ MARKDOWN_EXTENSIONS = [
     "nl2br",
     "toc",
     "md_in_html",
+    "attr_list",
     "src.extensions.nowrap",
     "src.extensions.colab",
     "src.extensions.code_block",
