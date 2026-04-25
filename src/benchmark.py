@@ -1,6 +1,5 @@
 import asyncio
 import time
-import sys
 
 from src.server import ConnectionManager
 

@@ -1,11 +1,9 @@
 import base64
-import io
 import logging
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-from PIL import Image
 
 from src.config import FileProcessingError, ImageEmbeddingError
 from src.embedders.media import MediaEmbedder

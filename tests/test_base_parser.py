@@ -1,4 +1,3 @@
-import pytest
 from src.processors.base_parser import BaseComponentParser
 import logging
 

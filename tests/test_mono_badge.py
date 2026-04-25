@@ -1,6 +1,5 @@
 import unittest
 import importlib.util
-import os
 
 # Load parser.py dynamically since we cannot import it directly due to hyphens in dir name
 spec = importlib.util.spec_from_file_location("mono_badge_parser", "src/components/mono-badge/parser.py")

@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path
-import urllib.parse
 
 class PDFProcessor:
     def __init__(self, logger: logging.Logger):

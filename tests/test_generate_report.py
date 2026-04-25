@@ -1,11 +1,9 @@
-import pytest
 import src.generate_report as generate_report
 import inspect
 
 def test_generate_report_imports():
     """Test that the generate_report module can be imported correctly."""
     assert generate_report is not None
-    assert hasattr(generate_report, "ast")
 
 def test_generate_report_empty():
     """Test that generate_report currently has no functions."""

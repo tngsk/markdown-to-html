@@ -1,4 +1,3 @@
-import pytest
 from pathlib import Path
 import logging
 from src.processors.pdf import PDFProcessor

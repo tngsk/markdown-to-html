@@ -1,7 +1,5 @@
-import pytest
 import importlib.util
 from pathlib import Path
-from src.processors.base_parser import BaseComponentParser
 
 def load_parser():
     parser_path = Path("src/components/mono-flipcard/parser.py")
