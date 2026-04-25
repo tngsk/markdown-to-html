@@ -7,7 +7,7 @@
     min-height: 100vh;
     /* Offset top padding from body if present */
     margin-top: calc(-1 * var(--body-padding-y, 5rem));
-    margin-bottom: 5rem;
+
     overflow: hidden;
     background-color: var(--hero-bg-color, transparent);
     background-image: var(--hero-bg-image, none);

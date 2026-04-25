@@ -4,8 +4,8 @@
     --component-grid-column: 1 / -1;
     width: 100%;
     position: relative;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+
+
     overflow: hidden;
     /* Default to base theme color if no color or image is specified */
     background-color: var(--section-bg-color, var(--color-base-100, transparent));

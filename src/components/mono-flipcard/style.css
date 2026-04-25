@@ -2,7 +2,7 @@ mono-flipcard {
     display: inline-block;
     perspective: 1000px; /* 3D effect */
     cursor: pointer;
-    margin: 4px;
+    margin: 0;
 }
 
 .flipcard-container {
