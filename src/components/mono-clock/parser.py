@@ -2,6 +2,7 @@ import re
 from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
+    # OPTIONS: format, display
     PATTERN = r"@\[clock(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     TEMPLATE = '<mono-clock{format_attr}{display_attr}></mono-clock>'
 

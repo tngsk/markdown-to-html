@@ -2,6 +2,7 @@ import re
 from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
+    # OPTIONS: time, color
     PATTERN = r"@\[countdown\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     TEMPLATE = '<mono-countdown{time_attr}{color_attr}></mono-countdown>'
 
