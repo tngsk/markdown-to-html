@@ -129,7 +129,8 @@ class MonoScore extends HTMLElement {
             if (notes.length > 0) {
                 // Determine bounding box based on number of notes to avoid crowding
                 const staveWidth = Math.max(150, notes.length * 40);
-                renderer.resize(staveWidth + 40, 120);
+                const rendererWidth = staveWidth + stave.getX() + 20;
+                renderer.resize(rendererWidth, 120);
                 stave.setWidth(staveWidth).draw();
 
                 // Calculate total ticks/beats to configure the voice correctly
@@ -148,7 +149,7 @@ class MonoScore extends HTMLElement {
                 voice.setStrict(false);
                 voice.addTickables(notes);
 
-                const formatter = new VF.Formatter().joinVoices([voice]).format([voice], staveWidth - 20);
+                const formatter = new VF.Formatter().joinVoices([voice]).format([voice], staveWidth - (stave.getNoteStartX() - stave.getX()) - 10);
                 voice.draw(context, stave);
             } else {
                 stave.draw();
