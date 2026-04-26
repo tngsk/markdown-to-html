@@ -47,115 +47,81 @@ class MonoScore extends HTMLElement {
         return window.__vexFlowLoadingPromise;
     }
 
-    renderScore(container) {
+            renderScore(container) {
         if (!window.Vex || !window.Vex.Flow) return;
-        // Clear previous
         container.innerHTML = '';
 
         const VF = window.Vex.Flow;
-        const renderer = new VF.Renderer(container, VF.Renderer.Backends.SVG);
+        const { Factory } = VF;
 
-        renderer.resize(200, 100);
-        const context = renderer.getContext();
-
-        const notesAttr = this.getAttribute('notes') || '';
+        let notesAttr = this.getAttribute('notes') || '';
+        const voicesAttr = this.getAttribute('voices') || '';
         const clefAttr = this.getAttribute('clef') || 'treble';
         const timeAttr = this.getAttribute('time') || '4/4';
 
-        const stave = new VF.Stave(10, 0, 180);
-        stave.addClef(clefAttr).addTimeSignature(timeAttr);
-        stave.setContext(context);
+        // Calculate a rough width based on string lengths to avoid crowding
+        let totalLength = Math.max(notesAttr.length, voicesAttr.length);
+        const staveWidth = Math.max(200, totalLength * 15);
+        const rendererWidth = staveWidth + 20;
 
-        if (notesAttr) {
-            const rawTokens = notesAttr.split(/[\s,]+/).filter(n => n);
-            const notes = [];
+        const vf = new Factory({ renderer: { elementId: container, width: rendererWidth, height: 120 } });
+        const score = vf.EasyScore();
+        const system = vf.System();
 
-            for (const token of rawTokens) {
-                if (token === '|') {
-                    notes.push(new VF.BarNote());
-                    continue;
+        let voicesData = [];
+
+        if (voicesAttr) {
+            try {
+                const decodedVoices = voicesAttr.replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+                let parsedVoices = [];
+                // If it is a valid JSON array
+                if (decodedVoices.trim().startsWith('[')) {
+                     parsedVoices = JSON.parse(decodedVoices);
+                } else {
+                     // Support string splits by | or something if needed, but JSON array is expected
+                     parsedVoices = [decodedVoices];
                 }
 
-                if (/^\d+$/.test(token) || /^[whq8]$/.test(token)) {
-                    if (notes.length > 0) {
-                        const prev = notes[notes.length - 1];
-                        if (prev instanceof VF.StaveNote) {
-                            let dur = token;
-                            if (token === '2') dur = 'h';
-                            else if (token === '4') dur = 'q';
-                            else if (token === '1') dur = 'w';
-                            else if (token === '8') dur = '8';
-
-                            const newNote = new VF.StaveNote({
-                                keys: prev.keys,
-                                duration: dur,
-                                clef: prev.clef
-                            });
-                            const keyParts = prev.keys[0].match(/([a-zA-Z]+)(#|b)?\/?(\d+)/);
-                            if (keyParts && keyParts[2]) {
-                                newNote.addModifier(new VF.Accidental(keyParts[2]));
-                            }
-                            notes[notes.length - 1] = newNote;
+                if (Array.isArray(parsedVoices)) {
+                    parsedVoices.forEach((voiceStr, i) => {
+                        let options = {};
+                        // For 2 voices, usually top is up, bottom is down
+                        if (parsedVoices.length > 1) {
+                            options.stem = i % 2 === 0 ? 'up' : 'down';
                         }
-                    }
-                    continue;
+                        voicesData.push(score.voice(score.notes(voiceStr, options)));
+                    });
                 }
-
-                let keysStr = token;
-                let duration = 'q';
-
-                if (token.includes('/')) {
-                    const parts = token.split('/');
-                    const lastPart = parts[parts.length - 1];
-                    if (['w', 'h', 'q', '8', '16', '32'].includes(lastPart)) {
-                        duration = parts.pop();
-                    }
-                    keysStr = parts.join('/');
-                }
-
-                const keyParts = keysStr.match(/([a-zA-Z]+)(#|b)?\/?(\d+)?/);
-                if (keyParts) {
-                    const [, noteName, accidental, octave] = keyParts;
-                    const key = `${noteName.toLowerCase()}${accidental || ''}/${octave || '4'}`;
-                    const staveNote = new VF.StaveNote({ keys: [key], duration: duration, clef: clefAttr });
-
-                    if (accidental) {
-                        staveNote.addModifier(new VF.Accidental(accidental));
-                    }
-                    notes.push(staveNote);
-                }
+            } catch (e) {
+                console.error("Failed to parse voices attribute for mono-score:", e);
             }
+        } else if (notesAttr) {
+            try {
+                // If legacy space separated like "C4 D4 E4", replace space with comma
+                if (!notesAttr.includes(',') && notesAttr.trim().length > 0) {
+                    notesAttr = notesAttr.split(/[\s]+/).filter(n => n).join(', ');
+                }
+                voicesData.push(score.voice(score.notes(notesAttr)));
+            } catch (e) {
+                console.error("Failed to parse notes attribute for mono-score:", e);
+            }
+        }
 
-            if (notes.length > 0) {
-                // Determine bounding box based on number of notes to avoid crowding
-                const staveWidth = Math.max(150, notes.length * 40);
-                const rendererWidth = staveWidth + stave.getX() + 20;
-                renderer.resize(rendererWidth, 120);
-                stave.setWidth(staveWidth).draw();
-
-                // Calculate total ticks/beats to configure the voice correctly
-                let totalTicks = 0;
-                notes.forEach(n => {
-                    if (n instanceof VF.StaveNote) {
-                        totalTicks += n.getTicks().value();
-                    }
-                });
-
-                // Usually 4096 ticks per beat in VexFlow, so we calculate total beats
-                const BEAT_RESOLUTION = 4096;
-                const totalBeats = Math.ceil(totalTicks / BEAT_RESOLUTION) || 4;
-
-                const voice = new VF.Voice({ num_beats: totalBeats, beat_value: 4 });
-                voice.setStrict(false);
-                voice.addTickables(notes);
-
-                const formatter = new VF.Formatter().joinVoices([voice]).format([voice], staveWidth - (stave.getNoteStartX() - stave.getX()) - 10);
-                voice.draw(context, stave);
-            } else {
-                stave.draw();
+        if (voicesData.length > 0) {
+            try {
+                system.addStave({
+                    voices: voicesData
+                }).addClef(clefAttr).addTimeSignature(timeAttr);
+                vf.draw();
+            } catch (e) {
+                console.error("Failed to draw mono-score:", e);
+                const fallbackVf = new Factory({ renderer: { elementId: container, width: rendererWidth, height: 120 } });
+                fallbackVf.System().addStave({}).addClef(clefAttr).addTimeSignature(timeAttr);
+                fallbackVf.draw();
             }
         } else {
-            stave.draw();
+            system.addStave({}).addClef(clefAttr).addTimeSignature(timeAttr);
+            vf.draw();
         }
 
         const svg = container.querySelector("svg");
@@ -175,7 +141,7 @@ class MonoScore extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['notes', 'clef', 'time'];
+        return ['notes', 'clef', 'time', 'voices'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
