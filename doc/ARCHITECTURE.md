@@ -29,7 +29,7 @@ Markdownファイルから単一HTMLへの変換は、主に `src/converter.py` 
 1.  **Markdownの読み込み**: `FileHandler` を使用して入力ファイルを読み込みます。
 2.  **Markdown → HTMLの中間変換 (`MarkdownProcessor`)**:
     *   コードブロックを保護（プレースホルダーへの置換）。
-    *   `src/components/*/parser.py` を動的にロードし、カスタムディレクティブを評価・置換。
+    *   `src/components/*/parser.py` をホワイトリスト(`ALLOWED_COMPONENTS`)ベースで安全にロードし、カスタムディレクティブを評価・置換。
     *   Python-Markdownによる標準Markdown処理、および `src/extensions/` の拡張処理を適用。
     *   コードブロックの復元。
 3.  **CSSの読み込み (`CSSEmbedder`)**: `--css` で指定された外部CSSファイルを読み込みます。
