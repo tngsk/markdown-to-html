@@ -85,4 +85,7 @@
 
 ## Documentation Writing
 * **User Documentation:** When creating or updating user-facing documentation (e.g., `README.md`), keep it concise and focused purely on usage instructions. Do not include internal development policies or guidelines.
-* In the Mono project, FastAPI CORS configuration in `src/server.py` is environment-aware. It uses the `ENVIRONMENT` environment variable to enforce strict security in production (filtering out `*` and `null` origins and restricting methods/headers) while allowing permissive settings for local development and Playwright testing. When updating tests or working with the server, remember that setting `ENVIRONMENT=production` in the environment will change CORS behavior.
+
+## Security & Defense
+* **DOM XSS Prevention:** When extracting JSON data from DOM elements (like `<template>` tags), strictly use `textContent` instead of `innerHTML` to prevent HTML entity decoding and DOM XSS vulnerabilities.
+* **URL Validation:** When assigning URLs to `src` attributes in JavaScript components, validate them securely using the `URL` constructor (`new URL(url, window.location.href)`) and explicitly allowlist safe protocols (e.g., `http:`, `https:`, `data:`) to prevent URI injection attacks like `javascript:`.
