@@ -38,8 +38,7 @@ class TestConversionConfig(unittest.TestCase):
         """Test initialization when config.toml is loaded successfully."""
         mock_toml_data = {
             "security": {
-                "connect-src": "wss://example.com",
-                "ws-src": "wss://example.com/ws"
+                "connect-src": "wss://example.com"
             }
         }
         with patch('builtins.open', mock_open(read_data=b"dummy")):
@@ -50,7 +49,6 @@ class TestConversionConfig(unittest.TestCase):
                     css_files=None
                 )
                 self.assertEqual(config.connect_src, "wss://example.com")
-                self.assertEqual(config.ws_src, "wss://example.com/ws")
 
     def test_post_init_no_security_key(self):
         """Test initialization when config.toml doesn't have security key."""
@@ -62,7 +60,6 @@ class TestConversionConfig(unittest.TestCase):
                     css_files=None
                 )
                 self.assertEqual(config.connect_src, "")
-                self.assertEqual(config.ws_src, "")
 
     def test_post_init_file_not_found(self):
         """Test exception handling during initialization (e.g. FileNotFoundError)."""
@@ -74,7 +71,6 @@ class TestConversionConfig(unittest.TestCase):
             )
             # Default values should be preserved
             self.assertEqual(config.connect_src, "")
-            self.assertEqual(config.ws_src, "")
 
     def test_post_init_toml_decode_error(self):
         """Test exception handling during initialization (TOML decode error)."""
@@ -87,7 +83,6 @@ class TestConversionConfig(unittest.TestCase):
                 )
                 # Default values should be preserved
                 self.assertEqual(config.connect_src, "")
-                self.assertEqual(config.ws_src, "")
 
     def test_resolve_output_file_provided(self):
         """Test resolving output file when explicitly provided."""

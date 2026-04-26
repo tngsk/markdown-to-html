@@ -56,40 +56,26 @@ class MonoSync extends MonoBaseElement {
     }
 
     setupFocusSync() {
-        const wsMeta = document.querySelector('meta[name="mono-ws-url"]');
-        const wsUrl = wsMeta ? wsMeta.content : null;
-        if (!wsUrl) return;
+        const apiMeta = document.querySelector('meta[name="mono-api-url"]');
+        const apiUrl = apiMeta ? apiMeta.content : null;
+        if (!apiUrl) return;
 
         const urlParams = new URLSearchParams(window.location.search);
         const isHost = urlParams.get("role") === "host";
 
         try {
-            this.ws = new WebSocket(wsUrl + "/ws/sync");
-
-            this.ws.onopen = () => {
-                console.log("🟢 [Mono] リアルタイム同期に接続しました（Role: " + (isHost ? "Host" : "Participant") + "）");
-            };
-
-            this.ws.onerror = () => {
-                console.info("💡 [Mono] 同期サーバが見つかりません。ドキュメントは引き続き単独で閲覧可能です。");
-            };
-
-            this.ws.onclose = () => {
-                // Connection closed messages can be noisy if the server shuts down, so we use info.
-                console.info("💡 [Mono] 同期サーバとの接続が終了しました。");
-            };
-
             if (isHost) {
-                this.setupHostObserver();
+                console.log("🟢 [Mono] リアルタイム同期を有効化しました（Role: Host）");
+                this.setupHostObserver(apiUrl);
             } else {
-                this.setupParticipantListener();
+                this.setupParticipantListener(apiUrl);
             }
         } catch (e) {
              console.info("💡 [Mono] 同期機能を初期化できませんでした。スタンドアロンで実行します。");
         }
     }
 
-    setupHostObserver() {
+    setupHostObserver(apiUrl) {
         let lastTargetId = null;
 
         const observer = new IntersectionObserver((entries) => {
@@ -98,7 +84,7 @@ class MonoSync extends MonoBaseElement {
                 if (entry.isIntersecting && entry.target.id) {
                     if (lastTargetId !== entry.target.id) {
                         lastTargetId = entry.target.id;
-                        this.broadcastFocus(lastTargetId);
+                        this.broadcastFocus(apiUrl, lastTargetId);
                     }
                     break;
                 }
@@ -111,14 +97,30 @@ class MonoSync extends MonoBaseElement {
         });
     }
 
-    broadcastFocus(targetId) {
-        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-            this.ws.send(JSON.stringify({ type: "focus", targetId }));
-        }
+    broadcastFocus(apiUrl, targetId) {
+        fetch(apiUrl + "/api/sync", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ type: "focus", targetId })
+        }).catch(err => {
+            console.error("Focus broadcast error:", err);
+        });
     }
 
-    setupParticipantListener() {
-        this.ws.onmessage = (event) => {
+    setupParticipantListener(apiUrl) {
+        this.eventSource = new EventSource(apiUrl + "/api/sync/stream");
+
+        this.eventSource.onopen = () => {
+            console.log("🟢 [Mono] リアルタイム同期に接続しました（Role: Participant）");
+        };
+
+        this.eventSource.onerror = () => {
+            console.info("💡 [Mono] 同期サーバとの接続が切断されました。");
+        };
+
+        this.eventSource.onmessage = (event) => {
             try {
                 const data = JSON.parse(event.data);
                 if (data.type === "focus" && data.targetId) {

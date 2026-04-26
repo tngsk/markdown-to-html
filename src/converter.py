@@ -86,7 +86,6 @@ class MarkdownToHTMLConverter:
                 title=title,
                 excluded_tags=self.config.excluded_tags,
                 connect_src=self.config.connect_src,
-                ws_src=self.config.ws_src,
                 asset_store=asset_store,
                 enable_export=self.config.enable_export,
             )
