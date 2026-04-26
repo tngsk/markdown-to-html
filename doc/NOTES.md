@@ -57,3 +57,7 @@ Markdown上に明示的なディレクティブを持たず、システムによ
 - `mono-code-block`
 - `mono-export`
 - `mono-sync`
+## Security Fix: DOM XSS in Lazy Load & Audio components
+
+* **Vulnerability:** Unsafe parsing of JSON assets using `innerHTML` and assigning URLs to `src` attributes without checking the protocol could lead to XSS attacks using `javascript:` payloads.
+* **Fix Applied:** Modified `lazy_load.js` and `mono-sound/script.js` to securely extract JSON string using `textContent`. Furthermore, added a robust URL validation checking the parsed URL protocol against a strict allowlist (`http:`, `https:`, `data:`).
