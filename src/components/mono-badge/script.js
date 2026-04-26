@@ -1,12 +1,8 @@
-class MonoBadge extends HTMLElement {
+class MonoBadge extends MonoBaseElement {
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
 
-        const template = document.getElementById('mono-badge-template');
-        if (template) {
-            this.shadowRoot.appendChild(template.content.cloneNode(true));
-        }
+        this.mountTemplate('mono-badge-template');
     }
 
     connectedCallback() {

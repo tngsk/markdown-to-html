@@ -1,15 +1,11 @@
-class MonoFlipcard extends HTMLElement {
+class MonoFlipcard extends MonoBaseElement {
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
         this.toggleFlip = this.toggleFlip.bind(this);
     }
 
     connectedCallback() {
-        const template = document.getElementById("mono-flipcard-template");
-        if (template) {
-            this.shadowRoot.appendChild(template.content.cloneNode(true));
-        }
+        this.mountTemplate('mono-flipcard-template');
 
         const frontText = this.getAttribute("front") || "";
         const backText = this.getAttribute("back") || "";

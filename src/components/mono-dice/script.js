@@ -1,7 +1,6 @@
-class MonoDice extends HTMLElement {
+class MonoDice extends MonoInteractiveElement {
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
 
         const facesAttr = this.getAttribute("faces") || this.getAttribute("number");
         this.faces = facesAttr ? parseInt(facesAttr, 10) : 6;
@@ -10,25 +9,11 @@ class MonoDice extends HTMLElement {
         }
 
         this.isRolling = false;
-        this.refs = {};
     }
 
     connectedCallback() {
-        this.mountTemplate();
+        super.mountTemplate('mono-dice-template');
         this.setupEventListeners();
-    }
-
-    mountTemplate() {
-        const template = document.getElementById("mono-dice-template");
-        if (!template) {
-            console.error("Template #mono-dice-template not found.");
-            return;
-        }
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
-
-        this.shadowRoot.querySelectorAll("[data-ref]").forEach((el) => {
-            this.refs[el.dataset.ref] = el;
-        });
     }
 
     setupEventListeners() {

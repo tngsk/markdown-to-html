@@ -1,7 +1,6 @@
-class MonoBrush extends HTMLElement {
+class MonoBrush extends MonoBaseElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
     this.isDrawingModeActive = false;
     this.isDrawing = false;
     this.hue = 0;
@@ -12,7 +11,7 @@ class MonoBrush extends HTMLElement {
   }
 
   connectedCallback() {
-    this.mountTemplate();
+    super.mountTemplate("mono-brush-template");
     this.setupElements();
     this.setupEventListeners();
     this.resizeCanvas();
@@ -20,13 +19,6 @@ class MonoBrush extends HTMLElement {
 
   disconnectedCallback() {
     this.removeEventListeners();
-  }
-
-  mountTemplate() {
-    const template = document.getElementById("mono-brush-template");
-    if (template) {
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
-    }
   }
 
   setupElements() {

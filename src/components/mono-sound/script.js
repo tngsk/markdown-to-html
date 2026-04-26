@@ -1,11 +1,7 @@
-class MonoSound extends HTMLElement {
+class MonoSound extends MonoBaseElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
-    const template = document.getElementById("mono-sound-template");
-    if (template) {
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
-    }
+    this.mountTemplate('mono-sound-template');
 
     this.audio = this.shadowRoot.querySelector(".mono-sound-audio");
     this.playBtn = this.shadowRoot.querySelector(".mono-sound-play-btn");

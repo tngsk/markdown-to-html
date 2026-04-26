@@ -1,7 +1,6 @@
-class MonoTextfieldInput extends HTMLElement {
+class MonoTextfieldInput extends MonoBaseElement {
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
         this.placeholder = this.getAttribute("placeholder") || "";
         this.size = this.getAttribute("size");
         this.inputId = this.getAttribute("id") || `textfield-${Math.random().toString(36).substr(2, 9)}`;
@@ -16,12 +15,7 @@ class MonoTextfieldInput extends HTMLElement {
     }
 
     mountTemplate() {
-        const template = document.getElementById("mono-textfield-input-template");
-        if (!template) {
-            console.error("Template #mono-textfield-input-template not found.");
-            return;
-        }
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
+        super.mountTemplate('mono-textfield-input-template');
         this.inputArea = this.shadowRoot.getElementById("textfield");
         this.inputArea.placeholder = this.placeholder;
         if (this.size) {

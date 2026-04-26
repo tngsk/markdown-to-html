@@ -1,11 +1,7 @@
-class MonoSection extends HTMLElement {
+class MonoSection extends MonoBaseElement {
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
-        const template = document.getElementById('mono-section-template');
-        if (template) {
-            this.shadowRoot.appendChild(template.content.cloneNode(true));
-        }
+        this.mountTemplate('mono-section-template');
     }
 
     connectedCallback() {

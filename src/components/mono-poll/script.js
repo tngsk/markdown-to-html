@@ -9,7 +9,6 @@
 class MonoPoll extends MonoInteractiveElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
 
     // Component state
     this.title = this.getAttribute("title") || "Poll";
@@ -24,7 +23,6 @@ class MonoPoll extends MonoInteractiveElement {
     this.selectedValue = null;
 
     // Cache for DOM references
-    this.refs = {};
     this.optionNodes = [];
   }
 
@@ -91,17 +89,9 @@ class MonoPoll extends MonoInteractiveElement {
 
   mountTemplate() {
     // 1. Clone main layout template
-    const template = document.getElementById("mono-poll-template");
-    if (!template) {
-      console.error("Template #mono-poll-template not found.");
-      return;
-    }
-    this.shadowRoot.appendChild(template.content.cloneNode(true));
+        super.mountTemplate('mono-poll-template');
 
     // 2. Cache main references
-    this.shadowRoot.querySelectorAll("[data-ref]").forEach((el) => {
-      this.refs[el.dataset.ref] = el;
-    });
 
     // 3. Bind static data
     if (this.refs.title) {

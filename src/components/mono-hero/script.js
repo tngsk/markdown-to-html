@@ -1,11 +1,7 @@
-class MonoHero extends HTMLElement {
+class MonoHero extends MonoBaseElement {
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
-        const template = document.getElementById('mono-hero-template');
-        if (template) {
-            this.shadowRoot.appendChild(template.content.cloneNode(true));
-        }
+        this.mountTemplate('mono-hero-template');
     }
 
     connectedCallback() {

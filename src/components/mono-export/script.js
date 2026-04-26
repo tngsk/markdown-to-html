@@ -1,19 +1,11 @@
-class MonoExport extends HTMLElement {
+class MonoExport extends MonoBaseElement {
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
     }
 
     connectedCallback() {
-        this.mountTemplate();
+        super.mountTemplate('mono-export-template');
         this.setupEventListeners();
-    }
-
-    mountTemplate() {
-        const template = document.getElementById("mono-export-template");
-        if (template) {
-            this.shadowRoot.appendChild(template.content.cloneNode(true));
-        }
     }
 
     collectData() {

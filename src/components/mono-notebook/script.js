@@ -6,11 +6,9 @@
  * persists the content automatically to Local Storage.
  */
 
-class MonoNotebookInput extends HTMLElement {
+class MonoNotebookInput extends MonoBaseElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
-    this.refs = {};
     this.inputId =
       this.getAttribute("id") ||
       `notebook-${Math.random().toString(36).substr(2, 9)}`;
@@ -25,18 +23,8 @@ class MonoNotebookInput extends HTMLElement {
   }
 
   mountTemplate() {
-    const template = document.getElementById("mono-notebook-template");
-    if (!template) {
-      console.error("Template #mono-notebook-template not found.");
-      return;
-    }
-
-    this.shadowRoot.appendChild(template.content.cloneNode(true));
-
-    // Cache references
-    this.shadowRoot.querySelectorAll("[data-ref]").forEach((el) => {
-      this.refs[el.dataset.ref] = el;
-    });
+        super.mountTemplate('mono-notebook-template');
+        // Cache references
 
     const title = this.getAttribute("title");
     if (title) {

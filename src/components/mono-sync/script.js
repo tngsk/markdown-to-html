@@ -1,20 +1,12 @@
-class MonoSync extends HTMLElement {
+class MonoSync extends MonoBaseElement {
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
     }
 
     connectedCallback() {
-        this.mountTemplate();
+        super.mountTemplate('mono-sync-template');
         this.setupDataRecovery();
         this.setupFocusSync();
-    }
-
-    mountTemplate() {
-        const template = document.getElementById("mono-sync-template");
-        if (template) {
-            this.shadowRoot.appendChild(template.content.cloneNode(true));
-        }
     }
 
     getEnvironmentContext() {

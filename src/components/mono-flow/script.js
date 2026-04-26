@@ -1,7 +1,6 @@
-class MonoFlow extends HTMLElement {
+class MonoFlow extends MonoBaseElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
     this.edges = [];
     this.nodes = new Map(); // id -> element
     this.resizeObserver = null;
@@ -19,12 +18,7 @@ class MonoFlow extends HTMLElement {
   }
 
   render() {
-    const template = document.getElementById("template-mono-flow");
-    if (!template) {
-      console.error("Template for mono-flow not found.");
-      return;
-    }
-    this.shadowRoot.appendChild(template.content.cloneNode(true));
+        this.mountTemplate('template-mono-flow');
 
     // Handle title
     const title = this.getAttribute("title");

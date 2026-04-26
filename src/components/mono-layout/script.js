@@ -1,9 +1,7 @@
-class MonoLayout extends HTMLElement {
+class MonoLayout extends MonoBaseElement {
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
-        const template = document.getElementById("mono-layout-template");
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
+        this.mountTemplate('mono-layout-template');
         this.wrapper = this.shadowRoot.querySelector('.layout-wrapper');
     }
 

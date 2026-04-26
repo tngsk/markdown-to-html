@@ -1,14 +1,10 @@
-class MonoSpacer extends HTMLElement {
+class MonoSpacer extends MonoBaseElement {
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
     }
 
     connectedCallback() {
-        const template = document.getElementById("mono-spacer-template");
-        if (template) {
-            this.shadowRoot.appendChild(template.content.cloneNode(true));
-        }
+        this.mountTemplate('mono-spacer-template');
 
         const width = this.getAttribute("width");
         const height = this.getAttribute("height");

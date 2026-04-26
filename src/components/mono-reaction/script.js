@@ -1,11 +1,7 @@
 class MonoReaction extends MonoInteractiveElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
-    const template = document.getElementById("mono-reaction-template");
-    if (template) {
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
-    }
+    this.mountTemplate('mono-reaction-template');
   }
 
   connectedCallback() {
