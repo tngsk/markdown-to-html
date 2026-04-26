@@ -64,7 +64,7 @@ class MonoScore extends HTMLElement {
 
         const stave = new VF.Stave(10, 0, 180);
         stave.addClef(clefAttr).addTimeSignature(timeAttr);
-        stave.setContext(context).draw();
+        stave.setContext(context);
 
         if (notesAttr) {
             const rawTokens = notesAttr.split(/[\s,]+/).filter(n => n);
@@ -150,7 +150,11 @@ class MonoScore extends HTMLElement {
 
                 const formatter = new VF.Formatter().joinVoices([voice]).format([voice], staveWidth - 20);
                 voice.draw(context, stave);
+            } else {
+                stave.draw();
             }
+        } else {
+            stave.draw();
         }
 
         const svg = container.querySelector("svg");
