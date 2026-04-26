@@ -101,7 +101,7 @@ class HTMLDocumentBuilder:
         mono_components_js = self._load_mono_components_script(used_component_dirs)
         component_templates = self._load_component_templates(used_component_dirs)
 
-        connect_src_str = " ".join(filter(None, ["'self'", connect_src, ws_src]))
+        connect_src_str = " ".join(filter(None, ["'self'", "https://cdn.jsdelivr.net", connect_src, ws_src]))
         csp_meta = f"<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self' 'unsafe-inline' data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: https://colab.research.google.com; connect-src {connect_src_str}; object-src 'none'; font-src 'self' data: https://fonts.gstatic.com;\">"
 
         meta_tags = []

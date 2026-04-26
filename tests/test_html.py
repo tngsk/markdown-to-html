@@ -80,7 +80,7 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
                 connect_src="https://api.example.com",
                 ws_src="wss://ws.example.com"
             )
-            self.assertIn("connect-src 'self' https://api.example.com wss://ws.example.com", result)
+            self.assertIn("connect-src 'self' https://cdn.jsdelivr.net https://api.example.com wss://ws.example.com", result)
             self.assertIn('<meta name="mono-api-url" content="https://api.example.com">', result)
             self.assertIn('<meta name="mono-ws-url" content="wss://ws.example.com">', result)
 
