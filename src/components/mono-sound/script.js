@@ -24,20 +24,31 @@ class MonoSound extends HTMLElement {
 
     const rawSrc = this.getAttribute("src");
     if (rawSrc && this.audio) {
+      const isValidUrl = (url) => {
+        if (!url || typeof url !== 'string') return false;
+        try {
+            const parsed = new URL(url, window.location.href);
+            const protocol = parsed.protocol.toLowerCase();
+            return ['http:', 'https:', 'data:'].includes(protocol);
+        } catch (e) {
+            return false;
+        }
+      };
+
       // Handle asset-store logic
       if (rawSrc.startsWith("asset-")) {
         const store = document.getElementById("mono-asset-store");
         if (store) {
           try {
-            const assets = JSON.parse(store.innerHTML);
-            if (assets[rawSrc]) {
+            const assets = JSON.parse(store.textContent);
+            if (assets[rawSrc] && isValidUrl(assets[rawSrc])) {
               this.audio.src = assets[rawSrc];
             }
           } catch (e) {
             console.error("Asset store parse error in mono-sound:", e);
           }
         }
-      } else {
+      } else if (isValidUrl(rawSrc)) {
         this.audio.src = rawSrc;
       }
     }
