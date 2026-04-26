@@ -21,9 +21,6 @@ if importlib.util.find_spec("fastapi") is None:
 if importlib.util.find_spec("uvicorn") is None:
     mock_uvicorn = MagicMock()
     sys.modules['uvicorn'] = mock_uvicorn
-if importlib.util.find_spec("websockets") is None:
-    mock_websockets = MagicMock()
-    sys.modules['websockets'] = mock_websockets
 
 from pathlib import Path
 import logging

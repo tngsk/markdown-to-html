@@ -67,7 +67,7 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
             self.assertIn("<mono-export></mono-export>", result2)
 
     @patch('pathlib.Path.read_text')
-    def test_build_document_connect_ws_src(self, mock_read_text):
+    def test_build_document_connect_src(self, mock_read_text):
         mock_read_text.return_value = "{CSP_META}{COPY_BUTTON_JS}"
         with patch.object(self.builder, '_get_used_component_dirs', return_value=[]), \
              patch.object(self.builder, '_load_highlight_js_script', return_value=""), \
@@ -77,12 +77,10 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
 
             result = self.builder.build_document(
                 html_body="<p>test</p>",
-                connect_src="https://api.example.com",
-                ws_src="wss://ws.example.com"
+                connect_src="https://api.example.com"
             )
-            self.assertIn("connect-src 'self' https://cdn.jsdelivr.net https://api.example.com wss://ws.example.com", result)
+            self.assertIn("connect-src 'self' https://cdn.jsdelivr.net https://api.example.com", result)
             self.assertIn('<meta name="mono-api-url" content="https://api.example.com">', result)
-            self.assertIn('<meta name="mono-ws-url" content="wss://ws.example.com">', result)
 
     @patch('pathlib.Path.read_text')
     def test_build_document_asset_store(self, mock_read_text):
