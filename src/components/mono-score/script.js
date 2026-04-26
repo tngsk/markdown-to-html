@@ -155,10 +155,15 @@ class MonoScore extends HTMLElement {
 
         const svg = container.querySelector("svg");
         if (svg) {
-            svg.style.cssText = "height: 4em; width: auto; display: inline-block; vertical-align: middle;";
+            svg.style.cssText = "height: 6em; width: auto; display: inline-block; vertical-align: middle;";
             svg.querySelectorAll("*").forEach((el) => {
                 if (el.tagName !== "svg") {
-                    el.style.cssText = "fill: currentColor; stroke: currentColor;";
+                    if (el.getAttribute("fill") === "black" || el.getAttribute("fill") === "#000000") {
+                        el.setAttribute("fill", "currentColor");
+                    }
+                    if (el.getAttribute("stroke") === "black" || el.getAttribute("stroke") === "#000000") {
+                        el.setAttribute("stroke", "currentColor");
+                    }
                 }
             });
         }
