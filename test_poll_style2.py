@@ -1,5 +1,6 @@
-/* Web Components CSS for Mono */
+import re
 
+css = """
 :host {
     display: flex;
     flex-direction: column;
@@ -119,8 +120,7 @@ button.submit-btn.hidden,
         display: none !important;
     }
     .poll-container::after {
-        content: "📊 (Interactive Poll - Print View)
-Options are available in the interactive version.";
+        content: "📊 (Interactive Poll - Print View)\nOptions are available in the interactive version.";
         display: block;
         margin-top: 1rem;
         padding: 1rem;
@@ -131,3 +131,9 @@ Options are available in the interactive version.";
         border-radius: 8px;
     }
 }
+"""
+
+with open("src/components/mono-poll/style.css", "w") as f:
+    f.write(css)
+
+print("Updated style.css")
