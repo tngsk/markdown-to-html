@@ -4,7 +4,7 @@ Markdown Processor
 Converts Markdown content to intermediate HTML.
 """
 
-import importlib.util
+import importlib
 import logging
 import re
 import sys
@@ -15,7 +15,7 @@ import markdown.util
 from src.config import ConversionError
 from src.constants import (
     MARKDOWN_EXTENSIONS,
-    COMPONENTS_DIR,
+    ALLOWED_COMPONENTS,
 )
 from src.handlers.file import FileHandler
 
@@ -30,54 +30,24 @@ class MarkdownProcessor:
 
     def _load_component_parsers(self):
         """
-        src/components/ 配下の各コンポーネントディレクトリにある
-        parser.py を動的に読み込み、インスタンス化してリストで返す
+        明示的に許可されたコンポーネントのみをインポートしてインスタンス化し、リストで返す
         """
         parsers = []
-        components_dir = COMPONENTS_DIR
-        if not components_dir.exists() or not components_dir.is_dir():
-            self.logger.warning(
-                f"コンポーネントディレクトリが見つかりません: {components_dir}"
-            )
-            return parsers
 
-        for component_dir in sorted(components_dir.iterdir()):
-            if not component_dir.is_dir():
-                continue
-
-            parser_file = component_dir / "parser.py"
-            if parser_file.exists():
-                try:
-                    module_name = (
-                        f"src.components.{component_dir.name}.parser"
+        for component_name in ALLOWED_COMPONENTS:
+            module_name = f"src.components.{component_name}.parser"
+            try:
+                module = importlib.import_module(module_name)
+                if hasattr(module, "Parser"):
+                    parser_instance = module.Parser()
+                    parsers.append(parser_instance)
+                    self.logger.debug(
+                        f"パーサーをロードしました: {component_name}"
                     )
-                    spec = importlib.util.spec_from_file_location(
-                        module_name, parser_file
-                    )
-                    if spec is None or spec.loader is None:
-                        self.logger.warning(
-                            f"パーサーモジュールのロードに失敗しました（spec不在）: {parser_file}"
-                        )
-                        continue
-                    module = importlib.util.module_from_spec(spec)
-                    if module is None:
-                        self.logger.warning(
-                            f"module_from_spec が None を返しました: {parser_file}"
-                        )
-                        continue
-                    sys.modules[module_name] = module
-                    spec.loader.exec_module(module)
-
-                    if hasattr(module, "Parser"):
-                        parser_instance = module.Parser()
-                        parsers.append(parser_instance)
-                        self.logger.debug(
-                            f"パーサーをロードしました: {component_dir.name}"
-                        )
-                except Exception as e:
-                    self.logger.warning(
-                        f"パーサーのロードに失敗しました ({parser_file}): {e}"
-                    )
+            except Exception as e:
+                self.logger.warning(
+                    f"パーサーのロードに失敗しました ({component_name}): {e}"
+                )
 
         return parsers
 
