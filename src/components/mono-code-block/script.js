@@ -7,14 +7,12 @@
  * a copy button and syntax highlighting functionality.
  */
 
-class MonoCodeBlock extends HTMLElement {
+class MonoCodeBlock extends MonoBaseElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
 
     // Component state
     this.language = this.getAttribute("language") || "";
-    this.refs = {};
   }
 
   connectedCallback() {
@@ -24,17 +22,8 @@ class MonoCodeBlock extends HTMLElement {
   }
 
   mountTemplate() {
-    const template = document.getElementById("mono-code-block-template");
-    if (!template) {
-      console.error("Template #mono-code-block-template not found.");
-      return;
-    }
-    this.shadowRoot.appendChild(template.content.cloneNode(true));
-
-    // Cache references
-    this.shadowRoot.querySelectorAll("[data-ref]").forEach((el) => {
-      this.refs[el.dataset.ref] = el;
-    });
+        super.mountTemplate('mono-code-block-template');
+        // Cache references
 
     // Set Header Label
     if (this.refs.languageLabel) {

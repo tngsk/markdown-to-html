@@ -1,17 +1,10 @@
-class MonoDrawer extends HTMLElement {
+class MonoDrawer extends MonoBaseElement {
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
   }
 
   connectedCallback() {
-    const template = document.getElementById('mono-drawer-template');
-    if (template) {
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
-    } else {
-        console.error('mono-drawer-template not found');
-        return;
-    }
+    this.mountTemplate('mono-drawer-template');
 
     const container = this.shadowRoot.getElementById('drawer-container');
     const handle = this.shadowRoot.getElementById('drawer-handle');

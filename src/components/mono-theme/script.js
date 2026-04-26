@@ -1,12 +1,8 @@
-class MonoTheme extends HTMLElement {
+class MonoTheme extends MonoBaseElement {
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
 
-        const template = document.getElementById('mono-theme-template');
-        if (template) {
-            this.shadowRoot.appendChild(template.content.cloneNode(true));
-        }
+        this.mountTemplate('mono-theme-template');
 
         this.container = this.shadowRoot.querySelector('.theme-switcher-container');
         this.select = this.shadowRoot.querySelector('#theme-select');

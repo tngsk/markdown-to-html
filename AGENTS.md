@@ -87,5 +87,5 @@
 * **User Documentation:** When creating or updating user-facing documentation (e.g., `README.md`), keep it concise and focused purely on usage instructions. Do not include internal development policies or guidelines.
 
 ## Security & Defense
-* **DOM XSS Prevention:** When extracting JSON data from DOM elements (like `<template>` tags), strictly use `textContent` instead of `innerHTML` to prevent HTML entity decoding and DOM XSS vulnerabilities.
+* **DOM XSS Prevention:** When extracting JSON data from DOM elements (like `<template>` tags), strictly use `textContent` instead of `innerHTML` to prevent HTML entity decoding and DOM XSS vulnerabilities. Furthermore, when dynamically injecting data into cached DOM elements (e.g., via `this.refs`), always use `textContent` instead of `innerHTML` to mitigate XSS risks.
 * **URL Validation:** When assigning URLs to `src` attributes in JavaScript components, validate them securely using the `URL` constructor (`new URL(url, window.location.href)`) and explicitly allowlist safe protocols (e.g., `http:`, `https:`, `data:`) to prevent URI injection attacks like `javascript:`.

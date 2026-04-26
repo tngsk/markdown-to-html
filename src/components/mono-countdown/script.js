@@ -1,7 +1,6 @@
-class MonoCountdown extends HTMLElement {
+class MonoCountdown extends MonoBaseElement {
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
         this._intervalId = null;
         this.totalSeconds = 0;
         this.remainingSeconds = 0;
@@ -10,13 +9,7 @@ class MonoCountdown extends HTMLElement {
     }
 
     connectedCallback() {
-        const template = document.getElementById('mono-countdown-template');
-        if (template) {
-            this.shadowRoot.appendChild(template.content.cloneNode(true));
-        } else {
-            console.error('mono-countdown-template not found');
-            return;
-        }
+        this.mountTemplate('mono-countdown-template');
 
         this.timeDisplayElement = this.shadowRoot.querySelector('.time-display');
         this.circle = this.shadowRoot.querySelector('.progress-ring-circle');

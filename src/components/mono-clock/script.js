@@ -1,18 +1,11 @@
-class MonoClock extends HTMLElement {
+class MonoClock extends MonoBaseElement {
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
         this._intervalId = null;
     }
 
     connectedCallback() {
-        const template = document.getElementById('mono-clock-template');
-        if (template) {
-            this.shadowRoot.appendChild(template.content.cloneNode(true));
-        } else {
-            console.error('mono-clock-template not found');
-            return;
-        }
+        this.mountTemplate('mono-clock-template');
 
         this.clockElement = this.shadowRoot.querySelector('.clock-display');
 

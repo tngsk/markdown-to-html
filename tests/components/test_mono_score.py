@@ -7,6 +7,9 @@ def test_mono_score_rendering():
     Test that the mono-score component successfully renders SVG for both
     legacy space-separated notes and EasyScore multi-voice inputs without errors.
     """
+    with open('src/templates/core/mono-base-element.js', 'r') as f:
+        base_script_content = f.read()
+
     with open('src/components/mono-score/script.js', 'r') as f:
         script_content = f.read()
 
@@ -15,6 +18,9 @@ def test_mono_score_rendering():
     <html>
     <head>
         <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
+        <script>
+            {base_script_content}
+        </script>
         <script>
             document.write('<template id="mono-score-template"><div class="score-container"></div></template>');
         </script>

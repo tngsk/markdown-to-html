@@ -6,10 +6,9 @@
  * Implements "Lab-Gear Aesthetic" and strict event-driven architecture.
  */
 
-class MonoABTest extends HTMLElement {
+class MonoABTest extends MonoBaseElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
 
     // Component State
     this.title = this.getAttribute("title") || "A/B Test";
@@ -40,7 +39,6 @@ class MonoABTest extends HTMLElement {
     this.hasVoted = false;
 
     // Cache for DOM references
-    this.refs = {};
 
     this.handleKeyDown = this.handleKeyDown.bind(this);
 
@@ -153,17 +151,8 @@ class MonoABTest extends HTMLElement {
   // ============================================================================
 
   mountTemplate() {
-    const template = document.getElementById("mono-ab-test-template");
-    if (!template) {
-      console.error("Template #mono-ab-test-template not found.");
-      return;
-    }
-    this.shadowRoot.appendChild(template.content.cloneNode(true));
-
-    // Cache references
-    this.shadowRoot.querySelectorAll("[data-ref]").forEach((el) => {
-      this.refs[el.dataset.ref] = el;
-    });
+        super.mountTemplate('mono-ab-test-template');
+        // Cache references
 
     if (this.refs.title) {
       this.refs.title.textContent = this.title;

@@ -1,18 +1,11 @@
-class MonoIcon extends HTMLElement {
+class MonoIcon extends MonoBaseElement {
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
     }
 
     connectedCallback() {
         // Clone the template
-        const template = document.getElementById('mono-icon-template');
-        if (template) {
-            this.shadowRoot.appendChild(template.content.cloneNode(true));
-        } else {
-            console.error('mono-icon-template not found');
-            return;
-        }
+        this.mountTemplate('mono-icon-template');
 
         const iconSpan = this.shadowRoot.querySelector('.material-symbols-outlined');
         const name = this.getAttribute('name');

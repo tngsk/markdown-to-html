@@ -1,6 +1,6 @@
-class MonoScore extends HTMLElement {
+class MonoScore extends MonoBaseElement {
     constructor() {
-        super();
+        super({ shadowMode: null });
     }
 
     async connectedCallback() {

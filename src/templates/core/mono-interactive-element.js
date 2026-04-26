@@ -1,6 +1,6 @@
-class MonoInteractiveElement extends HTMLElement {
-    constructor() {
-        super();
+class MonoInteractiveElement extends MonoBaseElement {
+    constructor(options = { shadowMode: 'open' }) {
+        super(options);
         this._authChangeListener = this._handleAuthChange.bind(this);
     }
 

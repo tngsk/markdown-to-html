@@ -1,11 +1,7 @@
-class MonoSessionJoin extends HTMLElement {
+class MonoSessionJoin extends MonoBaseElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
-    const template = document.getElementById("mono-session-join-template");
-    if (template) {
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
-    }
+    this.mountTemplate('mono-session-join-template');
   }
 
   connectedCallback() {

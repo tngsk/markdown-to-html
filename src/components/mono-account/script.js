@@ -1,9 +1,7 @@
-class MonoAccount extends HTMLElement {
+class MonoAccount extends MonoBaseElement {
     constructor() {
         super();
-        this.attachShadow({ mode: "open" });
         this.user = null;
-        this.refs = {};
     }
 
     connectedCallback() {
@@ -12,16 +10,9 @@ class MonoAccount extends HTMLElement {
     }
 
     mountTemplate() {
-        const template = document.getElementById("mono-account-template");
-        if (template) {
-            this.shadowRoot.appendChild(template.content.cloneNode(true));
-            this.shadowRoot.querySelectorAll("[data-ref]").forEach(el => {
-                this.refs[el.dataset.ref] = el;
-            });
-
-            if (this.refs.actionBtn) {
-                this.refs.actionBtn.addEventListener("click", () => this.toggleAuth());
-            }
+        super.mountTemplate("mono-account-template");
+        if (this.refs.actionBtn) {
+            this.refs.actionBtn.addEventListener("click", () => this.toggleAuth());
         }
     }
 

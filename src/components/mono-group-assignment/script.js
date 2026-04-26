@@ -1,11 +1,7 @@
-class MonoGroupAssignment extends HTMLElement {
+class MonoGroupAssignment extends MonoBaseElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
-    const template = document.getElementById("mono-group-assignment-template");
-    if (template) {
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
-    }
+    this.mountTemplate('mono-group-assignment-template');
   }
 
   connectedCallback() {
