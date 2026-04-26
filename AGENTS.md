@@ -84,3 +84,4 @@
 
 ## Documentation Writing
 * **User Documentation:** When creating or updating user-facing documentation (e.g., `README.md`), keep it concise and focused purely on usage instructions. Do not include internal development policies or guidelines.
+* In the Mono project, FastAPI CORS configuration in `src/server.py` is environment-aware. It uses the `ENVIRONMENT` environment variable to enforce strict security in production (filtering out `*` and `null` origins and restricting methods/headers) while allowing permissive settings for local development and Playwright testing. When updating tests or working with the server, remember that setting `ENVIRONMENT=production` in the environment will change CORS behavior.

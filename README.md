@@ -131,3 +131,12 @@ uv run main.py --help
 - ディレクトリ構造の `src/` 配下へのリファクタリング
 - 描画オーバーレイのための `mono-brush` コンポーネント追加
 - 方向ベースのレイアウトシステム `mono-layout` の追加
+
+### セキュリティ設定と環境変数
+
+FastAPI サーバー (`server.py`) は、`config.toml` によって CORS ポリシーを設定できますが、環境変数 `ENVIRONMENT` を用いてセキュリティレベルを動的に変更します。
+
+- **ローカル開発時 (デフォルト設定)**:
+  `ENVIRONMENT` が設定されていない、または `development` などの場合、ローカルでの動作やテストを優先し、すべてのメソッド・ヘッダーを許可し、`config.toml` に設定された任意のオリジン（`null` などを含む）を受け入れます。
+- **本番環境への展開 (`ENVIRONMENT=production`)**:
+  サーバーを本番環境やリモートにデプロイする際は、必ず環境変数 `ENVIRONMENT=production` を設定してください。これにより、`config.toml` から危険なオリジン（`*` や `null`）が自動的に除外され、許可される HTTP メソッド (`GET`, `POST`, `OPTIONS`) やヘッダーが厳格に制限されます。
