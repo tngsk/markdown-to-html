@@ -2,6 +2,10 @@ import re
 from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
+    @property
+    def block_level_tags(self) -> list[str]:
+        return ["mono-spacer"]
+
     # OPTIONS: width, height
     PATTERN = r"@\[spacer(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
 
