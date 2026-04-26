@@ -2,6 +2,10 @@ import re
 from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
+    @property
+    def block_level_tags(self) -> list[str]:
+        return ["mono-theme"]
+
     # OPTIONS: show_ui, config
     # Pattern to match @[theme: THEME_NAME]()
     PATTERN = r"@\[theme:\s*([^\]]+)\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
