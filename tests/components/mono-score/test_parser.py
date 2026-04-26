@@ -29,3 +29,11 @@ def test_mono_score_parser_with_colon_syntax():
     markdown = '@[score: C4/q, E4/q](clef: treble)'
     result = parser.process(markdown)
     assert '<mono-score notes="C4/q, E4/q" clef="treble"></mono-score>' in result
+
+
+def test_mono_score_parser_with_voices():
+    parser = Parser()
+    markdown = '@[score](voices: \'["C#5/q, B4", "C#4/h"]\', clef: "treble")'
+    result = parser.process(markdown)
+    assert 'voices="[&quot;C#5/q, B4&quot;, &quot;C#4/h&quot;]"' in result
+    assert 'clef="treble"' in result
