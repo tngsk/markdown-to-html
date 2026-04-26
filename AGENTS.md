@@ -89,3 +89,10 @@
 ## Security & Defense
 * **DOM XSS Prevention:** When extracting JSON data from DOM elements (like `<template>` tags), strictly use `textContent` instead of `innerHTML` to prevent HTML entity decoding and DOM XSS vulnerabilities.
 * **URL Validation:** When assigning URLs to `src` attributes in JavaScript components, validate them securely using the `URL` constructor (`new URL(url, window.location.href)`) and explicitly allowlist safe protocols (e.g., `http:`, `https:`, `data:`) to prevent URI injection attacks like `javascript:`.
+
+## Accessibility (a11y) & Standards
+* **Accessibility-First Design:** All new Web Components must be designed with accessibility baked in from the start, adhering to WAI-ARIA Authoring Practices.
+* **Role-Based Definitions:** Explicitly define the purpose of components using appropriate ARIA roles. For instance, input forms should use `role="form"`, individual choices should use `role="radio"` or `role="checkbox"`, and clickable custom elements should use `role="button"` or a native `<button>` element inside the Shadow DOM instead of a `<div>`.
+* **Keyboard Navigability:** Components must be entirely operable via keyboard. Ensure a natural Tab order. For modal or fullscreen components (`mono-drawer`, `mono-hero`), implement a "focus trap" within the Shadow DOM and ensure they can be dismissed via the Escape (`Esc`) key.
+* **Color Independence:** Do not convey meaning using color alone. State changes (like success, warning, error) must be accompanied by text labels, distinct icons, or semantic ARIA attributes.
+* **Semantic Attributes:** Expose abstract status attributes (e.g., `status="success"`) on components and rely on the active global theme (CSS variables) to handle the specific visual coloring.
