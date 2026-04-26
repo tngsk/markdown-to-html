@@ -67,34 +67,88 @@ class MonoScore extends HTMLElement {
         stave.setContext(context).draw();
 
         if (notesAttr) {
-            const notesList = notesAttr.split(',').map(n => n.trim()).filter(n => n);
+            const rawTokens = notesAttr.split(/[\s,]+/).filter(n => n);
             const notes = [];
 
-            for (const n of notesList) {
-                const parts = n.split('/');
-                if (parts.length >= 2) {
-                    const duration = parts.pop();
-                    const keysStr = parts.join('/');
-                    const keyParts = keysStr.match(/([a-zA-Z]+)(#|b)?\/?(\d+)/);
-                    if (keyParts) {
-                        const [, noteName, accidental, octave] = keyParts;
-                        const key = `${noteName.toLowerCase()}${accidental || ''}/${octave}`;
-                        const staveNote = new VF.StaveNote({ keys: [key], duration: duration, clef: clefAttr });
+            for (const token of rawTokens) {
+                if (token === '|') {
+                    notes.push(new VF.BarNote());
+                    continue;
+                }
 
-                        if (accidental) {
-                            staveNote.addModifier(new VF.Accidental(accidental));
+                if (/^\d+$/.test(token) || /^[whq8]$/.test(token)) {
+                    if (notes.length > 0) {
+                        const prev = notes[notes.length - 1];
+                        if (prev instanceof VF.StaveNote) {
+                            let dur = token;
+                            if (token === '2') dur = 'h';
+                            else if (token === '4') dur = 'q';
+                            else if (token === '1') dur = 'w';
+                            else if (token === '8') dur = '8';
+
+                            const newNote = new VF.StaveNote({
+                                keys: prev.keys,
+                                duration: dur,
+                                clef: prev.clef
+                            });
+                            const keyParts = prev.keys[0].match(/([a-zA-Z]+)(#|b)?\/?(\d+)/);
+                            if (keyParts && keyParts[2]) {
+                                newNote.addModifier(new VF.Accidental(keyParts[2]));
+                            }
+                            notes[notes.length - 1] = newNote;
                         }
-                        notes.push(staveNote);
                     }
+                    continue;
+                }
+
+                let keysStr = token;
+                let duration = 'q';
+
+                if (token.includes('/')) {
+                    const parts = token.split('/');
+                    const lastPart = parts[parts.length - 1];
+                    if (['w', 'h', 'q', '8', '16', '32'].includes(lastPart)) {
+                        duration = parts.pop();
+                    }
+                    keysStr = parts.join('/');
+                }
+
+                const keyParts = keysStr.match(/([a-zA-Z]+)(#|b)?\/?(\d+)?/);
+                if (keyParts) {
+                    const [, noteName, accidental, octave] = keyParts;
+                    const key = `${noteName.toLowerCase()}${accidental || ''}/${octave || '4'}`;
+                    const staveNote = new VF.StaveNote({ keys: [key], duration: duration, clef: clefAttr });
+
+                    if (accidental) {
+                        staveNote.addModifier(new VF.Accidental(accidental));
+                    }
+                    notes.push(staveNote);
                 }
             }
 
             if (notes.length > 0) {
-                const voice = new VF.Voice({ num_beats: 4, beat_value: 4 });
+                // Determine bounding box based on number of notes to avoid crowding
+                const staveWidth = Math.max(150, notes.length * 40);
+                renderer.resize(staveWidth + 40, 120);
+                stave.setWidth(staveWidth).draw();
+
+                // Calculate total ticks/beats to configure the voice correctly
+                let totalTicks = 0;
+                notes.forEach(n => {
+                    if (n instanceof VF.StaveNote) {
+                        totalTicks += n.getTicks().value();
+                    }
+                });
+
+                // Usually 4096 ticks per beat in VexFlow, so we calculate total beats
+                const BEAT_RESOLUTION = 4096;
+                const totalBeats = Math.ceil(totalTicks / BEAT_RESOLUTION) || 4;
+
+                const voice = new VF.Voice({ num_beats: totalBeats, beat_value: 4 });
                 voice.setStrict(false);
                 voice.addTickables(notes);
 
-                const formatter = new VF.Formatter().joinVoices([voice]).format([voice], 150);
+                const formatter = new VF.Formatter().joinVoices([voice]).format([voice], staveWidth - 20);
                 voice.draw(context, stave);
             }
         }
