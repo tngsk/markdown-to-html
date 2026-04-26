@@ -78,6 +78,7 @@ class MediaEmbedder:
         """
         media_count = 0
         asset_store = {}
+        path_to_asset_id = {}
 
         def resolve_and_encode(src_value: str) -> str:
             nonlocal media_count
@@ -95,6 +96,9 @@ class MediaEmbedder:
                 self.logger.warning(f"メディアファイルが見つかりません: {src_value}")
                 return src_value
 
+            if media_path in path_to_asset_id:
+                return path_to_asset_id[media_path]
+
             try:
                 if media_path.suffix.lower() == ".svg":
                     svg_content = self.file_handler.read_text(media_path)
@@ -102,6 +106,7 @@ class MediaEmbedder:
                     self.logger.debug(
                         f"インライン埋め込み: {media_path.name} (image/svg+xml)"
                     )
+                    path_to_asset_id[media_path] = svg_content
                     return svg_content
 
                 base64_data = self.encode_media_to_base64(media_path)
@@ -115,6 +120,7 @@ class MediaEmbedder:
 
                 asset_id = f"asset-{media_count}"
                 asset_store[asset_id] = f"data:{mime_type};base64,{base64_data}"
+                path_to_asset_id[media_path] = asset_id
                 return asset_id
             except ImageEmbeddingError as e:
                 self.logger.error(f"メディア埋め込み失敗: {e}")

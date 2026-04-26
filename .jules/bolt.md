@@ -13,3 +13,6 @@
 ## 2024-05-24 - Sync I/O in Async Route
 **Learning:** Calling synchronous blocking I/O (like reading and parsing a config file) inside an async FastAPI route (like `/api/data`) causes severe performance bottlenecks, blocking the entire event loop.
 **Action:** Use `functools.lru_cache` for configuration loading to cache the parsed data so subsequent requests don't hit the disk and parse the file again.
+## 2026-04-26 - Image Duplication Optimization
+**Learning:** During the media embedding process, repeatedly converting the same image file to Base64 (or reading the same SVG) resulted in unnecessary I/O overhead and significantly bloated the final HTML document's `<template id="mono-asset-store">`.
+**Action:** Always maintain a local cache mapping the resolved file path to its generated asset identifier (or SVG content) during the document build process. Check this cache before reading or encoding the file to ensure identical assets are deduplicated in the output.
