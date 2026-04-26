@@ -262,3 +262,29 @@ def test_main(mock_run):
     mock_run.assert_called_once()
     assert mock_run.call_args.kwargs["host"] == "0.0.0.0"
     assert mock_run.call_args.kwargs["port"] == 8000
+
+@patch.dict("os.environ", {"ENVIRONMENT": "production"})
+def test_get_security_config_production():
+    from src.server import get_security_config
+    get_security_config.cache_clear()
+
+    config = get_security_config()
+
+    # In production, "null" and "*" should be removed from origins
+    assert "null" not in config["origins"]
+    assert "*" not in config["origins"]
+    # Methods should be restricted
+    assert config["methods"] == ["GET", "POST", "OPTIONS"]
+    # Headers should be restricted
+    assert config["headers"] == ["Content-Type", "Content-Length", "Accept"]
+
+@patch.dict("os.environ", {"ENVIRONMENT": "development"})
+def test_get_security_config_development():
+    from src.server import get_security_config
+    get_security_config.cache_clear()
+
+    config = get_security_config()
+
+    # In development, it should use permissive defaults
+    assert config["methods"] == ["*"]
+    assert config["headers"] == ["*"]
