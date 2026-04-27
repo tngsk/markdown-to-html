@@ -5,7 +5,7 @@ import html
 class Parser(BaseComponentParser):
     # OPTIONS: image, mode, bg-color, text-color
     # Match @[hero: title](key: value, ...) or @[hero](key: value, ...)
-    START_PATTERN = r"@\[hero(?:\:\s*([^\]]*))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    START_PATTERN = r"@\[hero(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     END_PATTERN = r"@\[/hero\]"
 
     @property
@@ -17,9 +17,11 @@ class Parser(BaseComponentParser):
         pattern = re.compile(self.START_PATTERN)
 
         def start_replacer(match: re.Match) -> str:
-            title = match.group(1)
+            bracket_content = match.group(1)
             args_str = match.group(2)
-            args = self.parse_key_value_args(args_str)
+            title, specific_args = self.parse_bracket_content(bracket_content)
+            common_args = self.parse_key_value_args(args_str)
+            args = {**specific_args, **common_args}
 
             attrs = ['markdown="1"']
 

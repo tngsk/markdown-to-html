@@ -3,21 +3,22 @@ from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
     # OPTIONS: name, size, color, display
-    PATTERN = r"@\[icon(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    PATTERN = r"@\[icon(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     TEMPLATE = '<mono-icon name="{name}"{size_attr}{color_attr}{display_attr}{common_attr}></mono-icon>'
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
 
         def replacer(match: re.Match) -> str:
-            name = match.group(1)
-            if name:
-                name = name.strip()
-                if (name.startswith('"') and name.endswith('"')) or (name.startswith("'") and name.endswith("'")):
-                    name = name[1:-1].strip()
+            bracket_content = match.group(1)
 
             args_str = match.group(2)
-            args = self.parse_key_value_args(args_str)
+
+            name, specific_args = self.parse_bracket_content(bracket_content)
+
+            common_args = self.parse_key_value_args(args_str)
+
+            args = {**specific_args, **common_args}
 
             if 'name' in args:
                 name = args['name']

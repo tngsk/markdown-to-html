@@ -7,14 +7,16 @@ class Parser(BaseComponentParser):
         return ["mono-ab-test"]
 
     # OPTIONS: src-a, src-b
-    PATTERN = r"@\[ab-test(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    PATTERN = r"@\[ab-test(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
         def replacer(match: re.Match) -> str:
-            title = match.group(1)
+            bracket_content = match.group(1)
             args_str = match.group(2)
-            args = self.parse_key_value_args(args_str)
+            title, specific_args = self.parse_bracket_content(bracket_content)
+            common_args = self.parse_key_value_args(args_str)
+            args = {**specific_args, **common_args}
 
             src_a = args.get('src-a', '')
             if not src_a:

@@ -74,20 +74,20 @@ class TestMarkdownProcessor(unittest.TestCase):
     def test_preprocess_textfield(self):
         # Test standard format
         md_content = "Please enter @[textfield: Your Name]"
-        expected_html = 'Please enter <mono-textfield-input id="textfield-1" placeholder="Your Name"></mono-textfield-input>'
+        expected_html = 'Please enter <mono-textfield-input placeholder="Your Name" label="Your Name" id="textfield-1"></mono-textfield-input>'
         result = self._get_parser("mono-textfield-input").process(md_content)
         self.assertEqual(result, expected_html)
 
         # Test size format
         md_content_size = "Input with size: @[textfield](size: 50, placeholder: Details)"
-        expected_html_size = 'Input with size: <mono-textfield-input id="textfield-1" placeholder="Details" size="50"></mono-textfield-input>'
+        expected_html_size = 'Input with size: <mono-textfield-input placeholder="Details" size="50" id="textfield-1"></mono-textfield-input>'
         processor2 = MarkdownProcessor(self.logger, self.file_handler)
         result_size = self._get_parser("mono-textfield-input", processor2).process(md_content_size)
         self.assertEqual(result_size, expected_html_size)
 
         # Test typo 'textfiled'
         md_content_typo = "Typo @[textfiled: Description]"
-        expected_html_typo = 'Typo <mono-textfield-input id="textfield-1" placeholder="Description"></mono-textfield-input>'
+        expected_html_typo = 'Typo <mono-textfield-input placeholder="Description" label="Description" id="textfield-1"></mono-textfield-input>'
         processor3 = MarkdownProcessor(self.logger, self.file_handler)
         result_typo = self._get_parser("mono-textfield-input", processor3).process(md_content_typo)
         self.assertEqual(result_typo, expected_html_typo)
@@ -95,7 +95,7 @@ class TestMarkdownProcessor(unittest.TestCase):
     def test_preprocess_textfield_size_without_placeholder(self):
         # Test size without placeholder
         md_content_size_no_placeholder = "Input with size no placeholder: @[textfield](size: 30)"
-        expected_html_size_no_placeholder = 'Input with size no placeholder: <mono-textfield-input id="textfield-1" placeholder="" size="30"></mono-textfield-input>'
+        expected_html_size_no_placeholder = 'Input with size no placeholder: <mono-textfield-input placeholder="" size="30" id="textfield-1"></mono-textfield-input>'
         processor = MarkdownProcessor(self.logger, self.file_handler)
         result_size_no_placeholder = self._get_parser("mono-textfield-input", processor).process(md_content_size_no_placeholder)
         self.assertEqual(result_size_no_placeholder, expected_html_size_no_placeholder)
@@ -107,19 +107,19 @@ class TestMarkdownProcessor(unittest.TestCase):
         self.assertEqual(result, expected_html)
 
         md_content_title = "Notebook link: @[notebook: My Notes](id: my-notebook-id)"
-        expected_html_title = 'Notebook link: <mono-notebook id="my-notebook-id" title="My Notes"></mono-notebook>'
+        expected_html_title = 'Notebook link: <mono-notebook title="My Notes" id="my-notebook-id"></mono-notebook>'
         processor2 = MarkdownProcessor(self.logger, self.file_handler)
         result_title = self._get_parser("mono-notebook", processor2).process(md_content_title)
         self.assertEqual(result_title, expected_html_title)
 
         md_content_placeholder = "Notebook link: @[notebook](id: my-notebook-id, placeholder: Please write here)"
-        expected_html_placeholder = 'Notebook link: <mono-notebook id="my-notebook-id" placeholder="Please write here"></mono-notebook>'
+        expected_html_placeholder = 'Notebook link: <mono-notebook placeholder="Please write here" id="my-notebook-id"></mono-notebook>'
         processor3 = MarkdownProcessor(self.logger, self.file_handler)
         result_placeholder = self._get_parser("mono-notebook", processor3).process(md_content_placeholder)
         self.assertEqual(result_placeholder, expected_html_placeholder)
 
         md_content_both = "Notebook link: @[notebook: My Notes](id: my-notebook-id, placeholder: Please write here)"
-        expected_html_both = 'Notebook link: <mono-notebook id="my-notebook-id" title="My Notes" placeholder="Please write here"></mono-notebook>'
+        expected_html_both = 'Notebook link: <mono-notebook title="My Notes" placeholder="Please write here" id="my-notebook-id"></mono-notebook>'
         processor4 = MarkdownProcessor(self.logger, self.file_handler)
         result_both = self._get_parser("mono-notebook", processor4).process(md_content_both)
         self.assertEqual(result_both, expected_html_both)
@@ -249,3 +249,17 @@ Inline `@[icon: inside_inline]` testing.
             self.processor.convert_markdown_to_html(md_content)
 
         self.assertIn("Markdown変換エラー", str(context.exception))
+
+    def test_new_syntax_pattern_a(self):
+        """Test the new Markdown syntax (Pattern A) separating specific args and styles"""
+        # testfield with label, id, placeholder in [] and class in ()
+        md_content = 'Input: @[textfield: "Name", id: "user-name", placeholder: "Enter name"](class: "gap-md center")'
+        expected_html = 'Input: <mono-textfield-input placeholder="Enter name" label="Name" class="gap-md center" id="user-name"></mono-textfield-input>'
+        result = self._get_parser("mono-textfield-input").process(md_content)
+        self.assertEqual(result, expected_html)
+
+        # icon with size, color in [], display in ()
+        md_content2 = '@[icon: search, size: 24px, color: red](display: block)'
+        expected_html2 = '<mono-icon name="search" size="24px" color="red" display="block"></mono-icon>'
+        result2 = self._get_parser("mono-icon").process(md_content2)
+        self.assertEqual(result2, expected_html2)
