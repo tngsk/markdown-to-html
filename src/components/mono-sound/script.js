@@ -36,7 +36,7 @@ class MonoSound extends MonoBaseElement {
         const store = document.getElementById("mono-asset-store");
         if (store) {
           try {
-            const assets = JSON.parse(store.textContent);
+            const assets = JSON.parse(store.content ? store.content.textContent : store.textContent);
             if (assets[rawSrc] && isValidUrl(assets[rawSrc])) {
               this.audio.src = assets[rawSrc];
             }
