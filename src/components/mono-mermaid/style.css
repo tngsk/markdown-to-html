@@ -1,0 +1,16 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.mermaid-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+}
+
+::slotted(svg) {
+    max-width: 100%;
+    height: auto;
+}
