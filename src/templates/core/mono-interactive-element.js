@@ -7,19 +7,14 @@ class MonoInteractiveElement extends MonoBaseElement {
     connectedCallback() {
         // 1. Initial State Check (Race Condition Mitigation)
         try {
-            const savedAuth = localStorage.getItem("mono_auth");
-            if (savedAuth) {
-                const data = JSON.parse(savedAuth);
-                if (data && data.user) {
-                    this._triggerAuthStateChanged(data.user);
-                } else {
-                    this._triggerAuthStateChanged(null);
-                }
+            const savedAuth = this.loadState("mono_auth");
+            if (savedAuth && savedAuth.user) {
+                this._triggerAuthStateChanged(savedAuth.user);
             } else {
-                 this._triggerAuthStateChanged(null);
+                this._triggerAuthStateChanged(null);
             }
         } catch (e) {
-            console.warn("Failed to read auth state from localStorage during initialization:", e);
+            console.warn("Failed to read auth state during initialization:", e);
             this._triggerAuthStateChanged(null); // Fallback to guest
         }
 
