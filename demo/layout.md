@@ -87,3 +87,13 @@ Using a row to display multiple interactive media components side by side.
 @[ab-test: "Design C vs D"](src-a: test.svg, src-b: test_xml.svg)
 :::
 @[/row]
+
+## Additional Examples
+@[row](class: "gap-lg start")
+:::column
+Col 1
+:::
+:::column
+Col 2
+:::
+@[end]
