@@ -3,7 +3,7 @@ from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
     # OPTIONS: placeholder, size
-    PATTERN = r"@\[(?:textfield|textfiled)(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    PATTERN = r"@\[textfield(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
