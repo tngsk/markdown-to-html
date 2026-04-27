@@ -20,6 +20,7 @@ from src.constants import (
     MATERIAL_SYMBOLS_URL,
     TEMPLATES_DIR,
     COMPONENTS_DIR,
+    MONO_VERSION,
 )
 
 
@@ -104,6 +105,7 @@ class HTMLDocumentBuilder:
         csp_meta = f"<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'self' 'unsafe-inline' data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: https://colab.research.google.com; connect-src {connect_src_str}; object-src 'none'; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' data: https://actions.google.com;\">"
 
         meta_tags = []
+        meta_tags.append(f'<meta name="mono-version" data-mono-version="{MONO_VERSION}">')
         if connect_src:
             meta_tags.append(f'<meta name="mono-api-url" content="{connect_src}">')
 
