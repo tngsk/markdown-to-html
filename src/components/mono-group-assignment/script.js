@@ -24,9 +24,9 @@ class MonoGroupAssignment extends MonoBaseElement {
   checkAssignment() {
     let sessionData = null;
     try {
-      const savedSession = localStorage.getItem("mono_session_id");
-      if (savedSession) {
-        sessionData = JSON.parse(savedSession);
+      const data = this.loadState("mono_session_id");
+      if (data && data.sessionId) {
+        sessionData = data;
       }
     } catch (e) {}
 
@@ -37,13 +37,10 @@ class MonoGroupAssignment extends MonoBaseElement {
 
     // 既に割り当て済みか確認
     try {
-      const savedAssignment = localStorage.getItem("mono_group_assignment");
-      if (savedAssignment) {
-        const data = JSON.parse(savedAssignment);
-        if (data.sessionId === sessionData.sessionId) {
-          this.showAssigned(data.groupName);
-          return;
-        }
+      const data = this.loadState("mono_group_assignment");
+      if (data && data.sessionId === sessionData.sessionId) {
+        this.showAssigned(data.groupName);
+        return;
       }
     } catch (e) {}
 
@@ -71,7 +68,7 @@ class MonoGroupAssignment extends MonoBaseElement {
     };
 
     try {
-      localStorage.setItem("mono_group_assignment", JSON.stringify(payload));
+      this.saveState("mono_group_assignment", payload);
     } catch(e) {
       console.info("グループ割り当ての保存に失敗しました", e);
     }

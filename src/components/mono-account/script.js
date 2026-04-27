@@ -18,12 +18,9 @@ class MonoAccount extends MonoBaseElement {
 
     initializeAuth() {
         try {
-            const savedAuth = localStorage.getItem("mono_auth");
-            if (savedAuth) {
-                const data = JSON.parse(savedAuth);
-                if (data && data.user) {
-                    this.user = data.user;
-                }
+            const savedAuth = this.loadState("mono_auth");
+            if (savedAuth && savedAuth.user) {
+                this.user = savedAuth.user;
             }
         } catch (e) {
             console.info("アカウント機能はオフラインです", e);
@@ -38,11 +35,7 @@ class MonoAccount extends MonoBaseElement {
         if (this.user) {
             // Logout
             this.user = null;
-            try {
-                localStorage.removeItem("mono_auth");
-            } catch(e) {
-                console.info("Failed to remove auth state", e);
-            }
+            this.removeState("mono_auth");
         } else {
             // Mock Login
             this.user = {
@@ -50,11 +43,7 @@ class MonoAccount extends MonoBaseElement {
                 name: "Test User",
                 token: "mock-jwt-token"
             };
-            try {
-                localStorage.setItem("mono_auth", JSON.stringify({ user: this.user }));
-            } catch(e) {
-                console.info("Failed to save auth state", e);
-            }
+            this.saveState("mono_auth", { user: this.user });
         }
 
         this.updateView();

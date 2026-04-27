@@ -29,13 +29,10 @@ class MonoSessionJoin extends MonoBaseElement {
 
   checkStatus() {
     try {
-      const saved = localStorage.getItem("mono_session_id");
-      if (saved) {
-        const data = JSON.parse(saved);
-        if (data.sessionId) {
-          this.showJoinedView(data.sessionId);
-          return;
-        }
+      const data = this.loadState("mono_session_id");
+      if (data && data.sessionId) {
+        this.showJoinedView(data.sessionId);
+        return;
       }
     } catch (e) {
       console.info("セッション状態の読み込みに失敗しました", e);
@@ -64,11 +61,8 @@ class MonoSessionJoin extends MonoBaseElement {
     // 既存のユーザーIDがあるか確認
     let userId = this.generateUserId();
     try {
-      const saved = localStorage.getItem("mono_session_id");
-      if (saved) {
-        const data = JSON.parse(saved);
-        if (data.userId) userId = data.userId;
-      }
+      const data = this.loadState("mono_session_id");
+      if (data && data.userId) userId = data.userId;
     } catch(e) {}
 
     const payload = {
@@ -78,7 +72,7 @@ class MonoSessionJoin extends MonoBaseElement {
     };
 
     try {
-      localStorage.setItem("mono_session_id", JSON.stringify(payload));
+      this.saveState("mono_session_id", payload);
     } catch (e) {
       console.info("セッション情報の保存に失敗しました", e);
       alert("セッション情報の保存に失敗しました");

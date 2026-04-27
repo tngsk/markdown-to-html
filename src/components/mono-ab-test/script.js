@@ -161,9 +161,8 @@ class MonoABTest extends MonoBaseElement {
 
   checkPreviousVote() {
     try {
-      const savedData = localStorage.getItem(`mono_abtest_${this.componentId}`);
-      if (savedData) {
-        const data = JSON.parse(savedData);
+      const data = this.loadState(`mono_abtest_${this.componentId}`);
+      if (data && data.selected) {
         this.hasVoted = true;
         this.updateVoteUI(data.selected);
       }
@@ -507,10 +506,7 @@ if (this.mediaType === "image") {
 
     // Local Storage Mock Persistence (Phase 2)
     try {
-      localStorage.setItem(
-        `mono_abtest_${this.componentId}`,
-        JSON.stringify(payload),
-      );
+      this.saveState(`mono_abtest_${this.componentId}`, payload);
       this.hasVoted = true;
       this.updateVoteUI(value);
     } catch (e) {
