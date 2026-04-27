@@ -7,7 +7,7 @@ class Parser(BaseComponentParser):
         return ["mono-spacer"]
 
     # OPTIONS: width, height
-    PATTERN = r"@\[spacer(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    PATTERN = r"@\[spacer(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)

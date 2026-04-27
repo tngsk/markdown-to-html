@@ -26,7 +26,7 @@ def test_mono_score_parser_with_clef_and_time():
 
 def test_mono_score_parser_with_colon_syntax():
     parser = Parser()
-    markdown = '@[score: C4/q, E4/q](clef: treble)'
+    markdown = '@[score: "C4/q, E4/q"](clef: treble)'
     result = parser.process(markdown)
     assert '<mono-score notes="C4/q, E4/q" clef="treble"></mono-score>' in result
 

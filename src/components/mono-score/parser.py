@@ -3,23 +3,18 @@ from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
     # OPTIONS: notes, voices, clef, time
-    PATTERN = r"@\[score(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    PATTERN = r"@\[score(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     TEMPLATE = '<mono-score{notes_attr}{voices_attr}{clef_attr}{time_signature_attr}{common_attr}></mono-score>'
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
 
         def replacer(match: re.Match) -> str:
-            notes = match.group(1)
-            if notes:
-                notes = notes.strip()
-                if (notes.startswith('"') and notes.endswith('"')) or (notes.startswith("'") and notes.endswith("'")):
-                    notes = notes[1:-1].strip()
-
+            bracket_content = match.group(1)
             args_str = match.group(2)
-            args = {}
-            if args_str:
-                args = self.parse_key_value_args(args_str)
+            notes, specific_args = self.parse_bracket_content(bracket_content)
+            common_args = self.parse_key_value_args(args_str) if args_str else {}
+            args = {**specific_args, **common_args}
 
             if 'notes' in args:
                 notes = args['notes']

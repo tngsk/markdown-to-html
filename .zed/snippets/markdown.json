@@ -1,0 +1,198 @@
+{
+  "Markdown attr_list (class, id)": {
+    "prefix": "[",
+    "body": [
+      "[${1:text}]{${2:.class #id}}"
+    ],
+    "description": "Markdown attr_list extension for custom CSS classes and IDs"
+  },
+  "Mono Component: brush": {
+    "prefix": "@[brush",
+    "body": [
+      "@[brush: \"${1:Label}\"]"
+    ],
+    "description": "Mono brush component"
+  },
+  "Mono Component: sync": {
+    "prefix": "@[sync",
+    "body": [
+      "@[sync: \"${1:Label}\"]"
+    ],
+    "description": "Mono sync component"
+  },
+  "Mono Component: export": {
+    "prefix": "@[export",
+    "body": [
+      "@[export: \"${1:Label}\", filename: \"${2:val}\"]"
+    ],
+    "description": "Mono export component"
+  },
+  "Mono Component: code-block": {
+    "prefix": "@[code-block",
+    "body": [
+      "@[code-block: \"${1:Label}\", language: \"${2:val}\"]"
+    ],
+    "description": "Mono code-block component"
+  },
+  "Mono Component: score": {
+    "prefix": "@[score",
+    "body": [
+      "@[score: \"${1:Label}\", notes: \"${2:val}\", voices: \"${3:val}\", clef: \"${4:val}\", time: \"${5:val}\"]"
+    ],
+    "description": "Mono score component"
+  },
+  "Mono Component: account": {
+    "prefix": "@[account",
+    "body": [
+      "@[account: \"${1:Label}\"]"
+    ],
+    "description": "Mono account component"
+  },
+  "Mono Component: countdown": {
+    "prefix": "@[countdown",
+    "body": [
+      "@[countdown: \"${1:Label}\", time: \"${2:val}\", color: \"${3:val}\"]"
+    ],
+    "description": "Mono countdown component"
+  },
+  "Mono Component: poll": {
+    "prefix": "@[poll",
+    "body": [
+      "@[poll: \"${1:Label}\", title: \"${2:val}\", options: \"${3:val}\"]"
+    ],
+    "description": "Mono poll component"
+  },
+  "Mono Component: clock": {
+    "prefix": "@[clock",
+    "body": [
+      "@[clock: \"${1:Label}\", format: \"${2:val}\", display: \"${3:val}\"]"
+    ],
+    "description": "Mono clock component"
+  },
+  "Mono Component: reaction": {
+    "prefix": "@[reaction",
+    "body": [
+      "@[reaction: \"${1:Label}\", options: \"${2:val}\"]"
+    ],
+    "description": "Mono reaction component"
+  },
+  "Mono Component: sound": {
+    "prefix": "@[sound",
+    "body": [
+      "@[sound: \"${1:Label}\", src: \"${2:val}\", label: \"${3:val}\"]"
+    ],
+    "description": "Mono sound component"
+  },
+  "Mono Component: badge": {
+    "prefix": "@[badge",
+    "body": [
+      "@[badge: \"${1:Label}\", text: \"${2:val}\", color: \"${3:val}\", soft: \"${4:val}\", outline: \"${5:val}\"]"
+    ],
+    "description": "Mono badge component"
+  },
+  "Mono Component: hero": {
+    "prefix": "@[hero",
+    "body": [
+      "@[hero: \"${1:Label}\", image: \"${2:val}\", mode: \"${3:val}\", bg-color: \"${4:val}\", text-color: \"${5:val}\"]"
+    ],
+    "description": "Mono hero component"
+  },
+  "Mono Component: session-join": {
+    "prefix": "@[session-join",
+    "body": [
+      "@[session-join: \"${1:Label}\", title: \"${2:val}\"]"
+    ],
+    "description": "Mono session-join component"
+  },
+  "Mono Component: drawer": {
+    "prefix": "@[drawer",
+    "body": [
+      "@[drawer: \"${1:Label}\", label: \"${2:val}\", position: \"${3:val}\", open: \"${4:val}\"]"
+    ],
+    "description": "Mono drawer component"
+  },
+  "Mono Component: layout": {
+    "prefix": "@[layout",
+    "body": [
+      "@[layout: \"${1:Label}\", class: \"${2:val}\"]"
+    ],
+    "description": "Mono layout component"
+  },
+  "Mono Component: notebook": {
+    "prefix": "@[notebook",
+    "body": [
+      "@[notebook: \"${1:Label}\", id: \"${2:val}\", placeholder: \"${3:val}\", title: \"${4:val}\"]"
+    ],
+    "description": "Mono notebook component"
+  },
+  "Mono Component: spacer": {
+    "prefix": "@[spacer",
+    "body": [
+      "@[spacer: \"${1:Label}\", width: \"${2:val}\", height: \"${3:val}\"]"
+    ],
+    "description": "Mono spacer component"
+  },
+  "Mono Component: group-assignment": {
+    "prefix": "@[group-assignment",
+    "body": [
+      "@[group-assignment: \"${1:Label}\", title: \"${2:val}\"]"
+    ],
+    "description": "Mono group-assignment component"
+  },
+  "Mono Component: flipcard": {
+    "prefix": "@[flipcard",
+    "body": [
+      "@[flipcard: \"${1:Label}\", answer: \"${2:val}\"]"
+    ],
+    "description": "Mono flipcard component"
+  },
+  "Mono Component: ab-test": {
+    "prefix": "@[ab-test",
+    "body": [
+      "@[ab-test: \"${1:Label}\", src-a: \"${2:val}\", src-b: \"${3:val}\"]"
+    ],
+    "description": "Mono ab-test component"
+  },
+  "Mono Component: theme": {
+    "prefix": "@[theme",
+    "body": [
+      "@[theme: \"${1:Label}\", show_ui: \"${2:val}\", config: \"${3:val}\"]"
+    ],
+    "description": "Mono theme component"
+  },
+  "Mono Component: flow": {
+    "prefix": "@[flow",
+    "body": [
+      "@[flow: \"${1:Label}\", direction: \"${2:val}\"]"
+    ],
+    "description": "Mono flow component"
+  },
+  "Mono Component: section": {
+    "prefix": "@[section",
+    "body": [
+      "@[section: \"${1:Label}\", image: \"${2:val}\", mode: \"${3:val}\", bg-color: \"${4:val}\", text-color: \"${5:val}\", height: \"${6:val}\", width: \"${7:val}\"]"
+    ],
+    "description": "Mono section component"
+  },
+  "Mono Component: textfield-input": {
+    "prefix": "@[textfield-input",
+    "body": [
+      "@[textfield-input: \"${1:Label}\", placeholder: \"${2:val}\", size: \"${3:val}\"]"
+    ],
+    "description": "Mono textfield-input component"
+  },
+  "Mono Component: icon": {
+    "prefix": "@[icon",
+    "body": [
+      "@[icon: \"${1:Label}\", name: \"${2:val}\", size: \"${3:val}\", color: \"${4:val}\", display: \"${5:val}\"]"
+    ],
+    "description": "Mono icon component"
+  },
+  "Mono Component: dice": {
+    "prefix": "@[dice",
+    "body": [
+      "@[dice: \"${1:Label}\", number: \"${2:val}\", faces: \"${3:val}\"]"
+    ],
+    "description": "Mono dice component"
+  }
+}

@@ -7,14 +7,16 @@ class Parser(BaseComponentParser):
         return ["mono-reaction"]
 
     # OPTIONS: options
-    PATTERN = r"@\[reaction(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    PATTERN = r"@\[reaction(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
         def replacer(match: re.Match) -> str:
-            label = match.group(1)
+            bracket_content = match.group(1)
             args_str = match.group(2)
-            args = self.parse_key_value_args(args_str)
+            label, specific_args = self.parse_bracket_content(bracket_content)
+            common_args = self.parse_key_value_args(args_str)
+            args = {**specific_args, **common_args}
 
             options = args.get('options', '')
             # Backward compatibility or shorthand if label provided but no options

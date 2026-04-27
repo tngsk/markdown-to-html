@@ -26,3 +26,36 @@ def test_parse_key_value_args_mixed_separators(caplog):
 
     assert result == {"class": "gap-md", "url": "https://example.com"}
     assert "Deprecated syntax: Use ':' instead of '=' for component options. Found in: 'url=\"https://example.com\"'" in caplog.text
+
+def test_parse_bracket_content():
+    parser = BaseComponentParser()
+
+    # 1. Label and args
+    label, args = parser.parse_bracket_content('"My Label", id: "123", placeholder: "test"')
+    assert label == "My Label"
+    assert args == {"id": "123", "placeholder": "test"}
+
+    # 2. Label without quotes and args
+    label, args = parser.parse_bracket_content('My Label, id: "123"')
+    assert label == "My Label"
+    assert args == {"id": "123"}
+
+    # 3. Only args
+    label, args = parser.parse_bracket_content('id: "123", placeholder: "test"')
+    assert label == ""
+    assert args == {"id": "123", "placeholder": "test"}
+
+    # 4. Only label
+    label, args = parser.parse_bracket_content('"Only Label"')
+    assert label == "Only Label"
+    assert args == {}
+
+    # 5. Label with deprecated equal syntax
+    label, args = parser.parse_bracket_content('"My Label", id="123"')
+    assert label == "My Label"
+    assert args == {"id": "123"}
+
+    # 6. Empty content
+    label, args = parser.parse_bracket_content('')
+    assert label == ""
+    assert args == {}

@@ -6,7 +6,7 @@ from collections import defaultdict, deque
 
 class Parser(BaseComponentParser):
     # OPTIONS: direction
-    START_PATTERN = r"@\[flow(?:\:\s*([^\]]*))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    START_PATTERN = r"@\[flow(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     END_PATTERN = r"@\[/flow\]"
 
     @property
@@ -20,12 +20,14 @@ class Parser(BaseComponentParser):
 
         def replacer(match: re.Match) -> str:
             start_tag = match.group(1)
-            title = match.group(2)
+            bracket_content = match.group(2)
             args_str = match.group(3)
             content = match.group(4)
             end_tag = match.group(5)
 
-            args = self.parse_key_value_args(args_str)
+            title, specific_args = self.parse_bracket_content(bracket_content)
+            common_args = self.parse_key_value_args(args_str) if args_str else {}
+            args = {**specific_args, **common_args}
             direction = args.get("direction", "LR").strip("'\"").upper()
 
             nodes = set()

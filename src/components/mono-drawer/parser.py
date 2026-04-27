@@ -4,9 +4,9 @@ from src.processors.base_parser import BaseComponentParser
 class Parser(BaseComponentParser):
     # OPTIONS: label, position, open
     # Fixed to allow nested brackets if needed, but standard is just stop at ']'
-    # Actually standard pattern in base_parser is usually r"@\[type(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    # Actually standard pattern in base_parser is usually r"@\[type(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     # If the label has brackets, we might have issues, but let's stick to the standard for now.
-    DRAWER_PATTERN = r"@\[drawer(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    DRAWER_PATTERN = r"@\[drawer(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     END_PATTERN = r"@\[(?:end|/drawer)\]"
 
     @property
@@ -17,9 +17,11 @@ class Parser(BaseComponentParser):
         # drawer start
         pattern = re.compile(self.DRAWER_PATTERN)
         def drawer_replacer(match: re.Match) -> str:
-            label_match = match.group(1)
+            bracket_content = match.group(1)
             args_str = match.group(2)
-            args = self.parse_key_value_args(args_str)
+            label_match, specific_args = self.parse_bracket_content(bracket_content)
+            common_args = self.parse_key_value_args(args_str)
+            args = {**specific_args, **common_args}
 
             label = label_match.strip() if label_match else ""
             if 'label' in args:
