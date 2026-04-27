@@ -21,9 +21,9 @@
     /* Spacing variables */
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;
-    --spacing-md: 1.5rem;
-    --spacing-lg: 2rem;
-    --spacing-xl: 3rem;
+    --spacing-md: 2rem;
+    --spacing-lg: 3rem;
+    --spacing-xl: 4rem;
 }
 
 html {
@@ -131,12 +131,8 @@ h3 {
 }
 
 /* 段落・テキスト ------------------------------------------ */
-p {
-    margin: 0;
-}
-
 p + p {
-    margin-top: var(--spacing-xs);
+    margin-top: var(--spacing-sm);
 }
 
 strong {
@@ -183,12 +179,11 @@ a:hover {
 /* リスト -------------------------------------------------- */
 ul,
 ol {
-    margin: 0;
     padding-left: 1.7rem;
 }
 
 li + li {
-    margin-top: var(--spacing-xs);
+    margin-top: var(--spacing-sm);
 }
 
 /* コード -------------------------------------------------- */
@@ -201,7 +196,6 @@ code {
 }
 
 pre {
-    margin: 0;
     padding: 1.2rem;
     background: #020617;
     color: #e5e7eb;
@@ -217,7 +211,6 @@ pre code {
 
 /* 引用 ---------------------------------------------------- */
 blockquote {
-    margin: 0;
     padding-left: 1rem;
     padding-right: 1rem;
     padding-top: 0.1rem;
@@ -231,7 +224,6 @@ blockquote {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin: 0;
 }
 
 th,
