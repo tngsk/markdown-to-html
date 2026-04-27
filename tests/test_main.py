@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from pathlib import Path
 import tempfile
+import subprocess
 
 import src.main as main_module
 from src.config import ConversionConfig
@@ -61,12 +62,13 @@ class TestMain(unittest.TestCase):
         mock_print.assert_any_call("  除外タグ:     script, iframe")
 
     def test_module_execution_subprocess(self):
-        import runpy
-
-        with patch("sys.argv", ["src/main.py", "-h"]):
-            with self.assertRaises(SystemExit) as cm:
-                runpy.run_module("src.main", run_name="__main__")
-            self.assertEqual(cm.exception.code, 0)
+        result = subprocess.run(
+            [sys.executable, "-m", "src.main", "-h"],
+            capture_output=True,
+            text=True
+        )
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("usage:", result.stdout)
 
     # Integration test without mocking the converter
     def test_main_integration(self):
