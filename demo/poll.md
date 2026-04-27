@@ -35,3 +35,6 @@ A hidden feedback poll that users can open.
 Please let us know how we did today!
 @[poll: "Rate today's session"](options: "Excellent, Good, Fair, Poor")
 @[/drawer]
+
+## Additional Examples
+@[poll: "Favorite Color?"](options: "Red, Blue, Green, Yellow")

@@ -33,3 +33,6 @@ Gather input and take notes on the same topic.
 
 @[poll: "Are you enjoying the workshop?"](options: "Yes, No, Maybe")
 @[notebook: "Any additional comments?"](id: feedback-1, placeholder: "Write more details...")
+
+## Additional Examples
+@[notebook: "My Notes"](id: "note-123", placeholder: "Start typing...")
