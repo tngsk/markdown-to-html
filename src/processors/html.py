@@ -122,8 +122,9 @@ class HTMLDocumentBuilder:
         doc = doc.replace("{HIGHLIGHT_JS}", highlight_js)
 
         if asset_store:
+            safe_json = json.dumps(asset_store).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
             asset_template = (
-                f'<template id="mono-asset-store">{json.dumps(asset_store)}</template>'
+                f'<script type="application/json" id="mono-asset-store">{safe_json}</script>'
             )
             lazy_load_js = self._load_lazy_load_script()
             lazy_load_script = (

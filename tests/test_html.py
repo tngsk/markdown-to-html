@@ -95,7 +95,7 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
             asset_store = {"image1.png": "data:image/png;base64,1234"}
             result = self.builder.build_document(html_body="<p>test</p>", asset_store=asset_store)
 
-            self.assertIn('<template id="mono-asset-store">{"image1.png": "data:image/png;base64,1234"}</template>', result)
+            self.assertIn('<script type="application/json" id="mono-asset-store">{"image1.png": "data:image/png;base64,1234"}</script>', result)
             self.assertIn("console.log('lazy');", result)
 
     def test_extract_title_from_html(self):

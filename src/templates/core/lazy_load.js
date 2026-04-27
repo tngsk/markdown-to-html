@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (storeEl) {
         try {
-            const assets = JSON.parse(storeEl.content ? storeEl.content.textContent : storeEl.textContent);
+            const assets = JSON.parse(storeEl.textContent);
             const elements = document.querySelectorAll('[data-lazy-src], [data-lazy-src-a], [data-lazy-src-b]');
             elements.forEach(el => {
                 const src = el.getAttribute('data-lazy-src');
