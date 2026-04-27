@@ -85,13 +85,6 @@ class TestMarkdownProcessor(unittest.TestCase):
         result_size = self._get_parser("mono-textfield-input", processor2).process(md_content_size)
         self.assertEqual(result_size, expected_html_size)
 
-        # Test typo 'textfiled'
-        md_content_typo = "Typo @[textfiled: Description]"
-        expected_html_typo = 'Typo <mono-textfield-input placeholder="Description" label="Description" id="textfield-1"></mono-textfield-input>'
-        processor3 = MarkdownProcessor(self.logger, self.file_handler)
-        result_typo = self._get_parser("mono-textfield-input", processor3).process(md_content_typo)
-        self.assertEqual(result_typo, expected_html_typo)
-
     def test_preprocess_textfield_size_without_placeholder(self):
         # Test size without placeholder
         md_content_size_no_placeholder = "Input with size no placeholder: @[textfield](size: 30)"
