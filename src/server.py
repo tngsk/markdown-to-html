@@ -8,7 +8,8 @@ from contextlib import asynccontextmanager
 from functools import lru_cache
 import os
 
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request
+from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 logging.basicConfig(level=logging.INFO)
@@ -100,54 +101,60 @@ app.add_middleware(
 )
 
 
-class ConnectionManager:
+class SSEManager:
     def __init__(self):
-        self.active_connections: List[WebSocket] = []
-        self.bg_tasks = set()
+        self.active_queues: List[asyncio.Queue] = []
 
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
-        logger.info(f"Client connected. Active: {len(self.active_connections)}")
+    def connect(self) -> asyncio.Queue:
+        q = asyncio.Queue()
+        self.active_queues.append(q)
+        logger.info(f"SSE client connected. Active: {len(self.active_queues)}")
+        return q
 
-    def disconnect(self, websocket: WebSocket):
-        if websocket in self.active_connections:
-            self.active_connections.remove(websocket)
-            logger.info(f"Client disconnected. Active: {len(self.active_connections)}")
-
-    async def _send_to_connection(self, connection: WebSocket, message: str):
-        try:
-            await connection.send_text(message)
-        except Exception as e:
-            logger.error(f"Error broadcasting: {e}")
+    def disconnect(self, q: asyncio.Queue):
+        if q in self.active_queues:
+            self.active_queues.remove(q)
+            logger.info(f"SSE client disconnected. Active: {len(self.active_queues)}")
 
     async def broadcast(self, message: str):
-        import asyncio
-        if not self.active_connections:
-            return
-
-        for conn in self.active_connections:
-            task = asyncio.create_task(self._send_to_connection(conn, message))
-            self.bg_tasks.add(task)
-            task.add_done_callback(self.bg_tasks.discard)
+        for q in self.active_queues:
+            await q.put(message)
 
 
-manager = ConnectionManager()
+sse_manager = SSEManager()
 
 
-@app.websocket("/ws/sync")
-async def websocket_endpoint(websocket: WebSocket):
-    await manager.connect(websocket)
+@app.get("/api/sync/stream")
+async def sync_stream(request: Request):
+    async def event_generator():
+        q = sse_manager.connect()
+        try:
+            while True:
+                if await request.is_disconnected():
+                    break
+                # Wait for new message
+                message = await q.get()
+                yield f"data: {message}\n\n"
+        except asyncio.CancelledError:
+            pass
+        finally:
+            sse_manager.disconnect(q)
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream"
+    )
+
+@app.post("/api/sync")
+async def sync_post(request: Request):
     try:
-        while True:
-            data = await websocket.receive_text()
-            # Broadcast all messages received from host
-            await manager.broadcast(data)
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
+        body = await request.body()
+        data = body.decode("utf-8")
+        await sse_manager.broadcast(data)
+        return {"status": "success"}
     except Exception as e:
-        logger.error(f"WebSocket Error: {e}")
-        manager.disconnect(websocket)
+        logger.error(f"Error in sync post: {e}")
+        return {"status": "error", "message": str(e)}
 
 
 @app.post("/api/data")

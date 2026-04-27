@@ -57,7 +57,6 @@ class ConversionConfig:
     excluded_tags: Optional[List[str]] = None
     force: bool = False
     connect_src: str = ""
-    ws_src: str = ""
     enable_export: bool = False
     pdf_output: Union[Path, bool, None] = None
 
@@ -66,7 +65,6 @@ class ConversionConfig:
             with open("config.toml", "rb") as f:
                 config_data = tomllib.load(f)
                 self.connect_src = config_data.get("security", {}).get("connect-src", "")
-                self.ws_src = config_data.get("security", {}).get("ws-src", "")
         except Exception:
             pass
 

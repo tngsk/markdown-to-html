@@ -4,33 +4,19 @@ from typing import cast
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from fastapi import WebSocket
 from fastapi.testclient import TestClient
 
 from src.server import (
-    ConnectionManager,
+    SSEManager,
     app,
     get_allowed_origins,
-    manager,
-    websocket_endpoint,
+    sse_manager,
 )
 
 
 @pytest.fixture
 def client():
     return TestClient(app)
-
-
-class MockWebSocket:
-    def __init__(self):
-        self.sent_messages = []
-        self.accepted = False
-
-    async def accept(self):
-        self.accepted = True
-
-    async def send_text(self, data: str):
-        self.sent_messages.append(data)
 
 
 def test_get_allowed_origins_exception(caplog):
@@ -43,24 +29,21 @@ def test_get_allowed_origins_exception(caplog):
 
 
 @pytest.mark.asyncio
-async def test_connection_manager_connect():
-    test_manager = ConnectionManager()
-    ws = MockWebSocket()
-    await test_manager.connect(cast(WebSocket, ws))
+async def test_sse_manager_connect():
+    test_manager = SSEManager()
+    q = test_manager.connect()
 
-    assert ws.accepted is True
-    assert ws in test_manager.active_connections
+    assert q in test_manager.active_queues
 
 
 @pytest.mark.asyncio
-async def test_connection_manager_disconnect():
-    test_manager = ConnectionManager()
-    ws = MockWebSocket()
-    await test_manager.connect(cast(WebSocket, ws))
-    assert ws in test_manager.active_connections
+async def test_sse_manager_disconnect():
+    test_manager = SSEManager()
+    q = test_manager.connect()
+    assert q in test_manager.active_queues
 
-    test_manager.disconnect(cast(WebSocket, ws))
-    assert ws not in test_manager.active_connections
+    test_manager.disconnect(q)
+    assert q not in test_manager.active_queues
 
 
 def test_get_allowed_origins_open_error(caplog):
@@ -75,137 +58,34 @@ def test_get_allowed_origins_open_error(caplog):
 
 
 @pytest.mark.asyncio
-async def test_connection_manager_broadcast_empty():
-    test_manager = ConnectionManager()
-    test_manager.active_connections = []
-
-    # Should just return and not raise an error
-    await test_manager.broadcast("test")
-
-
-@pytest.mark.asyncio
-async def test_empty_broadcast():
-    test_manager = ConnectionManager()
-    # Should return early without raising error
-    await test_manager.broadcast("test message")
-
-
-@pytest.mark.asyncio
-async def test_connection_manager_broadcast():
-    test_manager = ConnectionManager()
-    ws1 = MockWebSocket()
-    ws2 = MockWebSocket()
-
-    await test_manager.connect(cast(WebSocket, ws1))
-    await test_manager.connect(cast(WebSocket, ws2))
+async def test_sse_manager_broadcast():
+    test_manager = SSEManager()
+    q1 = test_manager.connect()
+    q2 = test_manager.connect()
 
     await test_manager.broadcast("test message")
 
-    # Since tasks are created in the background, we need to yield to the event loop
-    import asyncio
+    assert not q1.empty()
+    assert not q2.empty()
 
-    await asyncio.sleep(0)
+    msg1 = await q1.get()
+    msg2 = await q2.get()
 
-    assert "test message" in ws1.sent_messages
-    assert "test message" in ws2.sent_messages
+    assert msg1 == "test message"
+    assert msg2 == "test message"
 
+def test_sync_post(client):
+    response = client.post("/api/sync", json={"type": "focus", "targetId": "heading-1"})
+    assert response.status_code == 200
+    assert response.json() == {"status": "success"}
 
-@pytest.mark.asyncio
-async def test_connection_manager_broadcast_empty_no_active():
-    test_manager = ConnectionManager()
-    # active_connections is empty
-    await test_manager.broadcast("should return early")
-
-
-@pytest.mark.asyncio
-async def test_connection_manager_broadcast_error(caplog):
-    test_manager = ConnectionManager()
-    ws = MockWebSocket()
-    await test_manager.connect(cast(WebSocket, ws))
-
-    # Make send_text raise an exception
-    async def mock_send_text(data: str):
-        raise Exception("Test broadcast error")
-
-    ws.send_text = mock_send_text
-
-    await test_manager.broadcast("test message")
-
-    # Since tasks are created in the background, we need to yield to the event loop
-    import asyncio
-
-    await asyncio.sleep(0)
-
-    assert "Error broadcasting: Test broadcast error" in caplog.text
-
-
-@pytest.mark.asyncio
-async def test_websocket_endpoint_exception(caplog):
-    class ErrorWebSocket(MockWebSocket):
-        async def receive_text(self):
-            raise Exception("Test generic socket error")
-
-    ws = ErrorWebSocket()
-    # It should not raise, just log the error and disconnect
-    with caplog.at_level(logging.ERROR):
-        await websocket_endpoint(cast(WebSocket, ws))
-
-    assert "WebSocket Error: Test generic socket error" in caplog.text
-    assert ws not in manager.active_connections
-
-
-def test_websocket_sync_endpoint(client):
-    # Ensure manager is empty at start
-    manager.active_connections.clear()
-
-    with client.websocket_connect("/ws/sync") as websocket1:
-        with client.websocket_connect("/ws/sync") as websocket2:
-            # Send from client 1
-            websocket1.send_text("hello from 1")
-
-            # Client 1 should receive its own broadcast
-            data1 = websocket1.receive_text()
-            assert data1 == "hello from 1"
-
-            # Client 2 should also receive it
-            data2 = websocket2.receive_text()
-            assert data2 == "hello from 1"
-
-
-def test_websocket_exception(caplog, client):
-    manager.active_connections.clear()
-    with patch.object(
-        WebSocket, "receive_text", side_effect=Exception("Generic WS error")
-    ):
-        with client.websocket_connect("/ws/sync"):
-            pass
-    assert "WebSocket Error: Generic WS error" in caplog.text
-
-
-def test_websocket_disconnect(client):
-    manager.active_connections.clear()
-
-    with client.websocket_connect("/ws/sync"):
-        assert len(manager.active_connections) == 1
-
-    # Once the context manager exits, the disconnect happens
-    assert len(manager.active_connections) == 0
-
-
-def test_websocket_endpoint_general_error(client, caplog):
-    manager.active_connections.clear()
-
-    with patch.object(
-        WebSocket, "receive_text", side_effect=Exception("General WS Error")
-    ):
-        # We catch the exception and assert on the log
-        try:
-            with client.websocket_connect("/ws/sync"):
-                pass
-        except Exception:
-            pass
-
-    assert "WebSocket Error: General WS Error" in caplog.text
+def test_sync_post_error(client, caplog):
+    # Make broadcast raise an exception
+    with patch.object(sse_manager, "broadcast", side_effect=Exception("Test broadcast error")):
+        response = client.post("/api/sync", json={"type": "focus", "targetId": "heading-1"})
+        assert response.status_code == 200
+        assert response.json() == {"status": "error", "message": "Test broadcast error"}
+        assert "Error in sync post: Test broadcast error" in caplog.text
 
 
 @patch("src.server.aiofiles.open")
