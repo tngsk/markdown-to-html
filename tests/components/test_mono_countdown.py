@@ -40,3 +40,8 @@ def test_countdown_with_multiple_instances(parser):
     html = parser.process(markdown)
     assert '<mono-countdown time="1m"></mono-countdown>' in html
     assert '<mono-countdown time="2m" color="green"></mono-countdown>' in html
+
+def test_countdown_absolute_time(parser):
+    markdown = "@[countdown](time: \"2026-12-31T23:59:59\")"
+    html = parser.process(markdown)
+    assert '<mono-countdown time="2026-12-31T23:59:59"></mono-countdown>' in html

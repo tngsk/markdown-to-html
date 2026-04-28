@@ -50,6 +50,12 @@
     user-select: none;
     -webkit-user-select: none;
     font-variant-numeric: tabular-nums;
+    text-align: center;
+    line-height: 1.2;
+}
+
+:host(.has-days) .time-display {
+    font-size: calc(var(--countdown-size, 80px) * 0.15);
 }
 
 :host(.time-up) .progress-ring-circle {

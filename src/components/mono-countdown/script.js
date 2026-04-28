@@ -49,6 +49,13 @@ class MonoCountdown extends MonoBaseElement {
     parseTime(timeStr) {
         if (!timeStr) return 0;
 
+        // Check if it's an absolute datetime (e.g., ISO string)
+        const date = new Date(timeStr);
+        if (!isNaN(date.getTime()) && timeStr.includes('-')) {
+            const remaining = Math.max(0, Math.floor((date.getTime() - Date.now()) / 1000));
+            return remaining;
+        }
+
         const match = timeStr.trim().match(/^(\d+)(s|m|h)?$/i);
         if (!match) return 0;
 
@@ -65,10 +72,15 @@ class MonoCountdown extends MonoBaseElement {
 
     formatTime(seconds) {
         if (seconds < 0) seconds = 0;
-        const h = Math.floor(seconds / 3600);
+
+        const d = Math.floor(seconds / 86400);
+        const h = Math.floor((seconds % 86400) / 3600);
         const m = Math.floor((seconds % 3600) / 60);
         const s = seconds % 60;
 
+        if (d > 0) {
+            return `${d}d ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
         if (h > 0) {
             return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         }
@@ -78,6 +90,11 @@ class MonoCountdown extends MonoBaseElement {
     updateDisplay() {
         if (this.timeDisplayElement) {
             this.timeDisplayElement.textContent = this.formatTime(this.remainingSeconds);
+            if (this.remainingSeconds >= 86400) {
+                this.classList.add('has-days');
+            } else {
+                this.classList.remove('has-days');
+            }
         }
 
         if (this.circle && this.totalSeconds > 0) {
