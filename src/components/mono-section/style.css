@@ -30,20 +30,18 @@
     width: 100%;
     /* Allow custom height, default to auto */
     min-height: var(--section-height, auto);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    grid-template-columns: minmax(1rem, 1fr) minmax(auto, 900px) minmax(1rem, 1fr);
     background-size: cover; /* Default */
     background-position: center;
     background-repeat: no-repeat;
-    padding: var(--padding-lg);
+    padding-top: var(--padding-lg);
+    padding-bottom: var(--padding-lg);
     box-sizing: border-box;
 }
 
 .section-content {
-    /* Keep the internal content width constrained so it doesn't span entire 100vw */
+    grid-column: 2;
     width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
     z-index: 1;
 }
