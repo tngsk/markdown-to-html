@@ -79,6 +79,25 @@ def test_mermaid_subprocess_call(mock_run, parser):
         assert args[1] == "mmdc"
         assert "-i" in args
         assert "-o" in args
+        assert "-t" not in args
+
+@patch.object(mono_mermaid_parser.subprocess, 'run')
+def test_mermaid_subprocess_call_with_theme(mock_run, parser):
+    """themeオプションが指定された場合に正しい引数でsubprocess.runが呼ばれるかテスト"""
+    mock_run.return_value = MagicMock(returncode=0)
+
+    mermaid_code = "graph TD;\n A-->B;"
+
+    with patch.object(mono_mermaid_parser.Path, 'exists', return_value=True), \
+         patch.object(mono_mermaid_parser.Path, 'read_text', return_value="<svg>mock</svg>"):
+
+        result = parser._generate_svg(mermaid_code, "dark")
+
+        assert result == "<svg>mock</svg>"
+        mock_run.assert_called_once()
+        args = mock_run.call_args[0][0]
+        assert "-t" in args
+        assert "dark" in args
 
 @patch.object(mono_mermaid_parser.subprocess, 'run')
 def test_mermaid_subprocess_error(mock_run, parser):

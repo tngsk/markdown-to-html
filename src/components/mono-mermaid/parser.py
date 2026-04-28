@@ -9,7 +9,7 @@ from src.processors.base_parser import BaseComponentParser
 logger = logging.getLogger(__name__)
 
 class Parser(BaseComponentParser):
-    # OPTIONS: width
+    # OPTIONS: width, theme
     START_PATTERN = r"@\[mermaid(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     END_PATTERN = r"@\[/mermaid\]"
 
@@ -31,7 +31,8 @@ class Parser(BaseComponentParser):
             common_args = self.parse_key_value_args(args_str) if args_str else {}
             args = {**specific_args, **common_args}
 
-            svg_content = self._generate_svg(content)
+            theme = args.get("theme", "default")
+            svg_content = self._generate_svg(content, theme)
             if not svg_content:
                 # If SVG generation fails, fallback to displaying the code
                 safe_content = html.escape(content)
@@ -56,7 +57,7 @@ class Parser(BaseComponentParser):
 
         return pattern.sub(replacer, markdown_content)
 
-    def _generate_svg(self, mermaid_code: str) -> str:
+    def _generate_svg(self, mermaid_code: str, theme: str = "default") -> str:
         """
         Uses @mermaid-js/mermaid-cli (mmdc) to generate SVG from Mermaid code.
         """
@@ -73,8 +74,12 @@ class Parser(BaseComponentParser):
 
                 # npx must be used to call mmdc from node_modules securely
                 # Suppress output to avoid spamming the console
+                cmd = ["npx", "mmdc", "-i", str(input_file), "-o", str(output_file)]
+                if theme and theme != "default":
+                    cmd.extend(["-t", theme])
+
                 result = subprocess.run(
-                    ["npx", "mmdc", "-i", str(input_file), "-o", str(output_file)],
+                    cmd,
                     capture_output=True,
                     text=True,
                     check=True
