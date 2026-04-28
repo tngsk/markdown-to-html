@@ -45,25 +45,30 @@ class BaseComponentParser:
 
         content = content.strip()
         parts = []
-        paren_depth = 0
-        in_quote = None
-        start_idx = 0
-        for i, char in enumerate(content):
-            if in_quote:
-                if char == in_quote:
-                    in_quote = None
-            elif char in "\"'":
-                in_quote = char
-            elif char == '(':
-                paren_depth += 1
-            elif char == ')':
-                paren_depth -= 1
-            elif char == ',' and paren_depth == 0:
-                parts.append(content[start_idx:i].strip())
-                start_idx = i + 1
 
-        if start_idx < len(content):
-            parts.append(content[start_idx:].strip())
+        # Fast path for simple cases without nested parens or complex quotes
+        if '(' not in content and '"' not in content and "'" not in content:
+            parts = [p.strip() for p in content.split(',') if p.strip()]
+        else:
+            paren_depth = 0
+            in_quote = None
+            start_idx = 0
+            for i, char in enumerate(content):
+                if in_quote:
+                    if char == in_quote:
+                        in_quote = None
+                elif char in "\"'":
+                    in_quote = char
+                elif char == '(':
+                    paren_depth += 1
+                elif char == ')':
+                    paren_depth -= 1
+                elif char == ',' and paren_depth == 0:
+                    parts.append(content[start_idx:i].strip())
+                    start_idx = i + 1
+
+            if start_idx < len(content):
+                parts.append(content[start_idx:].strip())
 
         label = ""
         args_dict = {}

@@ -16,3 +16,7 @@
 ## 2026-04-26 - Image Duplication Optimization
 **Learning:** During the media embedding process, repeatedly converting the same image file to Base64 (or reading the same SVG) resulted in unnecessary I/O overhead and significantly bloated the final HTML document's `<template id="mono-asset-store">`.
 **Action:** Always maintain a local cache mapping the resolved file path to its generated asset identifier (or SVG content) during the document build process. Check this cache before reading or encoding the file to ensure identical assets are deduplicated in the output.
+
+## 2024-05-24 - Optimizing Parameter Parsing
+**Learning:** Python character-by-character loops are extremely slow for parameter parsing (e.g. `BaseComponentParser.parse_bracket_content`).
+**Action:** When parsing parameters, check for the absence of complex nesting characters (like `(`, `"`, or `'`) and delegate to C-backed native string methods like `.split(',')` for a massive speedup on simple cases.
