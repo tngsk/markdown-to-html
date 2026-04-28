@@ -213,6 +213,8 @@ tasks.sh
 demo/*.html
 doc/*.html
 /watch_and_run.sh
+.vscode/mono.code-snippets
+.zed/snippets/markdown.json
 
 # Node.js
 node_modules/
