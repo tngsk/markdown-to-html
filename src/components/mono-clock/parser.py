@@ -7,7 +7,7 @@ class Parser(BaseComponentParser):
         return ["mono-clock"]
 
     # OPTIONS: format, display
-    PATTERN = r"@\[clock(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    PATTERN = r"@\[clock(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     TEMPLATE = '<mono-clock{format_attr}{display_attr}{common_attr}></mono-clock>'
 
     def process(self, markdown_content: str) -> str:

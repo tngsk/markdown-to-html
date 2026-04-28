@@ -7,15 +7,17 @@ class Parser(BaseComponentParser):
         return ["mono-notebook"]
 
     # OPTIONS: id, placeholder, title
-    PATTERN = r"@\[(?:notebook|notebook-input)(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    PATTERN = r"@\[(?:notebook-input|notebook)(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
 
         def replacer(match: re.Match) -> str:
-            title = match.group(1)
+            bracket_content = match.group(1)
             args_str = match.group(2)
-            args = self.parse_key_value_args(args_str)
+            title, specific_args = self.parse_bracket_content(bracket_content)
+            common_args = self.parse_key_value_args(args_str)
+            args = {**specific_args, **common_args}
 
             input_id = args.get('id', '')
             placeholder = args.get('placeholder', '')
@@ -23,7 +25,7 @@ class Parser(BaseComponentParser):
                 title = args['title']
 
             safe_id = self.escape_html(input_id)
-            attrs = [f'id="{safe_id}"'] if safe_id else []
+            attrs = []
 
             if title:
                 safe_title = self.escape_html(title.strip())
@@ -34,6 +36,7 @@ class Parser(BaseComponentParser):
                 attrs.append(f'placeholder="{safe_placeholder}"')
 
             attrs_str = " ".join(attrs)
-            return f'<mono-notebook {attrs_str}{self.get_common_attributes(args)}></mono-notebook>'
+            attr_prefix = f' {attrs_str}' if attrs_str else ''
+            return f'<mono-notebook{attr_prefix}{self.get_common_attributes(args)}></mono-notebook>'
 
         return pattern.sub(replacer, markdown_content)

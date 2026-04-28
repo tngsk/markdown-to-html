@@ -11,15 +11,16 @@ Mono extends standard Markdown to support custom interactive components (Web Com
 Components are invoked using the `@[]` syntax.
 
 **Format:**
-`@[component-name: optional_label](key: "value", key2: "value2")`
+`@[component-name: optional_label, key1: "value1"](style_key: "value2")`
 
 *   `component-name`: The hyphenated name of the Web Component (e.g., `mono-poll`, `mono-flipcard`).
 *   `optional_label`: An optional text label passed to the component (often used as a primary text or title).
-*   `(key: "value", ...)`: A comma-separated list of key-value pairs providing configuration options. Keys are unquoted, values are string literals enclosed in double quotes. The colon `:` is the standard delimiter.
+*   `key: "value"` inside `[]`: A comma-separated list of key-value pairs providing specific configuration options for the component (e.g., `id`, `placeholder`, `title`).
+*   `(style_key: "value", ...)`: A comma-separated list of key-value pairs providing style-related configuration options (e.g., `class`, `padding`).
 
 **Example:**
 ```markdown
-@[mono-poll: Favorite Language?](options: "Python, JavaScript, Rust")
+@[textfield: "Label", id: "my-id", placeholder: "Enter text"](class: "gap-md center")
 ```
 
 ### Deprecation Notice

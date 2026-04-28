@@ -39,6 +39,7 @@ ALLOWED_COMPONENTS = [
     "mono-hero",
     "mono-icon",
     "mono-layout",
+    "mono-mermaid",
     "mono-notebook",
     "mono-poll",
     "mono-reaction",

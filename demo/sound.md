@@ -31,3 +31,6 @@ A grid of sounds with reactions below.
 @[reaction](options: "👏, 👎")
 :::
 @[/row]
+
+## Additional Examples
+@[sound: "Alert"](src: "https://actions.google.com/sounds/v1/alarms/beep_short.ogg")

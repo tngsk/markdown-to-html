@@ -13,11 +13,15 @@ class Parser(BaseComponentParser):
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
         def replacer(match: re.Match) -> str:
-            theme_name = match.group(1).strip()
+            bracket_content = match.group(1)
 
-            # The args inside () are optional for now, but could be used to toggle UI in the future
             args_str = match.group(2)
-            args = self.parse_key_value_args(args_str) if args_str else {}
+
+            theme_name, specific_args = self.parse_bracket_content(bracket_content)
+
+            common_args = self.parse_key_value_args(args_str)
+
+            args = {**specific_args, **common_args} if args_str else {}
 
             show_ui = args.get('show_ui', 'false').lower() == 'true'
             config_file = args.get('config', '')

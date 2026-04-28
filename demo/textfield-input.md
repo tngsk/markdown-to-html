@@ -37,3 +37,6 @@ Hiding the input inside a sliding drawer.
 Please leave a quick note:
 @[textfield: "Your feedback..."](size: 30)
 @[/drawer]
+
+## Additional Examples
+@[textfield-input](placeholder: "Enter details", size: "large")

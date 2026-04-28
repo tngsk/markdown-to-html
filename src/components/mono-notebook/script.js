@@ -42,8 +42,8 @@ class MonoNotebookInput extends MonoBaseElement {
     // Test if Local Storage is available
     try {
       const testKey = "__storage_test__";
-      localStorage.setItem(testKey, testKey);
-      localStorage.removeItem(testKey);
+      this.saveState(testKey, testKey);
+      this.removeState(testKey);
     } catch (e) {
       this.storageUnavailable = true;
       console.warn(
@@ -76,12 +76,9 @@ class MonoNotebookInput extends MonoBaseElement {
     if (this.storageUnavailable || !this.refs.inputArea) return;
 
     try {
-      const stored = localStorage.getItem(this.getStorageKey());
-      if (stored) {
-        const data = JSON.parse(stored);
-        if (data && data.value !== undefined) {
-          this.refs.inputArea.value = data.value;
-        }
+      const data = this.loadState(this.getStorageKey());
+      if (data && data.value !== undefined) {
+        this.refs.inputArea.value = data.value;
       }
     } catch (e) {
       console.error("Failed to restore notebook data from Local Storage", e);
@@ -113,7 +110,7 @@ class MonoNotebookInput extends MonoBaseElement {
     };
 
     try {
-      localStorage.setItem(this.getStorageKey(), JSON.stringify(data));
+      this.saveState(this.getStorageKey(), data);
       this.showSaveFeedback();
     } catch (e) {
       console.error("Failed to save notebook data to Local Storage", e);

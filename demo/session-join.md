@@ -27,3 +27,6 @@ Ask a question immediately after joining.
 
 @[session-join: "Join Feedback Session"]
 @[poll: "How are you feeling today?"](options: "Great, Good, Okay, Bad")
+
+## Additional Examples
+@[session-join: "Join Event"]

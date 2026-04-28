@@ -27,3 +27,6 @@ Ask for immediate sentiment upon viewing a landing page.
 @[hero: "Welcome to Mono"]
 @[reaction](options: "Let's go!, I'm not sure...")
 @[/hero]
+
+## Additional Examples
+@[reaction](options: "❤️, 👎, 🚀")

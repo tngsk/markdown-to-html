@@ -6,7 +6,7 @@ class Parser(BaseComponentParser):
     # Pattern: @[flipcard: "Front Text"](args)
     # The first group matches the text after the colon.
     # The second group matches the arguments inside parentheses.
-    PATTERN = r"@\[flipcard(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    PATTERN = r"@\[flipcard(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
 
     @property
     def block_level_tags(self) -> list[str]:
@@ -18,14 +18,15 @@ class Parser(BaseComponentParser):
         def replacer(match: re.Match) -> str:
             # Front text is passed in the main label part.
             # Handle possible quotes.
-            front_text = match.group(1) or ""
-            front_text = front_text.strip()
-            if (front_text.startswith('"') and front_text.endswith('"')) or \
-               (front_text.startswith("'") and front_text.endswith("'")):
-                front_text = front_text[1:-1]
+            bracket_content = match.group(1)
 
             args_str = match.group(2)
-            args = self.parse_key_value_args(args_str)
+
+            front_text, specific_args = self.parse_bracket_content(bracket_content)
+
+            common_args = self.parse_key_value_args(args_str)
+
+            args = {**specific_args, **common_args}
 
             # Accept 'a', 'A', 'ans', 'answer' as keys for the back text
             back_text = ""

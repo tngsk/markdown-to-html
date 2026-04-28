@@ -19,12 +19,9 @@ class MonoReaction extends MonoInteractiveElement {
 
     // Load existing counts from local storage if any
     try {
-      const stored = localStorage.getItem(`mono_reaction_${this.componentId}`);
-      if (stored) {
-        const data = JSON.parse(stored);
-        if (data.counts) {
-           this.counts = data.counts;
-        }
+      const data = this.loadState(`mono_reaction_${this.componentId}`);
+      if (data && data.counts) {
+         this.counts = data.counts;
       }
     } catch (e) {
       console.info("リアクションデータの読み込みに失敗しました:", e);
@@ -80,7 +77,7 @@ class MonoReaction extends MonoInteractiveElement {
     };
 
     try {
-      localStorage.setItem(`mono_reaction_${this.componentId}`, JSON.stringify(payload));
+      this.saveState(`mono_reaction_${this.componentId}`, payload);
     } catch (e) {
       console.info("リアクションデータの保存に失敗しました", e);
     }

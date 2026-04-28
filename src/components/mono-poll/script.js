@@ -44,9 +44,8 @@ class MonoPoll extends MonoInteractiveElement {
 
   checkPreviousVote() {
     try {
-      const savedData = localStorage.getItem(`mono_poll_${this.componentId}`);
-      if (savedData) {
-        const data = JSON.parse(savedData);
+      const data = this.loadState(`mono_poll_${this.componentId}`);
+      if (data && data.selected) {
         this.hasVoted = true;
         this.selectedValue = data.selected;
       }
@@ -74,10 +73,7 @@ class MonoPoll extends MonoInteractiveElement {
 
     // Mock Persistence (Phase 2)
     try {
-      localStorage.setItem(
-        `mono_poll_${this.componentId}`,
-        JSON.stringify(payload),
-      );
+      this.saveState(`mono_poll_${this.componentId}`, payload);
       this.hasVoted = true;
       this.selectedValue = value;
       this.updateView();

@@ -3,21 +3,22 @@ from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
     # OPTIONS: text, color, soft, outline
-    PATTERN = r"@\[badge(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    PATTERN = r"@\[badge(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     TEMPLATE = '<mono-badge{color_attr}{soft_attr}{outline_attr}{common_attr}>{text}</mono-badge>'
 
     def process(self, markdown_content: str) -> str:
         pattern = re.compile(self.PATTERN)
 
         def replacer(match: re.Match) -> str:
-            text = match.group(1)
-            if text:
-                text = text.strip()
-                if (text.startswith('"') and text.endswith('"')) or (text.startswith("'") and text.endswith("'")):
-                    text = text[1:-1].strip()
+            bracket_content = match.group(1)
 
             args_str = match.group(2)
-            args = self.parse_key_value_args(args_str)
+
+            text, specific_args = self.parse_bracket_content(bracket_content)
+
+            common_args = self.parse_key_value_args(args_str)
+
+            args = {**specific_args, **common_args}
 
             if 'text' in args:
                 text = args['text']

@@ -32,8 +32,8 @@ class MonoTextfieldInput extends MonoBaseElement {
 
         try {
             const testKey = '__storage_test__';
-            localStorage.setItem(testKey, testKey);
-            localStorage.removeItem(testKey);
+            this.saveState(testKey, testKey);
+            this.removeState(testKey);
         } catch (e) {
             this.storageUnavailable = true;
             console.warn("Local Storage is not available. Input will not be persisted.", e);
@@ -58,12 +58,9 @@ class MonoTextfieldInput extends MonoBaseElement {
     restoreData() {
         if (this.storageUnavailable || !this.inputArea) return;
         try {
-            const stored = localStorage.getItem(this.getStorageKey());
-            if (stored) {
-                const data = JSON.parse(stored);
-                if (data && data.value !== undefined) {
-                    this.inputArea.value = data.value;
-                }
+            const data = this.loadState(this.getStorageKey());
+            if (data && data.value !== undefined) {
+                this.inputArea.value = data.value;
             }
         } catch (e) {
             console.error("Failed to restore textfield data", e);
@@ -90,7 +87,7 @@ class MonoTextfieldInput extends MonoBaseElement {
             updated_at: new Date().toISOString()
         };
         try {
-            localStorage.setItem(this.getStorageKey(), JSON.stringify(data));
+            this.saveState(this.getStorageKey(), data);
             this.showSaveFeedback();
         } catch (e) {
             console.error("Failed to save textfield data", e);

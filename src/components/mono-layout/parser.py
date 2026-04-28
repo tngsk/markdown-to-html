@@ -3,8 +3,8 @@ from src.processors.base_parser import BaseComponentParser
 
 class Parser(BaseComponentParser):
     # OPTIONS: class
-    ROW_PATTERN = r"@\[row(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
-    STACK_PATTERN = r"@\[stack(?:\:\s*([^\]]+))?\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    ROW_PATTERN = r"@\[row(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    STACK_PATTERN = r"@\[stack(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     END_PATTERN = r"@\[(?:end|/row|/stack|/layout)\]"
     COLUMN_START_PATTERN = r":::column"
     COLUMN_END_PATTERN = r":::(?!\S)"
@@ -17,9 +17,11 @@ class Parser(BaseComponentParser):
         # row
         pattern = re.compile(self.ROW_PATTERN)
         def row_replacer(match: re.Match) -> str:
-            label = match.group(1)
+            bracket_content = match.group(1)
             args_str = match.group(2)
-            args = self.parse_key_value_args(args_str)
+            label, specific_args = self.parse_bracket_content(bracket_content)
+            common_args = self.parse_key_value_args(args_str)
+            args = {**specific_args, **common_args}
 
             classes = label.strip() if label else ""
             if 'class' in args:
@@ -33,9 +35,11 @@ class Parser(BaseComponentParser):
         # stack
         pattern = re.compile(self.STACK_PATTERN)
         def stack_replacer(match: re.Match) -> str:
-            label = match.group(1)
+            bracket_content = match.group(1)
             args_str = match.group(2)
-            args = self.parse_key_value_args(args_str)
+            label, specific_args = self.parse_bracket_content(bracket_content)
+            common_args = self.parse_key_value_args(args_str)
+            args = {**specific_args, **common_args}
 
             classes = label.strip() if label else ""
             if 'class' in args:

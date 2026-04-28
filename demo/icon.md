@@ -42,3 +42,6 @@ Displaying a grid of icons.
 @[icon: "favorite"](size: 32px, color: pink)
 :::
 @[/row]
+
+## Additional Examples
+@[icon: "star"](size: "48px", color: "blue", display: "block")

@@ -45,3 +45,8 @@ Having drawers on different sides.
 @[drawer: Notes](position: right)
 @[notebook: "Quick Notes"](id: drawer-note-1, placeholder: "Jot things down...")
 @[/drawer]
+
+## Additional Examples
+@[drawer: "Always Open"](position: "right", open: "true")
+Always open drawer
+@[end]

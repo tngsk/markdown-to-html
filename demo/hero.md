@@ -43,3 +43,7 @@ Using row layouts inside a hero section.
 :::
 @[/row]
 @[/hero]
+
+## Additional Examples
+@[hero: "Dark Mode Hero"](image: "https://picsum.photos/800/400", mode: "dark")
+@[/hero]

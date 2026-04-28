@@ -48,14 +48,15 @@ def generate_snippets():
         # e.g., color: "${1:val}", soft: "${2:val}"
         if options:
             attr_parts = []
-            for i, opt in enumerate(options, start=1):
+            for i, opt in enumerate(options, start=2): # start at 2 since 1 is usually the label
                 # Provide a generic placeholder based on the option name
                 attr_parts.append(f'{opt}: \"${{{i}:val}}\"')
 
             attrs = ", ".join(attr_parts)
-            body = f"@[{comp}]({attrs})"
+            # Use pattern A: specific options in []
+            body = f"@[{comp}: \"${{1:Label}}\", {attrs}]"
         else:
-            body = f"@[{comp}]"
+            body = f"@[{comp}: \"${{1:Label}}\"]"
 
         snippets[f"Mono Component: {comp}"] = {
             "prefix": prefix,

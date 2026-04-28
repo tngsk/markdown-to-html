@@ -5,3 +5,6 @@
 @[score](notes: "C4 D4 E4 F4 G4 A4 B4 C5")
 
 @[score](notes: "C4/q, D4/8, E4/8, F4/h")
+
+## Additional Examples
+@[score](notes: "C4/q, D4/q", clef: "bass", time: "3/4")

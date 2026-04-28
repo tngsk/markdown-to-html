@@ -44,3 +44,6 @@ Adding breathing room around a major component.
 This hero is padded by spacers!
 @[/hero]
 @[spacer](width: 50px)
+
+## Additional Examples
+Content A @[spacer](width: "50px", height: "20px") Content B
