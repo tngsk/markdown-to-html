@@ -118,10 +118,16 @@ class HTMLDocumentBuilder:
         if "<mono-icon" in html_body:
             fonts_link = f'\n        <link rel="stylesheet" href="{MATERIAL_SYMBOLS_URL}" />'
 
+        content_css = self._load_component_content_css(used_component_dirs)
+
         doc = template_content.replace("{TITLE}", safe_title)
         doc = doc.replace("{CSP_META}", csp_meta + fonts_link)
         doc = doc.replace("{HIGHLIGHT_JS_CSS}", highlight_js_css)
         doc = doc.replace("{HIGHLIGHT_JS}", highlight_js)
+
+        if content_css:
+            content_css_tag = f"{{CSS_BLOCK}}\n<style id=\"mono-components-content-css\">\n{content_css}\n</style>"
+            doc = doc.replace("{CSS_BLOCK}", content_css_tag)
 
         if asset_store:
             safe_json = json.dumps(asset_store).replace('<', '\\u003c').replace('>', '\\u003e').replace('&', '\\u0026')
@@ -299,6 +305,28 @@ class HTMLDocumentBuilder:
 
         combined_js = "\n\n".join(js_contents)
         return f"<script>\n{combined_js}\n</script>"
+
+    def _load_component_content_css(self, used_component_dirs: List[Path]) -> str:
+        """指定されたコンポーネントの content.css を読み込み、結合して返す"""
+        if not used_component_dirs:
+            return ""
+
+        css_contents = []
+        for component_dir in used_component_dirs:
+            css_file = component_dir / "content.css"
+            if css_file.exists():
+                try:
+                    css_contents.append(css_file.read_text(encoding="utf-8"))
+                except Exception as e:
+                    self.logger.warning(
+                        f"content.css読み込みエラー ({css_file}): {e}"
+                    )
+
+        if not css_contents:
+            return ""
+
+        combined_css = "\n\n".join(css_contents)
+        return combined_css
 
     def _load_component_templates(self, used_component_dirs: List[Path]) -> str:
         """指定されたコンポーネントの template.html を読み込み、対応する style.css を注入して結合する"""

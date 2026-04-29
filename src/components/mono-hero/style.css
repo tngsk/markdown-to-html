@@ -41,20 +41,17 @@
 }
 
 /* Responsive font sizing for text inside hero */
-::slotted(h1),
 .hero-content h1 {
     font-size: clamp(2.5rem, 8vw, 6rem);
     margin: 0;
     line-height: 1.2;
 }
 
-::slotted(h2),
 .hero-content h2 {
     font-size: clamp(1.5rem, 5vw, 3rem);
     margin: 1rem 0;
 }
 
-::slotted(p),
 .hero-content p {
     font-size: clamp(1rem, 2.5vw, 1.5rem);
     margin: 1rem 0;
