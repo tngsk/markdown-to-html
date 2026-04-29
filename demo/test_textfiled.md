@@ -2,4 +2,4 @@
 
 @[textfield: (text)]
 
-@[notebook](nb-1)
+@[notebook: nb-1]

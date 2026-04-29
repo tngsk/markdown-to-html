@@ -68,10 +68,10 @@ Combining rows, stacks, and components.
 :::
 @[/stack]
 :::
-@[spacer](width: 20px)
+@[spacer: width: 20px]
 :::column
 **Feedback**
-@[poll: "How's the layout?"](options: "Great, Needs Work")
+@[poll: "How's the layout?", options: "Great, Needs Work"]
 :::
 @[/row]
 
@@ -80,11 +80,11 @@ Using a row to display multiple interactive media components side by side.
 
 @[row]
 :::column
-@[ab-test: "Design A vs B"](src-a: test.svg, src-b: test_xml.svg)
+@[ab-test: "Design A vs B", src-a: test.svg, src-b: test_xml.svg]
 :::
-@[spacer](width: 10px)
+@[spacer: width: 10px]
 :::column
-@[ab-test: "Design C vs D"](src-a: test.svg, src-b: test_xml.svg)
+@[ab-test: "Design C vs D", src-a: test.svg, src-b: test_xml.svg]
 :::
 @[/row]
 

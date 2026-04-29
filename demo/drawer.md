@@ -4,7 +4,7 @@ The `mono-drawer` component is used to create a sliding drawer tab on the edges 
 
 ## Usage
 ```markdown
-@[drawer: <label>](position: <position>, open: <open>)
+@[drawer: <label>, position: <position>, open: <open>]
 ...content...
 @[/drawer]
 ```
@@ -12,14 +12,14 @@ The `mono-drawer` component is used to create a sliding drawer tab on the edges 
 ## Simple Demos
 
 ### Left Drawer
-@[drawer: Menu](position: left)
+@[drawer: Menu, position: left]
 * Home
 * About
 * Contact
 @[/drawer]
 
 ### Right Drawer
-@[drawer: Information](position: right)
+@[drawer: Information, position: right]
 This is some extra information on the right.
 @[/drawer]
 
@@ -28,25 +28,25 @@ This is some extra information on the right.
 ### Drawer with Form Elements
 A feedback drawer at the bottom of the screen.
 
-@[drawer: Feedback](position: bottom)
+@[drawer: Feedback, position: bottom]
 **Please leave your feedback:**
-@[textfield: "Comments..."](size: 40)
-@[reaction](options: "Good, Bad")
+@[textfield: "Comments...", size: 40]
+@[reaction: options: "Good, Bad"]
 @[/drawer]
 
 ### Multiple Drawers
 Having drawers on different sides.
 
-@[drawer: Tools](position: left)
+@[drawer: Tools, position: left]
 @[icon: "build"]
 @[icon: "settings"]
 @[/drawer]
 
-@[drawer: Notes](position: right)
-@[notebook: "Quick Notes"](id: drawer-note-1, placeholder: "Jot things down...")
+@[drawer: Notes, position: right]
+@[notebook: "Quick Notes", placeholder: "Jot things down..."](id: drawer-note-1)
 @[/drawer]
 
 ## Additional Examples
-@[drawer: "Always Open"](position: "right", open: "true")
+@[drawer: "Always Open", position: "right", open: "true"]
 Always open drawer
 @[end]

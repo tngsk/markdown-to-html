@@ -25,6 +25,6 @@ Use session join to get everyone in, then assign groups.
 ### Group Assignment inside a Drawer
 Keep the interface clean by hiding group assignments until needed.
 
-@[drawer: Show Group Assigments](position: right)
+@[drawer: Show Group Assigments, position: right]
 @[group-assignment: "Workshop Groups"]
 @[/drawer]
