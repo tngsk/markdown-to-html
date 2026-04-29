@@ -44,28 +44,44 @@ class BaseComponentParser:
             return "", {}
 
         content = content.strip()
+
+        has_paren = '(' in content
+        has_quote = '"' in content or "'" in content
+
         parts = []
 
-        # Fast path for simple cases without nested parens or complex quotes
-        if '(' not in content and '"' not in content and "'" not in content:
+        # Fast path for simple cases without nested parens or quotes
+        if not has_paren and not has_quote:
             parts = [p.strip() for p in content.split(',') if p.strip()]
         else:
             paren_depth = 0
             in_quote = None
             start_idx = 0
-            for i, char in enumerate(content):
-                if in_quote:
-                    if char == in_quote:
-                        in_quote = None
-                elif char in "\"'":
-                    in_quote = char
-                elif char == '(':
-                    paren_depth += 1
-                elif char == ')':
-                    paren_depth -= 1
-                elif char == ',' and paren_depth == 0:
-                    parts.append(content[start_idx:i].strip())
-                    start_idx = i + 1
+
+            if not has_paren:
+                for i, char in enumerate(content):
+                    if in_quote:
+                        if char == in_quote:
+                            in_quote = None
+                    elif char in "\"'":
+                        in_quote = char
+                    elif char == ',' and not in_quote:
+                        parts.append(content[start_idx:i].strip())
+                        start_idx = i + 1
+            else:
+                for i, char in enumerate(content):
+                    if in_quote:
+                        if char == in_quote:
+                            in_quote = None
+                    elif char in "\"'":
+                        in_quote = char
+                    elif char == '(':
+                        paren_depth += 1
+                    elif char == ')':
+                        paren_depth -= 1
+                    elif char == ',' and paren_depth == 0 and not in_quote:
+                        parts.append(content[start_idx:i].strip())
+                        start_idx = i + 1
 
             if start_idx < len(content):
                 parts.append(content[start_idx:].strip())
@@ -127,8 +143,11 @@ class BaseComponentParser:
             return {}
         result = {}
 
-        # Fast path for simple cases without nested parens or complex quotes
-        if '(' not in args_str and '"' not in args_str and "'" not in args_str:
+        has_paren = '(' in args_str
+        has_quote = '"' in args_str or "'" in args_str
+
+        # Fast path for simple cases without nested parens or quotes
+        if not has_paren and not has_quote:
             for part in args_str.split(','):
                 part = part.strip()
                 if not part:
@@ -159,19 +178,31 @@ class BaseComponentParser:
         paren_depth = 0
         in_quote = None
         start_idx = 0
-        for i, char in enumerate(args_str):
-            if in_quote:
-                if char == in_quote:
-                    in_quote = None
-            elif char in "\"'":
-                in_quote = char
-            elif char == '(':
-                paren_depth += 1
-            elif char == ')':
-                paren_depth -= 1
-            elif char == ',' and paren_depth == 0:
-                parts.append(args_str[start_idx:i].strip())
-                start_idx = i + 1
+
+        if not has_paren:
+            for i, char in enumerate(args_str):
+                if in_quote:
+                    if char == in_quote:
+                        in_quote = None
+                elif char in "\"'":
+                    in_quote = char
+                elif char == ',' and not in_quote:
+                    parts.append(args_str[start_idx:i].strip())
+                    start_idx = i + 1
+        else:
+            for i, char in enumerate(args_str):
+                if in_quote:
+                    if char == in_quote:
+                        in_quote = None
+                elif char in "\"'":
+                    in_quote = char
+                elif char == '(':
+                    paren_depth += 1
+                elif char == ')':
+                    paren_depth -= 1
+                elif char == ',' and paren_depth == 0 and not in_quote:
+                    parts.append(args_str[start_idx:i].strip())
+                    start_idx = i + 1
 
         if start_idx < len(args_str):
             parts.append(args_str[start_idx:].strip())
