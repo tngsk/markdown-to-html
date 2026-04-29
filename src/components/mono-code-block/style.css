@@ -67,7 +67,6 @@
 
 /* Style the projected/slotted <pre> and <code> content */
 @layer overrides {
-    ::slotted(pre),
     .code-content-slot pre {
         margin: 0;
         padding: var(--padding-md);
@@ -77,7 +76,6 @@
         line-height: 1.5;
     }
 
-    ::slotted(code),
     .code-content-slot code {
         font-family: "Courier New", Courier, monospace;
         font-size: 0.95em;
@@ -85,82 +83,67 @@
     }
 
     /* Highlight.js theme overrides - matching original user design exactly */
-    ::slotted(.hljs),
     .code-content-slot .hljs {
         background: transparent;
         color: #abb2bf;
     }
 
-    ::slotted(.hljs-attr),
     .code-content-slot .hljs-attr {
         color: #e06c75;
     }
 
-    ::slotted(.hljs-string),
     .code-content-slot .hljs-string {
         color: #98c379;
     }
 
-    ::slotted(.hljs-number),
     .code-content-slot .hljs-number {
         color: #d19a66;
     }
 
-    ::slotted(.hljs-literal),
     .code-content-slot .hljs-literal {
         color: #56b6c2;
     }
 
-    ::slotted(.hljs-title),
     .code-content-slot .hljs-title {
         color: #61afef;
     }
 
-    ::slotted(.hljs-params),
     .code-content-slot .hljs-params {
         color: #abb2bf;
     }
 
-    ::slotted(.hljs-comment),
     .code-content-slot .hljs-comment {
         color: #5c6370;
     }
 
-    ::slotted(.hljs-keyword),
     .code-content-slot .hljs-keyword {
         color: #c678dd;
     }
 
-    ::slotted(.hljs-function),
     .code-content-slot .hljs-function {
         color: #61afef;
     }
 
-    ::slotted(.hljs-built_in),
     .code-content-slot .hljs-built_in {
         color: #e06c75;
     }
 }
 
 /* Scrollbar styling for the code block */
-.code-content-slot pre::-webkit-scrollbar,
-::slotted(pre)::-webkit-scrollbar {
+.code-content-slot pre::-webkit-scrollbar {
     height: 8px;
     width: 8px;
 }
 
-.code-content-slot pre::-webkit-scrollbar-track,
-::slotted(pre)::-webkit-scrollbar-track {
+.code-content-slot pre::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.2);
 }
 
-.code-content-slot pre::-webkit-scrollbar-thumb,
-::slotted(pre)::-webkit-scrollbar-thumb {
+.code-content-slot pre::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 4px;
 }
 
-.code-content-slot pre::-webkit-scrollbar-thumb:hover,
-::slotted(pre)::-webkit-scrollbar-thumb:hover {
+.code-content-slot pre::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.3);
 }

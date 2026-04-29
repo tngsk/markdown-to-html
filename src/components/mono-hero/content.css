@@ -1,0 +1,15 @@
+mono-hero h1 {
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    margin: 0;
+    line-height: 1.2;
+}
+
+mono-hero h2 {
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    margin: 1rem 0;
+}
+
+mono-hero p {
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    margin: 1rem 0;
+}
