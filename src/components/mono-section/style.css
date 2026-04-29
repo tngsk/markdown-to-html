@@ -45,3 +45,12 @@
     width: 100%;
     z-index: 1;
 }
+
+/* Apply Stack pattern to children inside the slot */
+::slotted(*) {
+    margin-top: var(--spacing-md);
+}
+
+::slotted(:first-child) {
+    margin-top: 0;
+}
