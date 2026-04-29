@@ -4,7 +4,7 @@ The `mono-hero` component is used to create a full-screen landing page style her
 
 ## Usage
 ```markdown
-@[hero: <title>](image: <image_url>, mode: <mode>, bg-color: <bg_color>, text-color: <text_color>)
+@[hero: <title>, image: <image_url>, mode: <mode>, bg-color: <bg_color>, text-color: <text_color>]
 ...content...
 @[/hero]
 ```
@@ -17,7 +17,7 @@ This is a simple hero section.
 @[/hero]
 
 ### Hero with Background Color
-@[hero: Colored Hero](bg-color: #f0f8ff, text-color: #333)
+@[hero: Colored Hero, bg-color: #f0f8ff, text-color: #333]
 Enjoy the calm colors!
 @[/hero]
 
@@ -26,7 +26,7 @@ Enjoy the calm colors!
 ### Hero with Background Image and Components
 A hero section showcasing an image and a session join button.
 
-@[hero: Join the Adventure](image: https://picsum.photos/1200/800?random=1, text-color: white)
+@[hero: Join the Adventure, image: https://picsum.photos/1200/800?random=1, text-color: white]
 @[session-join: "Start Now"]
 @[/hero]
 
@@ -39,11 +39,11 @@ Using row layouts inside a hero section.
 @[clock]
 :::
 :::column
-@[icon: "dashboard"](size: 64px)
+@[icon: "dashboard", size: 64px]
 :::
 @[/row]
 @[/hero]
 
 ## Additional Examples
-@[hero: "Dark Mode Hero"](image: "https://picsum.photos/800/400", mode: "dark")
+@[hero: "Dark Mode Hero", image: "https://picsum.photos/800/400", mode: "dark"]
 @[/hero]

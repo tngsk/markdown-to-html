@@ -3,15 +3,15 @@
 The `mono-notebook-input` component is used to create a multi-line notebook-style input area.
 
 ## Usage
-`@[notebook: <title>](id: <id>, placeholder: <placeholder>)`
+`@[notebook: <title>, placeholder: <placeholder>](id: <id>)`
 
 ## Simple Demos
 
 ### Notebook with Title
-@[notebook: "Daily Journal"](id: journal-1, placeholder: "Write your thoughts here...")
+@[notebook: "Daily Journal", placeholder: "Write your thoughts here..."](id: journal-1)
 
 ### Anonymous Notebook
-@[notebook](id: note-1, placeholder: "Quick notes...")
+@[notebook: placeholder: "Quick notes..."](id: note-1)
 
 ## Advanced Demos
 
@@ -20,19 +20,19 @@ Two separate notebooks side-by-side.
 
 @[row]
 :::column
-@[notebook: "Pros"](id: pros-1, placeholder: "List the pros...")
+@[notebook: "Pros", placeholder: "List the pros..."](id: pros-1)
 :::
-@[spacer](width: 20px)
+@[spacer: width: 20px]
 :::column
-@[notebook: "Cons"](id: cons-1, placeholder: "List the cons...")
+@[notebook: "Cons", placeholder: "List the cons..."](id: cons-1)
 :::
 @[/row]
 
 ### Notebook grouped with Poll
 Gather input and take notes on the same topic.
 
-@[poll: "Are you enjoying the workshop?"](options: "Yes, No, Maybe")
-@[notebook: "Any additional comments?"](id: feedback-1, placeholder: "Write more details...")
+@[poll: "Are you enjoying the workshop?", options: "Yes, No, Maybe"]
+@[notebook: "Any additional comments?", placeholder: "Write more details..."](id: feedback-1)
 
 ## Additional Examples
-@[notebook: "My Notes"](id: "note-123", placeholder: "Start typing...")
+@[notebook: "My Notes", placeholder: "Start typing..."](id: "note-123")

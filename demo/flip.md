@@ -1,3 +1,3 @@
 # Flipcard Demo
 
-@[flipcard: "Hi!"](a: "Hello! Flipcard")
+@[flipcard: "Hi!", a: "Hello! Flipcard"]

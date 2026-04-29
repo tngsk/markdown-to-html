@@ -3,7 +3,7 @@
 The `mono-clock` component is used to embed a real-time clock.
 
 ## Usage
-`@[clock](format: <format>, display: <display>)`
+`@[clock: format: <format>, display: <display>]`
 or
 `@[clock]`
 
@@ -14,7 +14,7 @@ or
 
 ### Clock with Format
 (If format string is supported by your parser)
-@[clock](format: "YYYY-MM-DD HH:mm:ss")
+@[clock: format: "YYYY-MM-DD HH:mm:ss"]
 
 ## Advanced Demos
 
@@ -22,7 +22,7 @@ or
 A clock placed inside a full-screen hero section.
 
 @[hero: Current Time]
-@[clock](display: block)
+@[clock: display: block]
 Start your work now!
 @[/hero]
 
@@ -34,7 +34,7 @@ Showing multiple clocks in a row.
 **Local Time**
 @[clock]
 :::
-@[spacer](width: 50px)
+@[spacer: width: 50px]
 :::column
 **Server Time**
 @[clock]
