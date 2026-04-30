@@ -85,7 +85,7 @@
     /* Highlight.js theme overrides - matching original user design exactly */
     .code-content-slot .hljs {
         background: transparent;
-        color: #abb2bf;
+        color: #333;
     }
 
     .code-content-slot .hljs-attr {
@@ -113,7 +113,7 @@
     }
 
     .code-content-slot .hljs-comment {
-        color: #5c6370;
+        color: #999;
     }
 
     .code-content-slot .hljs-keyword {

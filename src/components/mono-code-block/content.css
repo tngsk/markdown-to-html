@@ -17,7 +17,7 @@ mono-code-block code {
 /* Highlight.js theme overrides - matching original user design exactly */
 mono-code-block .hljs {
     background: transparent;
-    color: #abb2bf;
+    color: #333;
 }
 
 mono-code-block .hljs-attr {
@@ -45,7 +45,7 @@ mono-code-block .hljs-params {
 }
 
 mono-code-block .hljs-comment {
-    color: #5c6370;
+    color: #999;
 }
 
 mono-code-block .hljs-keyword {
