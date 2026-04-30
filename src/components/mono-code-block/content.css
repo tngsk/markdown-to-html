@@ -1,7 +1,7 @@
 /* Style the projected/slotted <pre> and <code> content */
 mono-code-block pre {
     margin: 0;
-    padding: var(--padding-md);
+    padding: 0; /* Highlight.js sets its own padding to .hljs */
     overflow-x: auto;
     background: transparent;
     color: var(--mono-code-text, var(--color-base-content));
@@ -13,6 +13,13 @@ mono-code-block code {
     font-variant-ligatures: none;
     font-size: 0.95em;
     line-height: 1.5;
+}
+
+/* Base override to ensure padding exists if a theme doesn't set it */
+mono-code-block .hljs {
+    padding: var(--padding-md);
+    border-radius: 0 0 8px 8px; /* Matching the container */
+    background: transparent; /* Allow wrapper background to show if needed, though highlight.js sets background */
 }
 
 /* Scrollbar styling for the code block */

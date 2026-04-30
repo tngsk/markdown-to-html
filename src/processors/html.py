@@ -225,11 +225,16 @@ class HTMLDocumentBuilder:
         return html_content
 
     def _build_highlight_js_link(self, html_body: str) -> str:
-        """Highlight.js CSSリンクタグを構築"""
-        from src.constants import HIGHLIGHT_JS_CDN_BASE, HIGHLIGHT_JS_VERSION
+        """Highlight.js のCSSスタイルタグを構築（オフライン・ビルド時）"""
+        from src.constants import TEMPLATES_DIR
+        import re
+        # node_modules から highlight.js のスタイルを読み込む
+        # constants.py doesn't have PROJECT_ROOT, but TEMPLATES_DIR is PROJECT_ROOT / "src" / "templates"
+        project_root = TEMPLATES_DIR.parent.parent
+        highlight_js_dir = project_root / "node_modules" / "highlight.js" / "styles"
 
         # すべてのテーマを抽出
-        themes = set(["atom-one-dark"]) # default
+        themes = set(["atom-one-dark"]) # デフォルトテーマ
 
         # html_bodyからtheme属性をすべて検索
         matches = re.finditer(r'<mono-code-block[^>]*theme="([^"]*)"', html_body)
@@ -237,12 +242,36 @@ class HTMLDocumentBuilder:
             if match.group(1):
                 themes.add(match.group(1))
 
-        links = []
+        css_blocks = []
         for theme in themes:
-            css_url = f"{HIGHLIGHT_JS_CDN_BASE}/{HIGHLIGHT_JS_VERSION}/styles/{theme}.min.css"
-            links.append(f'<link rel="stylesheet" href="{css_url}">')
+            theme_css_file = highlight_js_dir / f"{theme}.css"
 
-        return "\n        ".join(links)
+            if not theme_css_file.exists():
+                # CSSファイルが存在しない場合はフォールバック
+                self.logger.warning(f"Highlight.js theme '{theme}' not found. Falling back to default.")
+                theme_css_file = highlight_js_dir / "atom-one-dark.css"
+
+            try:
+                css = theme_css_file.read_text(encoding="utf-8")
+
+                # スコープを限定する。`.hljs` クラスを `mono-code-block[theme="..."] .hljs` などに置き換える
+                # 先頭が `.hljs` で始まるセレクタを置き換える
+                import re
+                if theme == "atom-one-dark":
+                    # デフォルトテーマのスコープ
+                    css = re.sub(r'(?<![-a-zA-Z0-9])\.hljs', r'mono-code-block:not([theme]) .hljs, mono-code-block[theme="atom-one-dark"] .hljs', css)
+                else:
+                    css = re.sub(r'(?<![-a-zA-Z0-9])\.hljs', rf'mono-code-block[theme="{theme}"] .hljs', css)
+
+                css_blocks.append(css)
+            except Exception as e:
+                self.logger.warning(f"Error loading Highlight.js theme '{theme}': {e}")
+
+        if not css_blocks:
+            return ""
+
+        combined_css = "\n".join(css_blocks)
+        return f'<style id="mono-highlightjs-css">\n{combined_css}\n</style>'
 
     def _load_lazy_load_script(self) -> str:
         """lazy_load.js ファイルを読み込んで返す"""
@@ -257,23 +286,12 @@ class HTMLDocumentBuilder:
             return ""
 
     def _load_highlight_js_script(self) -> str:
-        """Highlight.js スクリプトタグを構築"""
-        from src.constants import HIGHLIGHT_JS_CDN_JS
-        return f'<script src="{HIGHLIGHT_JS_CDN_JS}"></script>'
+        """Highlight.js スクリプトタグは使用しないため空文字を返す"""
+        return ""
 
     def _build_mathjax_script(self) -> str:
-        """MathJax 設定とスクリプトタグを構築"""
-        from src.constants import MATHJAX_CDN_JS
-        return f"""
-<script>
-window.MathJax = {{
-  tex: {{
-    inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
-    displayMath: [['$$', '$$'], ['\\\\[', '\\\\]']]
-  }}
-}};
-</script>
-<script src="{MATHJAX_CDN_JS}"></script>"""
+        """MathJax は事前レンダリングされるため空文字を返す"""
+        return ""
 
     def _get_used_component_dirs(self, found_mono_tags: set, should_enable_export: bool) -> List[Path]:
         """使用されているコンポーネントのディレクトリ一覧を取得する"""
