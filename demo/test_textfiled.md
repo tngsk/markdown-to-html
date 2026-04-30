@@ -1,5 +1,5 @@
 # テキストフィールドのテスト
 
-@[textfield: (text)]
+@[textfield: "(text)"]
 
-@[notebook: nb-1]
+@[notebook](id: "nb-1")
