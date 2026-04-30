@@ -1,6 +1,7 @@
 import os
 import subprocess
 import logging
+import html
 from pathlib import Path
 from markdown.inlinepatterns import InlineProcessor
 from markdown.extensions import Extension
@@ -32,13 +33,13 @@ class MathInlineProcessor(InlineProcessor):
             return result.stdout.strip()
         except subprocess.CalledProcessError as e:
             logger.error(f"MathJax CLI execution failed: {e.stderr}")
-            return f'<span class="mathjax-error">{math_content}</span>'
+            return f'<span class="mathjax-error">{html.escape(math_content)}</span>'
         except FileNotFoundError:
             logger.error("Node.js not found. Please ensure Node.js is installed.")
-            return f'<span class="mathjax-error">{math_content}</span>'
+            return f'<span class="mathjax-error">{html.escape(math_content)}</span>'
         except Exception as e:
             logger.error(f"An unexpected error occurred during MathJax rendering: {e}")
-            return f'<span class="mathjax-error">{math_content}</span>'
+            return f'<span class="mathjax-error">{html.escape(math_content)}</span>'
 
     def handleMatch(self, m, data):
         el = etree.Element('span')

@@ -225,11 +225,16 @@ class HTMLDocumentBuilder:
         return html_content
 
     def _build_highlight_js_link(self, html_body: str) -> str:
-        """Pygments CSSスタイルタグを構築"""
-        from pygments.formatters import HtmlFormatter
+        """Highlight.js のCSSスタイルタグを構築（オフライン・ビルド時）"""
+        from src.constants import TEMPLATES_DIR
+        import re
+        # node_modules から highlight.js のスタイルを読み込む
+        # constants.py doesn't have PROJECT_ROOT, but TEMPLATES_DIR is PROJECT_ROOT / "src" / "templates"
+        project_root = TEMPLATES_DIR.parent.parent
+        highlight_js_dir = project_root / "node_modules" / "highlight.js" / "styles"
 
         # すべてのテーマを抽出
-        themes = set(["monokai"]) # default (equivalent to atom-one-dark)
+        themes = set(["atom-one-dark"]) # デフォルトテーマ
 
         # html_bodyからtheme属性をすべて検索
         matches = re.finditer(r'<mono-code-block[^>]*theme="([^"]*)"', html_body)
@@ -239,28 +244,34 @@ class HTMLDocumentBuilder:
 
         css_blocks = []
         for theme in themes:
+            theme_css_file = highlight_js_dir / f"{theme}.css"
+
+            if not theme_css_file.exists():
+                # CSSファイルが存在しない場合はフォールバック
+                self.logger.warning(f"Highlight.js theme '{theme}' not found. Falling back to default.")
+                theme_css_file = highlight_js_dir / "atom-one-dark.css"
+
             try:
-                formatter = HtmlFormatter(style=theme)
-            except Exception:
-                # フォールバック
-                formatter = HtmlFormatter(style="monokai")
+                css = theme_css_file.read_text(encoding="utf-8")
 
-            css = formatter.get_style_defs('.highlight')
+                # スコープを限定する。`.hljs` クラスを `mono-code-block[theme="..."] .hljs` などに置き換える
+                # 先頭が `.hljs` で始まるセレクタを置き換える
+                import re
+                if theme == "atom-one-dark":
+                    # デフォルトテーマのスコープ
+                    css = re.sub(r'(?<![-a-zA-Z0-9])\.hljs', r'mono-code-block:not([theme]) .hljs, mono-code-block[theme="atom-one-dark"] .hljs', css)
+                else:
+                    css = re.sub(r'(?<![-a-zA-Z0-9])\.hljs', rf'mono-code-block[theme="{theme}"] .hljs', css)
 
-            # 各テーマのスタイルを適用するために、親のmono-code-blockに[theme="..."]属性セレクタを使用
-            if theme == "monokai":
-                # デフォルトテーマのスコープ
-                css = css.replace('.highlight', 'mono-code-block:not([theme]) code, mono-code-block[theme="monokai"] code')
-            else:
-                css = css.replace('.highlight', f'mono-code-block[theme="{theme}"] code')
-
-            css_blocks.append(css)
+                css_blocks.append(css)
+            except Exception as e:
+                self.logger.warning(f"Error loading Highlight.js theme '{theme}': {e}")
 
         if not css_blocks:
             return ""
 
         combined_css = "\n".join(css_blocks)
-        return f'<style id="mono-pygments-css">\n{combined_css}\n</style>'
+        return f'<style id="mono-highlightjs-css">\n{combined_css}\n</style>'
 
     def _load_lazy_load_script(self) -> str:
         """lazy_load.js ファイルを読み込んで返す"""

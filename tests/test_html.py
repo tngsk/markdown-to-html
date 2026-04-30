@@ -143,14 +143,14 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
     def test_build_highlight_js_link(self):
         html_body = '<mono-code-block theme="github"></mono-code-block>'
         result = self.builder._build_highlight_js_link(html_body)
-        self.assertIn('<style id="mono-pygments-css">', result)
-        self.assertIn('mono-code-block:not([theme]) code, mono-code-block[theme="monokai"] code', result)
+        self.assertIn('<style id="mono-highlightjs-css">', result)
+        self.assertIn('mono-code-block[theme="github"] .hljs', result)
 
         # Test default
         html_body_default = '<mono-code-block></mono-code-block>'
         result_default = self.builder._build_highlight_js_link(html_body_default)
-        self.assertIn('<style id="mono-pygments-css">', result_default)
-        self.assertIn('mono-code-block:not([theme]) code, mono-code-block[theme="monokai"] code', result_default)
+        self.assertIn('<style id="mono-highlightjs-css">', result_default)
+        self.assertIn('mono-code-block:not([theme]) .hljs', result_default)
 
     def test_load_highlight_js_script(self):
         result = self.builder._load_highlight_js_script()

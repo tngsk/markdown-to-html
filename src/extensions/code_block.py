@@ -1,11 +1,13 @@
 import re
 import html
+import json
+import subprocess
+from pathlib import Path
 from markdown.postprocessors import Postprocessor
 from markdown.extensions import Extension
-from pygments import highlight
-from pygments.lexers import get_lexer_by_name, guess_lexer
-from pygments.lexers.special import TextLexer
-from pygments.formatters import HtmlFormatter
+import logging
+
+logger = logging.getLogger(__name__)
 
 class CodeBlockPostprocessor(Postprocessor):
     def run(self, text):
@@ -17,7 +19,7 @@ class CodeBlockPostprocessor(Postprocessor):
             original_block = match.group(1)
             code_content = match.group(2)
 
-            # Markdown escapes the HTML content within the code block, so unescape it before Pygments
+            # Markdown escapes the HTML content within the code block, so unescape it before sending to highlight.js
             raw_code = html.unescape(code_content)
 
             # Extract language
@@ -32,27 +34,11 @@ class CodeBlockPostprocessor(Postprocessor):
             if theme_match:
                 theme = theme_match.group(1)
 
-            # Apply Pygments
-            lexer = None
-            if language:
-                try:
-                    lexer = get_lexer_by_name(language)
-                except Exception:
-                    pass
-
-            if lexer is None:
-                lexer = TextLexer()
-
-            # Format the output without wrapping in full div/pre wrappers if possible, but HtmlFormatter
-            # normally wraps in `<div class="highlight"><pre>...</pre></div>`. We use `nowrap=True`
-            # to only get the highlighted `<span>` tags, and then wrap it manually to retain original
-            # structure and theme attributes.
-            formatter = HtmlFormatter(nowrap=True)
-            highlighted_code = highlight(raw_code, lexer, formatter)
+            # Call Node.js script to highlight code
+            highlighted_code = self._highlight_code(raw_code, language)
 
             # Manually reconstruct the inner <code> content, maintaining the <pre><code> structure
             # to be compatible with MonoCodeBlock's Light DOM strategy.
-            # Pygments formatter adds a trailing newline, remove it if the original didn't have an extra one.
             highlighted_block = f'<pre><code class="language-{language} hljs">{highlighted_code}</code></pre>'
 
             theme_attr = f' theme="{theme}"' if theme else ""
@@ -60,11 +46,35 @@ class CodeBlockPostprocessor(Postprocessor):
 
         return pattern.sub(replacer, text)
 
+    def _highlight_code(self, code: str, language: str) -> str:
+        """Call Node.js script to highlight the code."""
+        script_path = Path(__file__).parent / "highlight_renderer.js"
+
+        # If node script doesn't exist, fallback to raw code
+        if not script_path.exists():
+            logger.warning("highlight_renderer.js not found. Falling back to unhighlighted code.")
+            return html.escape(code)
+
+        try:
+            input_data = json.dumps({"code": code, "language": language})
+
+            result = subprocess.run(
+                ["node", str(script_path)],
+                input=input_data,
+                text=True,
+                capture_output=True,
+                check=True
+            )
+            return result.stdout.strip()
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Highlight.js rendering failed: {e.stderr}")
+            return html.escape(code)
+        except Exception as e:
+            logger.error(f"Highlight.js process execution error: {e}")
+            return html.escape(code)
+
 class CodeBlockExtension(Extension):
     def extendMarkdown(self, md):
-        # markdown's RawHtmlPostprocessor has priority 30
-        # By setting priority to 10, we ensure this runs AFTER raw HTML blocks (like fenced code)
-        # are restored from their stash placeholders.
         md.postprocessors.register(CodeBlockPostprocessor(md), 'code_block', 10)
 
 def makeExtension(**kwargs):

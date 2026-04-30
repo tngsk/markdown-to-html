@@ -12,11 +12,12 @@ class TestCodeBlockExtension(unittest.TestCase):
         html = self.md.convert(text)
         self.assertIn('<mono-code-block language="python">', html)
         self.assertIn('<pre><code class="language-python hljs">', html)
-        self.assertIn('<span class="nb">print</span>', html)
+        self.assertIn('<span class="hljs-built_in">print</span>', html)
 
     def test_enhance_code_blocks_no_lang(self):
         text = "```\nprint(\"hello\")\n```"
         html = self.md.convert(text)
         self.assertIn('<mono-code-block language="">', html)
         self.assertIn('<pre><code class="language- hljs">', html)
-        self.assertIn('print(&quot;hello&quot;)', html)
+        # highlight.js auto-detects and adds classes even when no lang is provided
+        self.assertIn('<span class="hljs-', html)
