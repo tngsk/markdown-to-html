@@ -225,11 +225,11 @@ class HTMLDocumentBuilder:
         return html_content
 
     def _build_highlight_js_link(self, html_body: str) -> str:
-        """Highlight.js CSSリンクタグを構築"""
-        from src.constants import HIGHLIGHT_JS_CDN_BASE, HIGHLIGHT_JS_VERSION
+        """Pygments CSSスタイルタグを構築"""
+        from pygments.formatters import HtmlFormatter
 
         # すべてのテーマを抽出
-        themes = set(["atom-one-dark"]) # default
+        themes = set(["monokai"]) # default (equivalent to atom-one-dark)
 
         # html_bodyからtheme属性をすべて検索
         matches = re.finditer(r'<mono-code-block[^>]*theme="([^"]*)"', html_body)
@@ -237,12 +237,30 @@ class HTMLDocumentBuilder:
             if match.group(1):
                 themes.add(match.group(1))
 
-        links = []
+        css_blocks = []
         for theme in themes:
-            css_url = f"{HIGHLIGHT_JS_CDN_BASE}/{HIGHLIGHT_JS_VERSION}/styles/{theme}.min.css"
-            links.append(f'<link rel="stylesheet" href="{css_url}">')
+            try:
+                formatter = HtmlFormatter(style=theme)
+            except Exception:
+                # フォールバック
+                formatter = HtmlFormatter(style="monokai")
 
-        return "\n        ".join(links)
+            css = formatter.get_style_defs('.highlight')
+
+            # 各テーマのスタイルを適用するために、親のmono-code-blockに[theme="..."]属性セレクタを使用
+            if theme == "monokai":
+                # デフォルトテーマのスコープ
+                css = css.replace('.highlight', 'mono-code-block:not([theme]) code, mono-code-block[theme="monokai"] code')
+            else:
+                css = css.replace('.highlight', f'mono-code-block[theme="{theme}"] code')
+
+            css_blocks.append(css)
+
+        if not css_blocks:
+            return ""
+
+        combined_css = "\n".join(css_blocks)
+        return f'<style id="mono-pygments-css">\n{combined_css}\n</style>'
 
     def _load_lazy_load_script(self) -> str:
         """lazy_load.js ファイルを読み込んで返す"""
@@ -257,23 +275,12 @@ class HTMLDocumentBuilder:
             return ""
 
     def _load_highlight_js_script(self) -> str:
-        """Highlight.js スクリプトタグを構築"""
-        from src.constants import HIGHLIGHT_JS_CDN_JS
-        return f'<script src="{HIGHLIGHT_JS_CDN_JS}"></script>'
+        """Highlight.js スクリプトタグは使用しないため空文字を返す"""
+        return ""
 
     def _build_mathjax_script(self) -> str:
-        """MathJax 設定とスクリプトタグを構築"""
-        from src.constants import MATHJAX_CDN_JS
-        return f"""
-<script>
-window.MathJax = {{
-  tex: {{
-    inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
-    displayMath: [['$$', '$$'], ['\\\\[', '\\\\]']]
-  }}
-}};
-</script>
-<script src="{MATHJAX_CDN_JS}"></script>"""
+        """MathJax は事前レンダリングされるため空文字を返す"""
+        return ""
 
     def _get_used_component_dirs(self, found_mono_tags: set, should_enable_export: bool) -> List[Path]:
         """使用されているコンポーネントのディレクトリ一覧を取得する"""

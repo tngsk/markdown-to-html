@@ -5,7 +5,8 @@ from src.extensions.math import MathExtension
 def test_math_inline():
     text = "Here is an inline math $x = y^2$ equation."
     html = markdown(text, extensions=[MathExtension()])
-    assert '<span class="mono-math inline">\\(x = y^2\\)</span>' in html
+    assert '<span class="mono-math inline">' in html
+    assert '<svg' in html
     assert "Here is an inline math" in html
 
 def test_math_display():
@@ -18,7 +19,8 @@ $$
 End.
 """
     html = markdown(text, extensions=[MathExtension()])
-    assert '<span class="mono-math display">\\[\n\\sum_{i=1}^n i = \\frac{n(n+1)}{2}\n\\]</span>' in html
+    assert '<span class="mono-math display">' in html
+    assert '<svg' in html
     assert "Here is a block math:" in html
     assert "End." in html
 
@@ -39,4 +41,5 @@ $$
 """
     html = markdown_processor.convert_markdown_to_html(text)
     assert '<br' not in html
-    assert '<span class="mono-math display">\\[\na\nb\n\\]</span>' in html
+    assert '<span class="mono-math display">' in html
+    assert '<svg' in html
