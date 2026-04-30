@@ -141,9 +141,19 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         self.assertEqual(result3, html_input)
 
     def test_build_highlight_js_link(self):
-        from src.constants import HIGHLIGHT_JS_CDN_CSS
-        result = self.builder._build_highlight_js_link()
-        self.assertEqual(result, f'<link rel="stylesheet" href="{HIGHLIGHT_JS_CDN_CSS}">')
+        from src.constants import HIGHLIGHT_JS_CDN_BASE, HIGHLIGHT_JS_VERSION
+        html_body = '<mono-code-block theme="github"></mono-code-block>'
+        result = self.builder._build_highlight_js_link(html_body)
+        expected_url1 = f"{HIGHLIGHT_JS_CDN_BASE}/{HIGHLIGHT_JS_VERSION}/styles/atom-one-dark.min.css"
+        expected_url2 = f"{HIGHLIGHT_JS_CDN_BASE}/{HIGHLIGHT_JS_VERSION}/styles/github.min.css"
+        self.assertIn(f'<link rel="stylesheet" href="{expected_url1}">', result)
+        self.assertIn(f'<link rel="stylesheet" href="{expected_url2}">', result)
+
+        # Test default
+        html_body_default = '<mono-code-block></mono-code-block>'
+        result_default = self.builder._build_highlight_js_link(html_body_default)
+        expected_url_default = f"{HIGHLIGHT_JS_CDN_BASE}/{HIGHLIGHT_JS_VERSION}/styles/atom-one-dark.min.css"
+        self.assertEqual(result_default, f'<link rel="stylesheet" href="{expected_url_default}">')
 
     def test_load_highlight_js_script(self):
         from src.constants import HIGHLIGHT_JS_CDN_JS
