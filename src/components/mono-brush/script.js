@@ -184,7 +184,7 @@ class MonoBrush extends MonoBaseElement {
 
     this.lastX = x;
     this.lastY = y;
-    this.hue = (this.hue + 0.1) % 360; // Slowly cycle hue
+    this.hue = (this.hue + 0.25) % 360; // Slowly cycle hue
   }
 }
 

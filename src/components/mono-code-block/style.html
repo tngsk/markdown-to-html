@@ -1,0 +1,1481 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: https://colab.research.google.com; connect-src 'self' https://cdn.jsdelivr.net http://localhost:8000; object-src 'none'; font-src 'self' data: https://fonts.gstatic.com; media-src 'self' data: https://actions.google.com;">
+        <meta name="mono-version" data-mono-version="0.1.0">
+<meta name="mono-api-url" content="http://localhost:8000">
+        <title>Document</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"> <style>
+:root {
+  --color-primary: #3b82f6;
+  --color-primary-content: #ffffff;
+  --color-primary-light: #eff6ff;
+  --color-primary-dark: #2563eb;
+  --color-secondary: #8b5cf6;
+  --color-secondary-content: #ffffff;
+  --color-accent: #f43f5e;
+  --color-accent-content: #ffffff;
+  --color-base-100: #ffffff;
+  --color-base-200: #f3f4f6;
+  --color-base-300: #e5e7eb;
+  --color-base-content: #111827;
+  --color-base-content-muted: #4b5563;
+  --color-info: #0ea5e9;
+  --color-info-content: #ffffff;
+  --color-success: #10b981;
+  --color-success-content: #ffffff;
+  --color-warning: #f59e0b;
+  --color-warning-content: #ffffff;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+  --border-color: #d1d5db;
+}
+
+[data-theme="dark"] {
+  --color-primary: #3b82f6;
+  --color-primary-content: #ffffff;
+  --color-primary-light: #1e3a8a;
+  --color-primary-dark: #60a5fa;
+  --color-secondary: #8b5cf6;
+  --color-secondary-content: #ffffff;
+  --color-accent: #f43f5e;
+  --color-accent-content: #ffffff;
+  --color-base-100: #1f2937;
+  --color-base-200: #111827;
+  --color-base-300: #374151;
+  --color-base-content: #f9fafb;
+  --color-base-content-muted: #9ca3af;
+  --color-info: #38bdf8;
+  --color-info-content: #111827;
+  --color-success: #34d399;
+  --color-success-content: #111827;
+  --color-warning: #fbbf24;
+  --color-warning-content: #111827;
+  --color-error: #f87171;
+  --color-error-content: #111827;
+  --border-color: #4b5563;
+}
+
+[data-theme="corporate"] {
+  --color-primary: #4b6bfb;
+  --color-primary-content: #ffffff;
+  --color-primary-light: #e0e7ff;
+  --color-primary-dark: #3730a3;
+  --color-secondary: #7b92b2;
+  --color-secondary-content: #ffffff;
+  --color-accent: #67cba0;
+  --color-accent-content: #ffffff;
+  --color-base-100: #ffffff;
+  --color-base-200: #f2f2f2;
+  --color-base-300: #e5e6e6;
+  --color-base-content: #1f2937;
+  --color-base-content-muted: #4b5563;
+  --color-info: #3abff8;
+  --color-info-content: #ffffff;
+  --color-success: #36d399;
+  --color-success-content: #ffffff;
+  --color-warning: #fbbd23;
+  --color-warning-content: #ffffff;
+  --color-error: #f87272;
+  --color-error-content: #ffffff;
+  --border-color: #e5e7eb;
+}
+
+/* ベース -------------------------------------------------- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root {
+    --font-color: var(--color-base-content, #111827);
+    --font-color-light: var(--color-base-content-muted, #374151);
+    --body-padding-y: 5rem;
+    --z-index-overlay: 999;
+    --z-index-modal: 1000;
+
+    /* Padding variables */
+    --padding-sm: 0.5rem;
+    --padding-md: 1.5rem;
+    --padding-lg: 3rem;
+
+    /* Spacing variables */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 2rem;
+    --spacing-lg: 3rem;
+    --spacing-xl: 4rem;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    padding-block: var(--body-padding-y);
+    width: 100%;
+    font-family:
+        -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
+        "Segoe UI", "Yu Gothic Medium", "Hiragino Kaku Gothic ProN",
+        "Noto Sans JP", Meiryo, sans-serif;
+    line-height: 1.9;
+    color: var(--font-color);
+    background: var(--color-base-200, #f3f4f6);
+
+    /* CSS Grid Layout */
+    display: grid;
+    grid-template-columns: minmax(1rem, 1fr) minmax(auto, 900px) minmax(
+            1rem,
+            1fr
+        );
+}
+
+body > * {
+    grid-column: var(--component-grid-column, 2);
+}
+
+/* The Stack - https://every-layout.dev/layouts/stack/ */
+body > * + * {
+    margin-top: var(--spacing-md);
+}
+
+/* 共通コンポーネントパディング属性 */
+[padding="sm"] { padding: var(--padding-sm) !important; }
+[padding="md"] { padding: var(--padding-md) !important; }
+[padding="lg"] { padding: var(--padding-lg) !important; }
+
+[padding-x="sm"] { padding-left: var(--padding-sm) !important; padding-right: var(--padding-sm) !important; }
+[padding-x="md"] { padding-left: var(--padding-md) !important; padding-right: var(--padding-md) !important; }
+[padding-x="lg"] { padding-left: var(--padding-lg) !important; padding-right: var(--padding-lg) !important; }
+
+[padding-y="sm"] { padding-top: var(--padding-sm) !important; padding-bottom: var(--padding-sm) !important; }
+[padding-y="md"] { padding-top: var(--padding-md) !important; padding-bottom: var(--padding-md) !important; }
+[padding-y="lg"] { padding-top: var(--padding-lg) !important; padding-bottom: var(--padding-lg) !important; }
+
+/*
+  Specific exceptional spacing for Mono Section.
+  Since sections are often full-bleed and used to connect different areas,
+  we eliminate the margin between them.
+*/
+mono-section + mono-section {
+    margin-top: 0;
+}
+
+hr {
+    width: 100%;
+    max-width: 10%;
+    margin-top: var(--body-padding-y);
+    margin-bottom: var(--body-padding-y);
+    margin-left: auto;
+    margin-right: auto;
+    border: none;
+    border-top: 2px dotted var(--border-color, #ddd);
+}
+
+/* 見出し -------------------------------------------------- */
+h1,
+h2,
+h3,
+h4 {
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--font-color);
+    letter-spacing: 0.08em;
+    margin: 0;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+    padding-bottom: 0.35rem;
+}
+
+h3 {
+    font-size: 1.2rem;
+    color: var(--font-color-light);
+}
+
+/* Exceptional spacing for headings following other elements */
+* + h1,
+* + h2 {
+    margin-top: var(--spacing-xl);
+}
+
+* + h3,
+* + h4 {
+    margin-top: var(--spacing-lg);
+}
+
+/* 段落・テキスト ------------------------------------------ */
+p + p {
+    margin-top: var(--spacing-sm);
+}
+
+strong {
+    font-weight: 600;
+}
+
+em {
+    font-style: normal;
+    position: relative;
+}
+
+em::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.15em;
+    width: 100%;
+    height: 0.2em;
+    background: rgba(129, 140, 248, 0.25);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+/* リンク -------------------------------------------------- */
+a {
+    color: var(--color-primary, #2563eb);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-primary-light, rgba(37, 99, 235, 0.35));
+    padding-bottom: 0.05em;
+    transition:
+        color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+a:hover {
+    color: var(--color-primary-dark, #1d4ed8);
+    border-bottom-color: var(--color-primary, rgba(37, 99, 235, 0.7));
+}
+
+/* リスト -------------------------------------------------- */
+ul,
+ol {
+    padding-left: 1.7rem;
+}
+
+li + li {
+    margin-top: var(--spacing-sm);
+}
+
+/* コード -------------------------------------------------- */
+code {
+    font-family:
+        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+    background: var(--color-base-100, #fff);
+    padding: 0.5rem;
+}
+
+pre {
+    padding: 1.2rem;
+    background: #020617;
+    color: #e5e7eb;
+    overflow-x: auto;
+    line-height: 1.7;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+/* 引用 ---------------------------------------------------- */
+blockquote {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+    border-left: 4px solid var(--border-color, #9ca3af);
+    background: var(--color-base-100, #f9fafb);
+    color: var(--color-base-content-muted, #4b5563);
+}
+
+/* テーブル ------------------------------------------------ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color, #666);
+}
+
+th {
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid var(--color-base-content, #222);
+}
+
+/* ============================================================================ */
+
+.nowrap {
+    white-space: nowrap;
+    display: inline;
+}
+
+/* レイアウト ---------------------------------------------- */
+.column {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* Colab -------------------------------------------------- */
+.colab-badge {
+    vertical-align: middle;
+    margin-right: 6px;
+    height: 20px;
+    width: auto;
+    border-radius: 0;
+}
+
+.colab-link {
+    text-decoration: none;
+}
+
+/* テキストサイズバリエーション ------------------------------------ */
+.text-small {
+    font-size: 0.5rem;
+}
+
+.text-large {
+    font-size: 1.5rem;
+}
+
+.text-xlarge {
+    font-size: 3rem;
+}
+
+/* Print specific global adjustments */
+@media print {
+    html,
+    body {
+        /* Print background colors */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
+
+</style> 
+<style id="mono-components-content-css">
+/* Style the projected/slotted <pre> and <code> content */
+mono-code-block pre {
+    margin: 0;
+    padding: var(--padding-md);
+    overflow-x: auto;
+    background: transparent;
+    color: var(--mono-code-text, var(--color-base-content));
+    line-height: 1.5;
+}
+
+mono-code-block code {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+/* Highlight.js theme overrides - matching original user design exactly */
+mono-code-block .hljs {
+    background: transparent;
+    color: #333;
+}
+
+mono-code-block .hljs-attr {
+    color: #e06c75;
+}
+
+mono-code-block .hljs-string {
+    color: #98c379;
+}
+
+mono-code-block .hljs-number {
+    color: #d19a66;
+}
+
+mono-code-block .hljs-literal {
+    color: #56b6c2;
+}
+
+mono-code-block .hljs-title {
+    color: #61afef;
+}
+
+mono-code-block .hljs-params {
+    color: #abb2bf;
+}
+
+mono-code-block .hljs-comment {
+    color: #999;
+}
+
+mono-code-block .hljs-keyword {
+    color: #c678dd;
+}
+
+mono-code-block .hljs-function {
+    color: #61afef;
+}
+
+mono-code-block .hljs-built_in {
+    color: #e06c75;
+}
+
+/* Scrollbar styling for the code block */
+mono-code-block pre::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+mono-code-block pre::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+mono-code-block pre::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+mono-code-block pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+</style>
+    </head>
+    <body>
+        <p>/<em> Web Components CSS for mono-code-block </em>/</p>
+<p>:host {<br />
+    display: block;<br />
+    margin: 0;<br />
+    font-family: var(--mono-font-family, system-ui, -apple-system, sans-serif);<br />
+}</p>
+<p>.code-block-wrapper {<br />
+    position: relative;<br />
+    background: var(--mono-code-bg, var(--color-base-200));<br />
+    border-radius: 8px;<br />
+    overflow: hidden;<br />
+    /<em> Optional: shadow and border can be provided via theme variables,<br />
+       but default to the original minimal look without shadow </em>/<br />
+    border: 1px solid var(--mono-border-color, var(--border-color));<br />
+}</p>
+<p>.code-block-header {<br />
+    display: flex;<br />
+    justify-content: space-between;<br />
+    align-items: center;<br />
+    padding: var(--padding-sm) var(--padding-md);<br />
+    background: var(--mono-code-header-bg, var(--color-base-200));<br />
+    border-bottom: 1px solid var(--mono-code-header-border, var(--border-color));<br />
+    font-size: 0.85em;<br />
+    color: var(--mono-code-lang-color, var(--color-base-content));<br />
+}</p>
+<p>.code-language {<br />
+    font-weight: 600;<br />
+    letter-spacing: 0.05em;<br />
+    /<em> The user explicitly wanted capitalization and specific font size maintained here </em>/<br />
+    text-transform: capitalize;<br />
+}</p>
+<p>.copy-button {<br />
+    padding: 0.4em 0.8em;<br />
+    background: var(--mono-code-btn-bg, var(--color-base-100));<br />
+    color: var(--mono-code-btn-color, var(--color-primary));<br />
+    border: 1px solid var(--mono-code-btn-border, var(--border-color));<br />
+    border-radius: 4px;<br />
+    cursor: pointer;<br />
+    font-size: 0.9em;<br />
+    transition: all 0.2s ease;<br />
+    font-family: inherit;<br />
+    display: inline-flex;<br />
+    align-items: center;<br />
+    gap: 0.4em;<br />
+}</p>
+<p>.copy-button:hover {<br />
+    background: var(--mono-code-btn-hover-bg, var(--color-primary));<br />
+    color: var(--mono-code-btn-hover-color, var(--color-primary-content));<br />
+    border-color: var(--mono-code-btn-hover-border, var(--color-primary));<br />
+}</p>
+<p>.copy-button:active {<br />
+    transform: scale(0.98);<br />
+}</p>
+<p>.copy-button.copied {<br />
+    background: var(--mono-success-color, var(--color-success));<br />
+    color: var(--mono-success-text, var(--color-success-content));<br />
+    border-color: var(--mono-success-color, var(--color-success));<br />
+}</p>
+<p>/<em> Style the projected/slotted <pre> and <code> content </em>/<br />
+@layer overrides {<br />
+    .code-content-slot pre {<br />
+        margin: 0;<br />
+        padding: var(--padding-md);<br />
+        overflow-x: auto;<br />
+        background: transparent;<br />
+        color: var(--mono-code-text, var(--color-base-content));<br />
+        line-height: 1.5;<br />
+    }</p>
+<mono-code-block language="">
+<pre><code>.code-content-slot code {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.95em;
+    line-height: 1.5;
+}
+
+/* Highlight.js theme overrides - matching original user design exactly */
+.code-content-slot .hljs {
+    background: transparent;
+    color: #333;
+}
+
+.code-content-slot .hljs-attr {
+    color: #e06c75;
+}
+
+.code-content-slot .hljs-string {
+    color: #98c379;
+}
+
+.code-content-slot .hljs-number {
+    color: #d19a66;
+}
+
+.code-content-slot .hljs-literal {
+    color: #56b6c2;
+}
+
+.code-content-slot .hljs-title {
+    color: #61afef;
+}
+
+.code-content-slot .hljs-params {
+    color: #abb2bf;
+}
+
+.code-content-slot .hljs-comment {
+    color: #999;
+}
+
+.code-content-slot .hljs-keyword {
+    color: #c678dd;
+}
+
+.code-content-slot .hljs-function {
+    color: #61afef;
+}
+
+.code-content-slot .hljs-built_in {
+    color: #e06c75;
+}
+</code></pre>
+</mono-code-block>
+<p>}</p>
+<p>/<em> Scrollbar styling for the code block </em>/<br />
+.code-content-slot pre::-webkit-scrollbar {<br />
+    height: 8px;<br />
+    width: 8px;<br />
+}</p>
+<p>.code-content-slot pre::-webkit-scrollbar-track {<br />
+    background: rgba(0, 0, 0, 0.2);<br />
+}</p>
+<p>.code-content-slot pre::-webkit-scrollbar-thumb {<br />
+    background: rgba(255, 255, 255, 0.2);<br />
+    border-radius: 4px;<br />
+}</p>
+<p>.code-content-slot pre::-webkit-scrollbar-thumb:hover {<br />
+    background: rgba(255, 255, 255, 0.3);<br />
+}</p> <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script> <template id="mono-brush-template">
+    <style>:host {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: var(--z-index-modal, 1000);
+}
+
+#pointer {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    background-color: var(--color-error, rgba(255, 0, 0, 0.5));
+    border-radius: 50%;
+    transform: translate(-100%, -100%);
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;
+    opacity: 1;
+}
+
+#pointer.hidden {
+    opacity: 0;
+}
+
+#canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* By default, pass through */
+    transition: opacity 0.3s ease-out;
+    opacity: 1;
+}
+
+#canvas.hidden {
+    opacity: 0;
+}
+
+#canvas.drawing-mode {
+    pointer-events: auto; /* Intercept events when drawing */
+    cursor: crosshair;
+}
+
+/* Print specific styles */
+@media print {
+    .brush-container {
+        display: none !important;
+    }
+}
+</style>
+    <div id="pointer" class="hidden"></div>
+    <canvas id="canvas" class="hidden"></canvas>
+</template>
+
+
+<!-- Mono Web Component Template: mono-code-block -->
+<template id="mono-code-block-template">
+    <style>
+        /* CSS is injected dynamically by the Python builder */
+        /* Web Components CSS for mono-code-block */
+
+:host {
+    display: block;
+    margin: 0;
+    font-family: var(--mono-font-family, system-ui, -apple-system, sans-serif);
+}
+
+.code-block-wrapper {
+    position: relative;
+    background: var(--mono-code-bg, var(--color-base-200));
+    border-radius: 8px;
+    overflow: hidden;
+    /* Optional: shadow and border can be provided via theme variables,
+       but default to the original minimal look without shadow */
+    border: 1px solid var(--mono-border-color, var(--border-color));
+}
+
+.code-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--padding-sm) var(--padding-md);
+    background: var(--mono-code-header-bg, var(--color-base-200));
+    border-bottom: 1px solid var(--mono-code-header-border, var(--border-color));
+    font-size: 0.85em;
+    color: var(--mono-code-lang-color, var(--color-base-content));
+}
+
+.code-language {
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    /* The user explicitly wanted capitalization and specific font size maintained here */
+    text-transform: capitalize;
+}
+
+.copy-button {
+    padding: 0.4em 0.8em;
+    background: var(--mono-code-btn-bg, var(--color-base-100));
+    color: var(--mono-code-btn-color, var(--color-primary));
+    border: 1px solid var(--mono-code-btn-border, var(--border-color));
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+}
+
+.copy-button:hover {
+    background: var(--mono-code-btn-hover-bg, var(--color-primary));
+    color: var(--mono-code-btn-hover-color, var(--color-primary-content));
+    border-color: var(--mono-code-btn-hover-border, var(--color-primary));
+}
+
+.copy-button:active {
+    transform: scale(0.98);
+}
+
+.copy-button.copied {
+    background: var(--mono-success-color, var(--color-success));
+    color: var(--mono-success-text, var(--color-success-content));
+    border-color: var(--mono-success-color, var(--color-success));
+}
+
+/* Style the projected/slotted <pre> and <code> content */
+@layer overrides {
+    .code-content-slot pre {
+        margin: 0;
+        padding: var(--padding-md);
+        overflow-x: auto;
+        background: transparent;
+        color: var(--mono-code-text, var(--color-base-content));
+        line-height: 1.5;
+    }
+
+    .code-content-slot code {
+        font-family: "Courier New", Courier, monospace;
+        font-size: 0.95em;
+        line-height: 1.5;
+    }
+
+    /* Highlight.js theme overrides - matching original user design exactly */
+    .code-content-slot .hljs {
+        background: transparent;
+        color: #333;
+    }
+
+    .code-content-slot .hljs-attr {
+        color: #e06c75;
+    }
+
+    .code-content-slot .hljs-string {
+        color: #98c379;
+    }
+
+    .code-content-slot .hljs-number {
+        color: #d19a66;
+    }
+
+    .code-content-slot .hljs-literal {
+        color: #56b6c2;
+    }
+
+    .code-content-slot .hljs-title {
+        color: #61afef;
+    }
+
+    .code-content-slot .hljs-params {
+        color: #abb2bf;
+    }
+
+    .code-content-slot .hljs-comment {
+        color: #999;
+    }
+
+    .code-content-slot .hljs-keyword {
+        color: #c678dd;
+    }
+
+    .code-content-slot .hljs-function {
+        color: #61afef;
+    }
+
+    .code-content-slot .hljs-built_in {
+        color: #e06c75;
+    }
+}
+
+/* Scrollbar styling for the code block */
+.code-content-slot pre::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+.code-content-slot pre::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.code-content-slot pre::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.code-content-slot pre::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+    </style>
+    <div class="code-block-wrapper">
+        <div class="code-block-header">
+            <span class="code-language" data-ref="languageLabel">CODE</span>
+            <button class="copy-button" data-ref="copyButton" title="コードをコピー">📋 Copy</button>
+        </div>
+        <!-- Light DOM (the original <pre><code> from Markdown) will be slotted here -->
+        <div class="code-content-slot" data-ref="contentSlot"></div>
+    </div>
+</template>
+
+
+<template id="mono-sync-template">
+</template>
+<script>
+class MonoBaseElement extends HTMLElement {
+    constructor(options = { shadowMode: 'open' }) {
+        super();
+        this.refs = {};
+        this._isMounted = false; // 二重マウント防止用フラグ
+
+        if (options && options.shadowMode) {
+            this.attachShadow({ mode: options.shadowMode });
+        }
+    }
+
+    /**
+     * テンプレートをマウントし、data-ref要素をキャッシュする。
+     * @param {string} templateId
+     */
+    mountTemplate(templateId) {
+        if (this._isMounted) return;
+
+        const template = document.getElementById(templateId);
+        if (!template) {
+            console.error(`[Mono] Template #${templateId} not found.`);
+            return;
+        }
+
+        const root = this.shadowRoot || this;
+        root.appendChild(template.content.cloneNode(true));
+
+        // data-refのキャッシュ（セキュリティのためtextContent等の操作を想定）
+        root.querySelectorAll("[data-ref]").forEach((el) => {
+            this.refs[el.dataset.ref] = el;
+        });
+
+        this._isMounted = true;
+    }
+
+    /**
+     * Get the Mono version from the meta tag.
+     * @returns {string} The version string, or "unknown" if not found.
+     */
+    getMonoVersion() {
+        const meta = document.querySelector('meta[name="mono-version"]');
+        return meta ? meta.dataset.monoVersion || "unknown" : "unknown";
+    }
+
+    /**
+     * Save data to localStorage with a version wrapper.
+     * @param {string} key
+     * @param {any} data
+     * @throws {Error} if localStorage is not available or quota is exceeded
+     */
+    saveState(key, data) {
+        try {
+            const payload = {
+                _version: this.getMonoVersion(),
+                data: data
+            };
+            localStorage.setItem(key, JSON.stringify(payload));
+        } catch (e) {
+            console.warn(`Failed to save state to localStorage for key: ${key}`, e);
+            throw e;
+        }
+    }
+
+    /**
+     * Load data from localStorage and unwrap the version wrapper.
+     * Checks if the data has a _version field. If not, assumes it's legacy data.
+     * @param {string} key
+     * @returns {any|null} The original data, or null if not found.
+     * @throws {Error} if localStorage is not available
+     */
+    loadState(key) {
+        try {
+            const raw = localStorage.getItem(key);
+            if (!raw) return null;
+
+            // mono-notebook, mono-textfield-input のテスト用キーなど、JSONでない場合への対応
+            let parsed;
+            try {
+                parsed = JSON.parse(raw);
+            } catch (e) {
+                return raw;
+            }
+
+            // Wrapper check
+            if (parsed && typeof parsed === 'object' && '_version' in parsed && 'data' in parsed) {
+                const currentVersion = this.getMonoVersion();
+                if (parsed._version !== currentVersion) {
+                    // Future implementation: Version migration logic here
+                    console.info(`[Mono] Version mismatch for ${key}: Data version ${parsed._version}, Current version ${currentVersion}. Proceeding to load.`);
+                }
+                return parsed.data;
+            }
+
+            // Legacy data (unwrapped)
+            return parsed;
+        } catch (e) {
+            console.warn(`Failed to read state from localStorage for key: ${key}`, e);
+            throw e;
+        }
+    }
+
+    /**
+     * Remove data from localStorage.
+     * @param {string} key
+     * @throws {Error} if localStorage is not available
+     */
+    removeState(key) {
+        try {
+            localStorage.removeItem(key);
+        } catch (e) {
+            console.warn(`Failed to remove state from localStorage for key: ${key}`, e);
+            throw e;
+        }
+    }
+}
+
+
+class MonoInteractiveElement extends MonoBaseElement {
+    constructor(options = { shadowMode: 'open' }) {
+        super(options);
+        this._authChangeListener = this._handleAuthChange.bind(this);
+    }
+
+    connectedCallback() {
+        // 1. Initial State Check (Race Condition Mitigation)
+        try {
+            const savedAuth = this.loadState("mono_auth");
+            if (savedAuth && savedAuth.user) {
+                this._triggerAuthStateChanged(savedAuth.user);
+            } else {
+                this._triggerAuthStateChanged(null);
+            }
+        } catch (e) {
+            console.warn("Failed to read auth state during initialization:", e);
+            this._triggerAuthStateChanged(null); // Fallback to guest
+        }
+
+        // 2. Listen for global auth events broadcasted by mono-account
+        window.addEventListener("mono-auth-changed", this._authChangeListener);
+    }
+
+    disconnectedCallback() {
+        window.removeEventListener("mono-auth-changed", this._authChangeListener);
+    }
+
+    _handleAuthChange(event) {
+        if (event && event.detail !== undefined) {
+            this._triggerAuthStateChanged(event.detail.user || null);
+        } else {
+            this._triggerAuthStateChanged(null);
+        }
+    }
+
+    _triggerAuthStateChanged(user) {
+        if (typeof this.onAuthStateChanged === "function") {
+            try {
+                this.onAuthStateChanged(user);
+            } catch (e) {
+                console.error("Error in onAuthStateChanged hook:", e);
+            }
+        }
+    }
+
+    // Child classes can override this method to handle auth state changes.
+    onAuthStateChanged(user) {
+        // Default behavior is to do nothing, wait for child implementation.
+    }
+}
+
+
+class MonoBrush extends MonoBaseElement {
+  constructor() {
+    super();
+    this.isDrawingModeActive = false;
+    this.isDrawing = false;
+    this.hue = 0;
+    this.lastX = 0;
+    this.lastY = 0;
+    this.animationFrameId = null;
+    this.resizeTimeout = null;
+  }
+
+  connectedCallback() {
+    super.mountTemplate("mono-brush-template");
+    this.setupElements();
+    this.setupEventListeners();
+    this.resizeCanvas();
+  }
+
+  disconnectedCallback() {
+    this.removeEventListeners();
+  }
+
+  setupElements() {
+    this.pointer = this.shadowRoot.getElementById("pointer");
+    this.canvas = this.shadowRoot.getElementById("canvas");
+    this.ctx = this.canvas.getContext("2d");
+  }
+
+  setupEventListeners() {
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
+    this.handleResize = this.handleResize.bind(this);
+
+    this.handleBlur = this.handleBlur.bind(this);
+
+    document.addEventListener("keydown", this.handleKeyDown);
+    document.addEventListener("keyup", this.handleKeyUp);
+    document.addEventListener("mousemove", this.handleMouseMove, {
+      passive: false,
+    });
+
+    // Canvas events for drawing
+    this.canvas.addEventListener("mousedown", this.handleMouseDown);
+    this.canvas.addEventListener("mousemove", this.handleMouseMove);
+    this.canvas.addEventListener("mouseup", this.handleMouseUp);
+    this.canvas.addEventListener("mouseout", this.handleMouseUp);
+
+    // Touch support
+    this.canvas.addEventListener(
+      "touchstart",
+      this.handleTouchStart.bind(this),
+      { passive: false },
+    );
+    this.canvas.addEventListener("touchmove", this.handleTouchMove.bind(this), {
+      passive: false,
+    });
+    this.canvas.addEventListener("touchend", this.handleMouseUp);
+
+    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("blur", this.handleBlur);
+  }
+
+  removeEventListeners() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+    document.removeEventListener("keyup", this.handleKeyUp);
+    document.removeEventListener("mousemove", this.handleMouseMove);
+    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("blur", this.handleBlur);
+  }
+
+  handleBlur() {
+    this.isDrawingModeActive = false;
+    this.updateMode();
+  }
+
+  handleResize() {
+    // Debounce resize
+    clearTimeout(this.resizeTimeout);
+    this.resizeTimeout = setTimeout(() => {
+      this.resizeCanvas();
+    }, 200);
+  }
+
+  resizeCanvas() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+  }
+
+  updateMode() {
+    const inDrawingMode = this.isDrawingModeActive;
+
+    // Pointer mode is disabled
+    this.pointer.classList.add("hidden");
+
+    if (inDrawingMode) {
+      this.canvas.classList.add("drawing-mode");
+      this.canvas.classList.remove("hidden");
+    } else {
+      this.canvas.classList.remove("drawing-mode");
+      this.isDrawing = false;
+
+      // Fade out and clear canvas if we were drawing
+      if (!this.canvas.classList.contains("hidden")) {
+        this.canvas.classList.add("hidden");
+        // Wait for fade out animation before clearing
+        setTimeout(() => {
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }, 300);
+      }
+    }
+  }
+
+  handleKeyDown(e) {
+    if (e.key === "CapsLock" || e.code === "CapsLock") {
+      this.isDrawingModeActive = !this.isDrawingModeActive;
+      this.updateMode();
+    }
+  }
+
+  handleKeyUp(e) {
+    // No-op for now, as drawing mode is toggled on keydown
+  }
+
+  updatePointerPosition(x, y) {
+    // Pointer mode is disabled, so we don't need to update pointer position
+  }
+
+  handleMouseMove(e) {
+    // Handle drawing
+    if (this.isDrawing && this.isDrawingModeActive) {
+      e.preventDefault(); // Prevent text selection/scrolling while drawing
+      this.draw(e.clientX, e.clientY);
+    }
+  }
+
+  handleMouseDown(e) {
+    if (this.isDrawingModeActive) {
+      this.isDrawing = true;
+      this.lastX = e.clientX;
+      this.lastY = e.clientY;
+      this.draw(e.clientX, e.clientY); // Draw a dot
+    }
+  }
+
+  handleMouseUp() {
+    this.isDrawing = false;
+  }
+
+  handleTouchStart(e) {
+    if (this.isDrawingModeActive) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      this.handleMouseDown({ clientX: touch.clientX, clientY: touch.clientY });
+    }
+  }
+
+  handleTouchMove(e) {
+    if (this.isDrawing && this.isDrawingModeActive) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      this.handleMouseMove({
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        preventDefault: () => {},
+      });
+    }
+  }
+
+  draw(x, y) {
+    if (!this.isDrawing) return;
+
+    this.ctx.beginPath();
+    this.ctx.moveTo(this.lastX, this.lastY);
+    this.ctx.lineTo(x, y);
+    this.ctx.strokeStyle = `hsl(${this.hue}, 100%, 60%)`;
+    this.ctx.lineWidth = 12;
+    this.ctx.lineCap = "round";
+    this.ctx.lineJoin = "round";
+    this.ctx.stroke();
+
+    this.lastX = x;
+    this.lastY = y;
+    this.hue = (this.hue + 0.25) % 360; // Slowly cycle hue
+  }
+}
+
+if (!customElements.get("mono-brush")) {
+  customElements.define("mono-brush", MonoBrush);
+}
+
+// Automatically inject into page
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    if (!document.querySelector("mono-brush")) {
+      document.body.appendChild(document.createElement("mono-brush"));
+    }
+  });
+} else {
+  if (!document.querySelector("mono-brush")) {
+    document.body.appendChild(document.createElement("mono-brush"));
+  }
+}
+
+
+/**
+ * Mono Components
+ *
+ * Vanilla JS Web Component for code blocks.
+ * Implements "Light DOM" enhancement strategy: Wraps the original Markdown
+ * <pre><code> output to preserve SEO and accessibility, while injecting
+ * a copy button and syntax highlighting functionality.
+ */
+
+class MonoCodeBlock extends MonoBaseElement {
+  constructor() {
+    super();
+
+    // Component state
+    this.language = this.getAttribute("language") || "";
+  }
+
+  connectedCallback() {
+    this.mountTemplate();
+    this.setupEventListeners();
+    this.initializeSyntaxHighlighting();
+  }
+
+  mountTemplate() {
+        super.mountTemplate('mono-code-block-template');
+        // Cache references
+
+    // Set Header Label
+    if (this.refs.languageLabel) {
+      this.refs.languageLabel.textContent = this.language
+        ? this.language
+        : "Code";
+    }
+
+    // Move Light DOM content (the original <pre><code> from markdown) into the slot container
+    if (this.refs.contentSlot) {
+      // Create a <slot> to project the light DOM content into the Shadow DOM
+      const slot = document.createElement("slot");
+      this.refs.contentSlot.appendChild(slot);
+    }
+  }
+
+  setupEventListeners() {
+    if (this.refs.copyButton) {
+      this.refs.copyButton.addEventListener("click", () =>
+        this.handleCopyClick(),
+      );
+    }
+  }
+
+  handleCopyClick() {
+    // Look for the <code> element within the Light DOM (children of <mono-code-block>)
+    const codeElement = this.querySelector("code");
+    if (!codeElement) return;
+
+    // Use textContent to grab raw text, avoiding HTML tags from highlight.js
+    const text = codeElement.textContent;
+
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        this.showCopySuccess();
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+        this.showCopyError();
+      });
+  }
+
+  showCopySuccess() {
+    const btn = this.refs.copyButton;
+    if (!btn) return;
+
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "✅ Copied!";
+    btn.classList.add("copied");
+
+    // Reset after 2 seconds
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.classList.remove("copied");
+    }, 2000);
+  }
+
+  showCopyError() {
+    const btn = this.refs.copyButton;
+    if (!btn) return;
+
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "❌ Error";
+
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+    }, 2000);
+  }
+
+  initializeSyntaxHighlighting() {
+    // If highlight.js is loaded globally, apply it to the Light DOM <code> element
+    if (window.hljs) {
+      const codeElement = this.querySelector("code");
+      if (codeElement) {
+        // Ensure the language class is set for hljs
+        if (
+          this.language &&
+          !codeElement.classList.contains(`language-${this.language}`)
+        ) {
+          codeElement.classList.add(`language-${this.language}`);
+        }
+        window.hljs.highlightElement(codeElement);
+      }
+    }
+  }
+}
+
+// Register the custom element
+if (!customElements.get("mono-code-block")) {
+  customElements.define("mono-code-block", MonoCodeBlock);
+}
+
+
+class MonoSync extends MonoBaseElement {
+    constructor() {
+        super();
+    }
+
+    connectedCallback() {
+        super.mountTemplate('mono-sync-template');
+        this.setupDataRecovery();
+        this.setupFocusSync();
+    }
+
+    getEnvironmentContext() {
+        return {
+            userAgent: navigator.userAgent,
+            windowWidth: window.innerWidth,
+            windowHeight: window.innerHeight,
+            url: window.location.href,
+        };
+    }
+
+    setupDataRecovery() {
+        // Listen for mono:vote and mono-data events bubbling up to document
+        const handleDataEvent = (e) => {
+            const data = {
+                ...e.detail,
+                environment: this.getEnvironmentContext(),
+            };
+            this.sendDataToServer(data);
+        };
+        document.addEventListener("mono:vote", handleDataEvent);
+        document.addEventListener("mono-data", handleDataEvent);
+    }
+
+    async sendDataToServer(data) {
+        const apiMeta = document.querySelector('meta[name="mono-api-url"]');
+        const apiUrl = apiMeta ? apiMeta.content : null;
+        if (!apiUrl) {
+            console.info("💡 [Mono] スタンドアロンモードで動作しています。データはローカルにのみ保存されます。");
+            return;
+        }
+
+        try {
+            const response = await fetch(apiUrl + "/api/data", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+            if (!response.ok) {
+                throw new Error("Server responded with an error");
+            }
+        } catch (error) {
+            console.info("💡 [Mono] サーバに接続できません（オフライン）。入力内容はブラウザに保存されているため、右下のボタンからJSONでダウンロードできます。");
+        }
+    }
+
+    setupFocusSync() {
+        const apiMeta = document.querySelector('meta[name="mono-api-url"]');
+        const apiUrl = apiMeta ? apiMeta.content : null;
+        if (!apiUrl) return;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const isHost = urlParams.get("role") === "host";
+
+        try {
+            if (isHost) {
+                console.log("🟢 [Mono] リアルタイム同期を有効化しました（Role: Host）");
+                this.setupHostObserver(apiUrl);
+            } else {
+                this.setupParticipantListener(apiUrl);
+            }
+        } catch (e) {
+             console.info("💡 [Mono] 同期機能を初期化できませんでした。スタンドアロンで実行します。");
+        }
+    }
+
+    setupHostObserver(apiUrl) {
+        let lastTargetId = null;
+
+        const observer = new IntersectionObserver((entries) => {
+            // Find the most visible heading
+            for (const entry of entries) {
+                if (entry.isIntersecting && entry.target.id) {
+                    if (lastTargetId !== entry.target.id) {
+                        lastTargetId = entry.target.id;
+                        this.broadcastFocus(apiUrl, lastTargetId);
+                    }
+                    break;
+                }
+            }
+        }, { threshold: 0.5 });
+
+        // Observe h1, h2, h3 tags
+        document.querySelectorAll("h1, h2, h3").forEach(el => {
+            if (el.id) observer.observe(el);
+        });
+    }
+
+    broadcastFocus(apiUrl, targetId) {
+        fetch(apiUrl + "/api/sync", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ type: "focus", targetId })
+        }).catch(err => {
+            console.error("Focus broadcast error:", err);
+        });
+    }
+
+    setupParticipantListener(apiUrl) {
+        this.eventSource = new EventSource(apiUrl + "/api/sync/stream");
+
+        this.eventSource.onopen = () => {
+            console.log("🟢 [Mono] リアルタイム同期に接続しました（Role: Participant）");
+        };
+
+        this.eventSource.onerror = () => {
+            console.info("💡 [Mono] 同期サーバとの接続が切断されました。");
+        };
+
+        this.eventSource.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type === "focus" && data.targetId) {
+                    const el = document.getElementById(data.targetId);
+                    if (el) {
+                        el.scrollIntoView({ behavior: "smooth" });
+                    }
+                }
+            } catch (e) {
+                console.error("Focus Sync error:", e);
+            }
+        };
+    }
+}
+
+if (!customElements.get("mono-sync")) {
+    customElements.define("mono-sync", MonoSync);
+}
+// Automatically inject into page
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+        if (!document.querySelector("mono-sync")) {
+            document.body.appendChild(document.createElement("mono-sync"));
+        }
+    });
+} else {
+    if (!document.querySelector("mono-sync")) {
+        document.body.appendChild(document.createElement("mono-sync"));
+    }
+}
+
+</script>
+    </body>
+</html>
