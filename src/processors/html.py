@@ -98,6 +98,10 @@ class HTMLDocumentBuilder:
         highlight_js_css = self._build_highlight_js_link(html_body) if has_code_block else ""
         highlight_js = self._load_highlight_js_script() if has_code_block else ""
 
+        mathjax = ""
+        if 'class="mono-math' in html_body:
+            mathjax = self._build_mathjax_script()
+
         mono_components_js = self._load_mono_components_script(used_component_dirs)
         component_templates = self._load_component_templates(used_component_dirs)
 
@@ -124,6 +128,7 @@ class HTMLDocumentBuilder:
         doc = doc.replace("{CSP_META}", csp_meta + fonts_link)
         doc = doc.replace("{HIGHLIGHT_JS_CSS}", highlight_js_css)
         doc = doc.replace("{HIGHLIGHT_JS}", highlight_js)
+        doc = doc.replace("{MATHJAX}", mathjax)
 
         if content_css:
             content_css_tag = f"{{CSS_BLOCK}}\n<style id=\"mono-components-content-css\">\n{content_css}\n</style>"
@@ -253,7 +258,22 @@ class HTMLDocumentBuilder:
 
     def _load_highlight_js_script(self) -> str:
         """Highlight.js スクリプトタグを構築"""
+        from src.constants import HIGHLIGHT_JS_CDN_JS
         return f'<script src="{HIGHLIGHT_JS_CDN_JS}"></script>'
+
+    def _build_mathjax_script(self) -> str:
+        """MathJax 設定とスクリプトタグを構築"""
+        from src.constants import MATHJAX_CDN_JS
+        return f"""
+<script>
+window.MathJax = {{
+  tex: {{
+    inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
+    displayMath: [['$$', '$$'], ['\\\\[', '\\\\]']]
+  }}
+}};
+</script>
+<script src="{MATHJAX_CDN_JS}"></script>"""
 
     def _get_used_component_dirs(self, found_mono_tags: set, should_enable_export: bool) -> List[Path]:
         """使用されているコンポーネントのディレクトリ一覧を取得する"""
