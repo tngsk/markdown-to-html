@@ -188,9 +188,8 @@ li + li {
 
 /* コード -------------------------------------------------- */
 code {
-    font-family:
-        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-        "Liberation Mono", "Courier New", monospace;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-variant-ligatures: none;
     background: var(--color-base-100, #fff);
     padding: 0.5rem;
 }

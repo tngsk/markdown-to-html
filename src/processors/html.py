@@ -95,7 +95,7 @@ class HTMLDocumentBuilder:
         used_component_dirs = self._get_used_component_dirs(found_mono_tags, should_enable_export)
 
         has_code_block = "<mono-code-block" in html_body
-        highlight_js_css = self._build_highlight_js_link() if has_code_block else ""
+        highlight_js_css = self._build_highlight_js_link(html_body) if has_code_block else ""
         highlight_js = self._load_highlight_js_script() if has_code_block else ""
 
         mono_components_js = self._load_mono_components_script(used_component_dirs)
@@ -219,9 +219,25 @@ class HTMLDocumentBuilder:
 
         return html_content
 
-    def _build_highlight_js_link(self) -> str:
+    def _build_highlight_js_link(self, html_body: str) -> str:
         """Highlight.js CSSリンクタグを構築"""
-        return f'<link rel="stylesheet" href="{HIGHLIGHT_JS_CDN_CSS}">'
+        from src.constants import HIGHLIGHT_JS_CDN_BASE, HIGHLIGHT_JS_VERSION
+
+        # すべてのテーマを抽出
+        themes = set(["atom-one-dark"]) # default
+
+        # html_bodyからtheme属性をすべて検索
+        matches = re.finditer(r'<mono-code-block[^>]*theme="([^"]*)"', html_body)
+        for match in matches:
+            if match.group(1):
+                themes.add(match.group(1))
+
+        links = []
+        for theme in themes:
+            css_url = f"{HIGHLIGHT_JS_CDN_BASE}/{HIGHLIGHT_JS_VERSION}/styles/{theme}.min.css"
+            links.append(f'<link rel="stylesheet" href="{css_url}">')
+
+        return "\n        ".join(links)
 
     def _load_lazy_load_script(self) -> str:
         """lazy_load.js ファイルを読み込んで返す"""

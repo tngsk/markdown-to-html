@@ -5,20 +5,26 @@ from markdown.extensions import Extension
 class CodeBlockPostprocessor(Postprocessor):
     def run(self, text):
         pattern = re.compile(
-            r'(<pre><code(?:\s+class="([^"]*)")?>.*?</code></pre>)', re.DOTALL
+            r'(<pre><code(?:\s+[^>]+)?>.*?</code></pre>)', re.DOTALL
         )
 
         def replacer(match: re.Match) -> str:
             original_block = match.group(1)
-            lang_class = match.group(2) or ""
 
+            # Extract language
             language = ""
-            if lang_class:
-                lang_match = re.search(r"language-(\w+)", lang_class)
-                if lang_match:
-                    language = lang_match.group(1)
+            lang_match = re.search(r'class="[^"]*language-([^"\s]+)[^"]*"', original_block)
+            if lang_match:
+                language = lang_match.group(1)
 
-            return f'<mono-code-block language="{language}">\n{original_block}\n</mono-code-block>'
+            # Extract theme
+            theme = ""
+            theme_match = re.search(r'theme="([^"]*)"', original_block)
+            if theme_match:
+                theme = theme_match.group(1)
+
+            theme_attr = f' theme="{theme}"' if theme else ""
+            return f'<mono-code-block language="{language}"{theme_attr}>\n{original_block}\n</mono-code-block>'
 
         return pattern.sub(replacer, text)
 

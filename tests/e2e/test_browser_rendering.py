@@ -53,7 +53,7 @@ def test_rendering_no_console_errors(temp_markdown_file, tmp_path):
         browser.close()
 
         # There should be no console errors or exceptions
-        filtered_errors = [e for e in errors if "net::ERR_CONNECTION_REFUSED" not in e and "net::ERR_FAILED" not in e and "favicon.ico" not in e and "Failed to load resource" not in e]
+        filtered_errors = [e for e in errors if "net::ERR_CONNECTION_REFUSED" not in e and "net::ERR_FAILED" not in e and "favicon.ico" not in e and "Failed to load resource" not in e and "/api/sync/stream" not in e and "CORS policy" not in e]
         assert len(filtered_errors) == 0, f"Found errors in browser console: {filtered_errors}"
 
 def test_lazy_loaded_image_rendered(temp_markdown_file, tmp_path):

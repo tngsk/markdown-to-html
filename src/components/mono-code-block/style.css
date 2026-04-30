@@ -77,55 +77,10 @@
     }
 
     .code-content-slot code {
-        font-family: "Courier New", Courier, monospace;
+        font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+        font-variant-ligatures: none;
         font-size: 0.95em;
         line-height: 1.5;
-    }
-
-    /* Highlight.js theme overrides - matching original user design exactly */
-    .code-content-slot .hljs {
-        background: transparent;
-        color: #333;
-    }
-
-    .code-content-slot .hljs-attr {
-        color: #e06c75;
-    }
-
-    .code-content-slot .hljs-string {
-        color: #98c379;
-    }
-
-    .code-content-slot .hljs-number {
-        color: #d19a66;
-    }
-
-    .code-content-slot .hljs-literal {
-        color: #56b6c2;
-    }
-
-    .code-content-slot .hljs-title {
-        color: #61afef;
-    }
-
-    .code-content-slot .hljs-params {
-        color: #abb2bf;
-    }
-
-    .code-content-slot .hljs-comment {
-        color: #999;
-    }
-
-    .code-content-slot .hljs-keyword {
-        color: #c678dd;
-    }
-
-    .code-content-slot .hljs-function {
-        color: #61afef;
-    }
-
-    .code-content-slot .hljs-built_in {
-        color: #e06c75;
     }
 }
 
