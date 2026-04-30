@@ -59,15 +59,56 @@ class BaseComponentParser:
             start_idx = 0
 
             if not has_paren:
-                for i, char in enumerate(content):
-                    if in_quote:
-                        if char == in_quote:
+                raw_parts = content.split(',')
+                current_part = ""
+                in_quote = None
+
+                for p in raw_parts:
+                    if current_part:
+                        current_part += "," + p
+                    else:
+                        current_part = p
+
+                    if not in_quote and "'" not in p:
+                        if p.count('"') % 2 == 0:
+                            parts.append(current_part.strip())
+                            current_part = ""
+                            continue
+                    elif not in_quote and '"' not in p:
+                        if p.count("'") % 2 == 0:
+                            parts.append(current_part.strip())
+                            current_part = ""
+                            continue
+
+                    search_start = 0
+                    while True:
+                        if in_quote:
+                            idx = p.find(in_quote, search_start)
+                            if idx == -1:
+                                break
                             in_quote = None
-                    elif char in "\"'":
-                        in_quote = char
-                    elif char == ',' and not in_quote:
-                        parts.append(content[start_idx:i].strip())
-                        start_idx = i + 1
+                            search_start = idx + 1
+                        else:
+                            idx_q1 = p.find('"', search_start)
+                            idx_q2 = p.find("'", search_start)
+
+                            if idx_q1 == -1 and idx_q2 == -1:
+                                break
+                            elif idx_q1 != -1 and idx_q2 != -1:
+                                m = idx_q1 if idx_q1 < idx_q2 else idx_q2
+                            else:
+                                m = idx_q1 if idx_q1 != -1 else idx_q2
+
+                            in_quote = p[m]
+                            search_start = m + 1
+
+                    if not in_quote:
+                        parts.append(current_part.strip())
+                        current_part = ""
+
+                start_idx = len(content)
+                if current_part:
+                    parts.append(current_part.strip())
             else:
                 for i, char in enumerate(content):
                     if in_quote:
@@ -180,15 +221,56 @@ class BaseComponentParser:
         start_idx = 0
 
         if not has_paren:
-            for i, char in enumerate(args_str):
-                if in_quote:
-                    if char == in_quote:
+            raw_parts = args_str.split(',')
+            current_part = ""
+            in_quote = None
+
+            for p in raw_parts:
+                if current_part:
+                    current_part += "," + p
+                else:
+                    current_part = p
+
+                if not in_quote and "'" not in p:
+                    if p.count('"') % 2 == 0:
+                        parts.append(current_part.strip())
+                        current_part = ""
+                        continue
+                elif not in_quote and '"' not in p:
+                    if p.count("'") % 2 == 0:
+                        parts.append(current_part.strip())
+                        current_part = ""
+                        continue
+
+                search_start = 0
+                while True:
+                    if in_quote:
+                        idx = p.find(in_quote, search_start)
+                        if idx == -1:
+                            break
                         in_quote = None
-                elif char in "\"'":
-                    in_quote = char
-                elif char == ',' and not in_quote:
-                    parts.append(args_str[start_idx:i].strip())
-                    start_idx = i + 1
+                        search_start = idx + 1
+                    else:
+                        idx_q1 = p.find('"', search_start)
+                        idx_q2 = p.find("'", search_start)
+
+                        if idx_q1 == -1 and idx_q2 == -1:
+                            break
+                        elif idx_q1 != -1 and idx_q2 != -1:
+                            m = idx_q1 if idx_q1 < idx_q2 else idx_q2
+                        else:
+                            m = idx_q1 if idx_q1 != -1 else idx_q2
+
+                        in_quote = p[m]
+                        search_start = m + 1
+
+                if not in_quote:
+                    parts.append(current_part.strip())
+                    current_part = ""
+
+            start_idx = len(args_str)
+            if current_part:
+                parts.append(current_part.strip())
         else:
             for i, char in enumerate(args_str):
                 if in_quote:
