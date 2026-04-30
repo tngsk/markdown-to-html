@@ -67,6 +67,13 @@ HIGHLIGHT_JS_CDN_CSS = (
 HIGHLIGHT_JS_CDN_JS = f"{HIGHLIGHT_JS_CDN_BASE}/{HIGHLIGHT_JS_VERSION}/highlight.min.js"
 
 # ============================================================================
+# MathJax Configuration
+# ============================================================================
+
+# MathJax CDN URL
+MATHJAX_CDN_JS = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+
+# ============================================================================
 # MIME Type Registry
 # ============================================================================
 
@@ -143,6 +150,7 @@ MARKDOWN_EXTENSIONS = [
     "src.extensions.nowrap",
     "src.extensions.colab",
     "src.extensions.code_block",
+    "src.extensions.math",
 ]
 
 
