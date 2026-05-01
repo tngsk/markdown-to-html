@@ -129,20 +129,30 @@ class MonoBrush extends MonoBaseElement {
     // Pointer mode is disabled, so we don't need to update pointer position
   }
 
+  getPointerPosition(clientX, clientY) {
+    const rect = this.canvas.getBoundingClientRect();
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top
+    };
+  }
+
   handleMouseMove(e) {
     // Handle drawing
     if (this.isDrawing && this.isDrawingModeActive) {
       e.preventDefault(); // Prevent text selection/scrolling while drawing
-      this.draw(e.clientX, e.clientY);
+      const pos = this.getPointerPosition(e.clientX, e.clientY);
+      this.draw(pos.x, pos.y);
     }
   }
 
   handleMouseDown(e) {
     if (this.isDrawingModeActive) {
       this.isDrawing = true;
-      this.lastX = e.clientX;
-      this.lastY = e.clientY;
-      this.draw(e.clientX, e.clientY); // Draw a dot
+      const pos = this.getPointerPosition(e.clientX, e.clientY);
+      this.lastX = pos.x;
+      this.lastY = pos.y;
+      this.draw(pos.x, pos.y); // Draw a dot
     }
   }
 
