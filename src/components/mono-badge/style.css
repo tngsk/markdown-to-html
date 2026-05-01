@@ -1,6 +1,6 @@
 :host {
-    display: inline-block;
-    vertical-align: baseline;
+    display: inline-flex;
+    vertical-align: middle;
 }
 
 .mono-badge {
