@@ -132,17 +132,20 @@ class BaseComponentParser:
 
         if parts:
             first_part = parts[0]
-            in_q = None
             has_kv_separator = False
-            for char in first_part:
-                if in_q:
-                    if char == in_q:
-                        in_q = None
-                elif char in "\"'":
-                    in_q = char
-                elif char in (':', '='):
-                    has_kv_separator = True
-                    break
+
+            # Fast path for finding key-value separator
+            if ':' in first_part or '=' in first_part:
+                in_q = None
+                for char in first_part:
+                    if in_q:
+                        if char == in_q:
+                            in_q = None
+                    elif char in "\"'":
+                        in_q = char
+                    elif char in (':', '='):
+                        has_kv_separator = True
+                        break
 
             if not has_kv_separator:
                 label = first_part

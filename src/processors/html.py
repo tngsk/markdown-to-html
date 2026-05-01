@@ -94,7 +94,7 @@ class HTMLDocumentBuilder:
         # 使用されているコンポーネントを特定
         used_component_dirs = self._get_used_component_dirs(found_mono_tags, should_enable_export)
 
-        has_code_block = "<mono-code-block" in html_body
+        has_code_block = "mono-code-block" in found_mono_tags
         highlight_js_css = self._build_highlight_js_link(html_body) if has_code_block else ""
         highlight_js = self._load_highlight_js_script() if has_code_block else ""
 
@@ -119,7 +119,7 @@ class HTMLDocumentBuilder:
 
         # アイコンが使われている場合はGoogle Fontsのリンクを追加
         fonts_link = ""
-        if "<mono-icon" in html_body:
+        if "mono-icon" in found_mono_tags:
             fonts_link = f'\n        <link rel="stylesheet" href="{MATERIAL_SYMBOLS_URL}" />'
 
         content_css = self._load_component_content_css(used_component_dirs)
