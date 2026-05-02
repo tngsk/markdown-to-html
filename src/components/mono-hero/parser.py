@@ -3,7 +3,7 @@ from src.processors.base_parser import BaseComponentParser
 import html
 
 class Parser(BaseComponentParser):
-    # OPTIONS: image, mode, bg-color, text-color
+    # OPTIONS: image, mode, bg-color, text-color, title
     # Match @[hero: title](key: value, ...) or @[hero](key: value, ...)
     START_PATTERN = r"@\[hero(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     END_PATTERN = r"@\[/hero\]"
