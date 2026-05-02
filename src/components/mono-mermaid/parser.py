@@ -9,7 +9,7 @@ from src.processors.base_parser import BaseComponentParser
 logger = logging.getLogger(__name__)
 
 class Parser(BaseComponentParser):
-    # OPTIONS: width, theme
+    # OPTIONS: theme, title
     START_PATTERN = r"@\[mermaid(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
     END_PATTERN = r"@\[/mermaid\]"
 
