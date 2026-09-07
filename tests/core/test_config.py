@@ -11,6 +11,7 @@ from src.config import (
     FileProcessingError,
     ImageEmbeddingError,
     CSSEmbeddingError,
+    ConfigurationError,
     ConversionConfig,
     ConversionStats
 )
@@ -141,6 +142,24 @@ class TestConversionConfig(unittest.TestCase):
             pdf_output=True
         )
         self.assertEqual(config.resolve_pdf_output_file(), Path("some_dir/dist/input.pdf"))
+
+    def test_path_collision_raises_configuration_error(self):
+        """Test that same HTML and PDF output paths raise ConfigurationError."""
+        config = ConversionConfig(
+            input_file=Path("doc.md"),
+            output_file=Path("doc.pdf"),
+            pdf_output=Path("doc.pdf")
+        )
+        with self.assertRaises(ConfigurationError):
+            config.resolve_pdf_output_file()
+
+    def test_unknown_profile_raises_configuration_error(self):
+        """Test that unknown profile raises ConfigurationError."""
+        with self.assertRaises(ConfigurationError):
+            ConversionConfig(
+                input_file=Path("doc.md"),
+                profile="nonexistent_profile_xyz"
+            )
 
 class TestConversionStats(unittest.TestCase):
     def test_default_initialization(self):

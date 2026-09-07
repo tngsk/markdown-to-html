@@ -2,7 +2,7 @@ import json
 import logging
 from typing import Dict, List
 
-from src.constants import COMPONENTS_DIR
+from src.constants import COMPONENTS_DIR, ALLOWED_COMPONENTS
 
 logger = logging.getLogger("markdown_converter.registry")
 
@@ -31,7 +31,8 @@ class ComponentRegistry:
             logger.warning(f"Component directory not found: {COMPONENTS_DIR}")
             return
 
-        for component_dir in COMPONENTS_DIR.iterdir():
+        for component_name in ALLOWED_COMPONENTS:
+            component_dir = COMPONENTS_DIR / component_name
             if not component_dir.is_dir():
                 continue
 

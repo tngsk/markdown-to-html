@@ -316,5 +316,40 @@ class TestHTMLDocumentBuilder(unittest.TestCase):
         self.assertNotIn("mono-zoom", names)
         self.assertNotIn("mono-clock", names)
 
+    @patch('pathlib.Path.read_text')
+    def test_build_document_minimal_profile_zero_js(self, mock_read_text):
+        """minimalプロファイルでコードブロックと画像が含まれる場合でもZero-JSとなりコードブロックがアンラップされることをテスト"""
+        mock_read_text.return_value = "<!doctype html><html><head>{CSP_META}</head><body>{BODY}{COPY_BUTTON_JS}</body></html>"
+        html_body = '<p>Hello</p><mono-code-block language="python"><pre><code class="language-python">print("hi")</code></pre></mono-code-block>'
+        asset_store = {"asset-1": "data:image/png;base64,xxxx"}
+
+        result = self.builder.build_document(
+            html_body=html_body,
+            title="Minimal Doc",
+            asset_store=asset_store,
+            profile="minimal"
+        )
+
+        self.assertNotIn("<script", result)
+        self.assertNotIn("</script>", result)
+        self.assertIn("script-src 'none'", result)
+        self.assertNotIn("<mono-code-block", result)
+        self.assertIn('<pre><code class="language-python">print("hi")</code></pre>', result)
+        self.assertNotIn("mono-asset-store", result)
+
+    @patch('pathlib.Path.read_text')
+    def test_build_document_minimal_profile_unsupported_component(self, mock_read_text):
+        """minimalプロファイルで未対応のコンポーネントが存在する場合に例外が送出されることをテスト"""
+        mock_read_text.return_value = "<!doctype html><html><head>{CSP_META}</head><body>{BODY}{COPY_BUTTON_JS}</body></html>"
+        html_body = '<mono-poll id="p1" question="Q?"></mono-poll>'
+
+        with self.assertRaises(ConversionError) as context:
+            self.builder.build_document(
+                html_body=html_body,
+                profile="minimal"
+            )
+
+        self.assertIn("minimalプロファイルで未対応のコンポーネントが含まれています: mono-poll", str(context.exception))
+
 if __name__ == '__main__':
     unittest.main()

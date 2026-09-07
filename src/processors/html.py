@@ -42,6 +42,7 @@ class HTMLDocumentBuilder:
         enable_export: bool = False,
         csp_additions: Optional[dict[str, List[str]]] = None,
         profile_components: Optional[List[str]] = None,
+        profile: Optional[str] = None,
     ) -> str:
         """
         テンプレートとHTML断片からドキュメントを生成
@@ -50,6 +51,7 @@ class HTMLDocumentBuilder:
             html_body: <body>に挿入するHTML
             title: ドキュメントのタイトル
             profile_components: プロファイルで指定された追加コンポーネント名リスト
+            profile: 有効なプロファイル名（minimal, standard, presentation など）
 
         Returns:
             完全なHTMLドキュメント
@@ -65,11 +67,22 @@ class HTMLDocumentBuilder:
         except Exception as e:
             raise ConversionError(f"テンプレート読み込みエラー: {e}") from e
 
+        is_minimal = profile == "minimal"
+
         # テーブルインラインスタイル削除
         html_body = self._remove_table_inline_styles(html_body)
 
         # 除外タグ削除
         html_body = self._remove_excluded_tags(html_body, excluded_tags)
+
+        if is_minimal:
+            # mono-code-block を純粋な <pre><code> にアンラップ
+            html_body = re.sub(
+                r"<mono-code-block[^>]*>\s*(<pre(?:\s+[^>]+)?><code(?:\s+[^>]+)?>(?:.*?)</code></pre>)\s*</mono-code-block>",
+                r"\1",
+                html_body,
+                flags=re.DOTALL,
+            )
 
         # プレースホルダーを置換
         safe_title = self._escape_html(title)
@@ -77,27 +90,40 @@ class HTMLDocumentBuilder:
         # 最適化: HTMLボディからコンポーネントタグを1回のパスで抽出する
         found_mono_tags = set(re.findall(r"<(mono-[a-z0-9-]+)", html_body))
 
-        # エクスポート機能の自動判定
-        has_interactive_components = any(
-            tag in found_mono_tags
-            for tag in registry.get_interactive_components()
-        )
-        should_enable_export = enable_export or has_interactive_components
+        if is_minimal:
+            unsupported = found_mono_tags - {"mono-code-block"}
+            if unsupported:
+                tag_list = ", ".join(sorted(unsupported))
+                raise ConversionError(
+                    f"minimalプロファイルで未対応のコンポーネントが含まれています: {tag_list}"
+                )
+            should_enable_export = False
+            used_component_dirs = []
+            mathjax = ""
+            mono_components_js = ""
+            component_templates = ""
+        else:
+            # エクスポート機能の自動判定
+            has_interactive_components = any(
+                tag in found_mono_tags
+                for tag in registry.get_interactive_components()
+            )
+            should_enable_export = enable_export or has_interactive_components
 
-        if should_enable_export:
-            html_body += "\n<mono-export></mono-export>"
+            if should_enable_export:
+                html_body += "\n<mono-export></mono-export>"
 
-        # 使用されているコンポーネントを特定
-        used_component_dirs = self._get_used_component_dirs(
-            found_mono_tags, should_enable_export, profile_components
-        )
+            # 使用されているコンポーネントを特定
+            used_component_dirs = self._get_used_component_dirs(
+                found_mono_tags, should_enable_export, profile_components
+            )
 
-        mathjax = ""
-        if any(f'class="{cls}' in html_body for cls in CLASSES_REQUIRING_MATH):
-            mathjax = self._build_mathjax_script()
+            mathjax = ""
+            if any(f'class="{cls}' in html_body for cls in CLASSES_REQUIRING_MATH):
+                mathjax = self._build_mathjax_script()
 
-        mono_components_js = self._load_mono_components_script(used_component_dirs)
-        component_templates = self._load_component_templates(used_component_dirs)
+            mono_components_js = self._load_mono_components_script(used_component_dirs)
+            component_templates = self._load_component_templates(used_component_dirs)
 
         # Base CSP Directives
         csp_directives = {
@@ -121,6 +147,9 @@ class HTMLDocumentBuilder:
                 for val in values:
                     if val not in csp_directives[directive]:
                         csp_directives[directive].append(val)
+
+        if is_minimal:
+            csp_directives["script-src"] = ["'none'"]
 
         csp_parts = []
         for directive, values in csp_directives.items():
@@ -161,7 +190,7 @@ class HTMLDocumentBuilder:
             content_css_tag = f'{{CSS_BLOCK}}\n<style id="mono-components-content-css">\n{content_css}\n</style>'
             doc = doc.replace("{CSS_BLOCK}", content_css_tag)
 
-        if asset_store:
+        if asset_store and not is_minimal:
             safe_json = (
                 json.dumps(asset_store)
                 .replace("<", "\\u003c")
@@ -176,7 +205,7 @@ class HTMLDocumentBuilder:
             html_body += f"\n{asset_template}\n{lazy_load_script}"
 
         # 既存の {COPY_BUTTON_JS} プレースホルダーにまとめて追記する
-        combined_js = f"{component_templates}\n{mono_components_js}"
+        combined_js = f"{component_templates}\n{mono_components_js}" if not is_minimal else ""
         doc = doc.replace("{COPY_BUTTON_JS}", combined_js)
         doc = doc.replace(
             "{BODY}", html_body

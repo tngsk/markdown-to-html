@@ -66,7 +66,14 @@ class MonoExport extends MonoBaseElement {
                     body: JSON.stringify(data)
                 });
                 if (response.ok) {
-                    alert("✅ データをサーバに同期しました！");
+                    const result = await response.json().catch(() => null);
+                    if (result && result.status === "success") {
+                        alert("✅ データをサーバに同期しました！");
+                    } else {
+                        const errMsg = (result && result.message) ? `: ${result.message}` : "";
+                        alert(`❌ サーバへの同期に失敗しました${errMsg}\n\n「Download JSON」からローカルに保存してください。`);
+                        console.info("💡 [Mono] サーバ処理エラー。");
+                    }
                 } else {
                     alert("❌ サーバへの同期に失敗しました。\n\nオフラインの可能性があります。「Download JSON」からローカルに保存してください。");
                     console.info("💡 [Mono] サーバエラー。ステータス: " + response.statusText);

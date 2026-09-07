@@ -1,6 +1,6 @@
 # Mono
 
-Markdownを、画像やスタイルが埋め込まれた単一の自己完結型HTMLファイル（Single-File HTML）に変換するCLIツールです。プロジェクターでのプレゼンテーションから配布用ドキュメントまで、オフライン環境で完全動作します。
+Markdownを、ローカル画像やスタイルが埋め込まれた単一の自己完結型HTMLファイル（Single-File HTML）に変換するCLIツールです。プロジェクターでのプレゼンテーションから配布用ドキュメントまで、基本コンテンツはオフライン環境で完全動作します（外部画像や一部CDN連携機能を除く）。
 
 ## インストール
 
@@ -11,17 +11,20 @@ uv sync
 ## 使い方
 
 ```bash
-# 基本変換（入力ファイル名.html を出力）
+# 基本変換（入力ファイル名.html を出力。同階層に dist/ がある場合は dist/ 内に出力）
 uv run main.py document.md
 
 # プレゼンテーション用（オートズーム mono-zoom を有効化）
 uv run main.py slides.md -o output.html -p presentation
 
 # 静的ドキュメント用（Zero-JS 出力）
-uv run main.py doc.md -o output.html -p static
+uv run main.py doc.md -o output.html -p minimal
 
 # PDF 書き出し（単一縦長PDFを出力）
-uv run main.py document.md --pdf -o document.pdf
+uv run main.py document.md -o document.html --pdf document.pdf
+
+# データ収集・同期サーバー起動（オプション）
+uv run python -m src.server
 
 # バージョン確認
 uv run main.py --version
@@ -83,5 +86,5 @@ uv run main.py --version
 - `P`: プレゼンタービュー起動（開発中: 別ウィンドウで縮小プレビュー・トークスクリプト・スライド位置同期を表示）
 - `B`: 蛍光ブラシ描画モード切替（画面上への手書きアノテーション、`Esc` で解除）
 - `D`: アンビエント没頭フォーカス（周辺減光）とフラット表示の切り替え
-- `J` / `K`（または `↓` / `↑`）: 章・節への自動スクロール
+- `J` / `K`（または `↓` / `↑`）: 水平線（`---`）がある場合はスライド間、ない場合は章・節（H1/H2）への自動スクロール
 - `Z`（または要素クリック）: ホバー中要素の全画面ズーム（`Esc` で解除）

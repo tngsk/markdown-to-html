@@ -65,7 +65,7 @@ class MediaEmbedder:
             ) from e
 
     def embed_media_in_html(
-        self, html_content: str, markdown_dir: Path
+        self, html_content: str, markdown_dir: Path, lazy_load: bool = True
     ) -> Tuple[str, int, dict]:
         """
         HTMLの<img>タグおよび<mono-ab-test>のメディアをBase64データに置換
@@ -73,6 +73,7 @@ class MediaEmbedder:
         Args:
             html_content: 変換対象のHTML文字列
             markdown_dir: Markdownファイルが存在するディレクトリ
+            lazy_load: Trueの場合1x1透過gif+data-lazy-srcで遅延読込、Falseの場合直接Data URI埋め込み
 
         Returns:
             (変換後のHTML, 埋め込みメディア数, asset_store)
@@ -89,12 +90,19 @@ class MediaEmbedder:
             unquoted_src = urllib.parse.unquote(src_value)
             media_path = (markdown_dir / unquoted_src).resolve()
 
-            # Security fix: prevent path traversal attacks (temporarily bypassed for ../ paths)
-            # if not media_path.is_relative_to(markdown_dir.resolve()) and not media_path.is_relative_to(Path.cwd().resolve()):
-            #     self.logger.warning(f"不正なメディアパス (ディレクトリトラバーサル): {src_value}")
-            #     return src_value
+            # Security fix: prevent path traversal attacks
+            try:
+                resolved_md = markdown_dir.resolve()
+                resolved_cwd = Path.cwd().resolve()
+                is_safe = media_path.is_relative_to(resolved_md) or media_path.is_relative_to(resolved_cwd)
+            except ValueError:
+                is_safe = False
 
-            if not media_path.exists():
+            if not is_safe:
+                self.logger.warning(f"不正なメディアパス (ディレクトリトラバーサル): {src_value}")
+                return src_value
+
+            if not media_path.exists() or not media_path.is_file():
                 self.logger.warning(f"メディアファイルが見つかりません: {src_value}")
                 return src_value
 
@@ -142,6 +150,9 @@ class MediaEmbedder:
                 return new_src
 
             if new_src.startswith("asset-"):
+                if not lazy_load:
+                    direct_src = asset_store.get(new_src, "")
+                    return f'<img {before_src}src="{direct_src}"{after_src}>'
                 # transparent 1x1 gif
                 placeholder = (
                     "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="

@@ -73,8 +73,11 @@ class MarkdownToHTMLConverter:
 
             # Step 4: メディア埋め込み
             markdown_dir = self.config.input_file.parent
+            is_minimal = self.config.profile == "minimal"
             html_body, media_count, asset_store = (
-                self.media_embedder.embed_media_in_html(html_body, markdown_dir)
+                self.media_embedder.embed_media_in_html(
+                    html_body, markdown_dir, lazy_load=(not is_minimal)
+                )
             )
             self.stats.images_embedded = media_count
             self.logger.info(f"✓ {media_count} 件のメディアをBase64で埋め込みました")
@@ -90,6 +93,7 @@ class MarkdownToHTMLConverter:
                 enable_export=self.config.enable_export,
                 csp_additions=self.config.csp_additions,
                 profile_components=self.config.profile_components,
+                profile=self.config.profile,
             )
             self.logger.info(
                 f"✓ HTMLドキュメント構造を生成しました (タイトル: {title})"
@@ -127,7 +131,10 @@ class MarkdownToHTMLConverter:
             # Step 7: PDF出力 (オプション)
             pdf_file = self.config.resolve_pdf_output_file()
             if pdf_file:
-                self.pdf_processor.export_html_to_pdf(output_file, pdf_file)
+                pdf_success = self.pdf_processor.export_html_to_pdf(output_file, pdf_file)
+                if not pdf_success:
+                    self.logger.error("PDF生成に失敗しました。")
+                    return False
 
             return True
 

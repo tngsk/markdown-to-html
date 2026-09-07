@@ -38,6 +38,12 @@ class CSSEmbeddingError(ConversionError):
     pass
 
 
+class ConfigurationError(ConversionError):
+    """設定エラー"""
+
+    pass
+
+
 # ============================================================================
 # Data Classes & Configuration
 # ============================================================================
@@ -48,15 +54,16 @@ class ConversionConfig:
     """変換処理の設定を保持するデータクラス"""
 
     input_file: Path
-    output_file: Optional[Path]
-    css_files: Optional[List[Path]]
+    output_file: Optional[Path] = None
+    css_files: Optional[List[Path]] = None
     template_path: Optional[Path] = None
     verbose: bool = False
     excluded_tags: Optional[List[str]] = None
     force: bool = False
-    connect_src: str = ""
     enable_export: bool = False
     pdf_output: Union[Path, bool, None] = None
+    theme: Optional[str] = None
+    connect_src: str = ""
     csp_additions: dict[str, List[str]] = None
     profile: Optional[str] = None
     profile_components: Optional[List[str]] = None
@@ -79,9 +86,20 @@ class ConversionConfig:
                     
                     # Profiles resolving
                     profiles = config_data.get("profiles", {})
-                    active_profile_name = self.profile or profiles.get("default", "standard")
+                    if self.profile:
+                        if self.profile == "static":
+                            active_profile_name = "minimal"
+                        elif self.profile in profiles:
+                            active_profile_name = self.profile
+                        else:
+                            raise ConfigurationError(f"未定義のプロファイルが指定されました: {self.profile}")
+                    else:
+                        active_profile_name = profiles.get("default", "standard")
+
                     if active_profile_name in profiles and isinstance(profiles[active_profile_name], dict):
                         self.profile_components = profiles[active_profile_name].get("components", [])
+            except ConfigurationError:
+                raise
             except Exception:
                 pass
 
@@ -100,12 +118,27 @@ class ConversionConfig:
         """PDF出力ファイルパスを決定する"""
         if self.pdf_output is None or self.pdf_output is False:
             return None
+        pdf_file: Path
         if isinstance(self.pdf_output, bool) and self.pdf_output:
             dist_dir = self.input_file.parent / "dist"
             if dist_dir.is_dir():
-                return dist_dir / self.input_file.with_suffix(".pdf").name
-            return self.input_file.with_suffix(".pdf")
-        return self.pdf_output
+                pdf_file = dist_dir / self.input_file.with_suffix(".pdf").name
+            else:
+                pdf_file = self.input_file.with_suffix(".pdf")
+        else:
+            pdf_file = Path(self.pdf_output)
+
+        # HTML出力先との衝突を検証
+        html_file = self.resolve_output_file()
+        try:
+            if html_file.resolve() == pdf_file.resolve():
+                raise ConfigurationError(
+                    f"HTML出力先とPDF出力先に同一のファイルパスが指定されています: {html_file}"
+                )
+        except ValueError:
+            pass
+
+        return pdf_file
 
 
 @dataclass

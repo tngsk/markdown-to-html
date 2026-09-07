@@ -42,5 +42,14 @@ class TestMonoBadgeParser(unittest.TestCase):
         html = self.parser.process(markdown)
         self.assertTrue(isinstance(html, str))
 
+    def test_badge_trailing_attributes(self):
+        markdown = '@[badge: "Important"]{.custom-class #badge-1}'
+        html = self.parser.process(markdown)
+        self.assertIn('class="custom-class"', html)
+        self.assertIn('id="badge-1"', html)
+        self.assertIn('Important', html)
+        self.assertNotIn('{', html)
+        self.assertNotIn('}', html)
+
 if __name__ == '__main__':
     unittest.main()

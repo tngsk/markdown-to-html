@@ -28,6 +28,40 @@ BASE_CSS_FILE = "base.css"
 THEMES_TOML_FILE = "themes.toml"
 
 # 許可されたコンポーネントのリスト (セキュリティのため、明示的に指定)
+ALLOWED_COMPONENTS = [
+    "mono-ab-test",
+    "mono-account",
+    "mono-badge",
+    "mono-brush",
+    "mono-clock",
+    "mono-code-block",
+    "mono-countdown",
+    "mono-dice",
+    "mono-drawer",
+    "mono-export",
+    "mono-flipcard",
+    "mono-flow",
+    "mono-group-assignment",
+    "mono-hero",
+    "mono-icon",
+    "mono-image",
+    "mono-layout",
+    "mono-link",
+    "mono-media-grid",
+    "mono-mermaid",
+    "mono-notebook",
+    "mono-poll",
+    "mono-presenter",
+    "mono-reaction",
+    "mono-score",
+    "mono-section",
+    "mono-session-join",
+    "mono-sound",
+    "mono-synth",
+    "mono-textfield-input",
+    "mono-theme",
+    "mono-zoom",
+]
 
 # ============================================================================
 # Component Behavior Configuration

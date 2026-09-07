@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 class Parser(BaseComponentParser):
     # OPTIONS: url: "url", style: "full|small|card"
-    PATTERN = r"@\[link(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?"
+    PATTERN = r"@\[link(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?(?:\{([^}]*)\})?"
     FAST_PATH_MARKERS = ("@[link",)
 
     @property
@@ -87,13 +87,15 @@ class Parser(BaseComponentParser):
         def replacer(match: re.Match) -> str:
             bracket_content = match.group(1) or ""
             args_str = match.group(2) or ""
+            trailing_str = match.group(3) or ""
 
             label, specific_args = self.parse_bracket_content(bracket_content)
             common_args = self.parse_key_value_args(args_str)
             args = {**specific_args, **common_args}
+            args = self.merge_trailing_attrs(args, trailing_str)
 
             # Support both `@[link: "url"]` and `@[link](url="url")`
-            url, _ = self.resolve_url_and_label(label, args, ['url'], 'text')
+            url, text_label = self.resolve_url_and_label(label, args, ['url'], 'text')
             url = url.strip('\'"')
             # Default style is full
             style = args.get('style', 'full')
@@ -101,9 +103,12 @@ class Parser(BaseComponentParser):
             # Fetch metadata
             og_data = self.fetch_og_data(url)
 
+            # Determine title: explicit label/text > title arg > OGP title > url
+            title = text_label or args.get('title') or og_data['title'] or url
+
             # We must escape HTML safely
             safe_url = self.escape_html(url)
-            safe_title = self.escape_html(og_data['title'])
+            safe_title = self.escape_html(title)
             safe_desc = self.escape_html(og_data['desc'])
 
             # The base64 data shouldn't strictly need escaping but it's safe to do so

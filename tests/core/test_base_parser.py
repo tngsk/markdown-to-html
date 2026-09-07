@@ -76,3 +76,21 @@ def test_parse_attr_list():
     res4 = parser.parse_key_value_args("{.gap-lg .center}")
     assert res4 == {"class": "gap-lg center"}
 
+def test_merge_trailing_attrs():
+    parser = BaseComponentParser()
+
+    # 1. Merge classes deduplicated, ID from trailing
+    args = {"class": "btn primary", "id": "btn-orig", "color": "blue"}
+    merged = parser.merge_trailing_attrs(args, "{.primary .large #btn-new}")
+    assert merged["class"] == "btn primary large"
+    assert merged["id"] == "btn-new"
+    assert merged["color"] == "blue"
+
+    # 2. Empty trailing
+    assert parser.merge_trailing_attrs(args, "") == args
+
+    # 3. Only trailing class and id
+    args_empty = {}
+    merged2 = parser.merge_trailing_attrs(args_empty, "{.custom #elem}")
+    assert merged2 == {"class": "custom", "id": "elem"}
+

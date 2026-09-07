@@ -93,6 +93,44 @@ class BaseComponentParser:
 
         return attrs
 
+    @classmethod
+    def merge_trailing_attrs(cls, args: dict, attr_str: str) -> dict:
+        """
+        後置属性文字列（例: {.class #id}）をパースし、既存の args とマージする。
+        - クラスは重複除去して結合
+        - IDは後置属性を優先
+        - その他の属性も後置属性を優先
+        """
+        if not attr_str:
+            return args
+
+        trailing_attrs = cls.parse_attr_list(attr_str)
+        if not trailing_attrs:
+            return args
+
+        merged = dict(args)
+        # クラスのマージ
+        orig_class = merged.get('class', '').strip()
+        new_class = trailing_attrs.get('class', '').strip()
+        if orig_class and new_class:
+            orig_tokens = orig_class.split()
+            new_tokens = new_class.split()
+            combined_tokens = list(dict.fromkeys(orig_tokens + new_tokens))
+            merged['class'] = ' '.join(combined_tokens)
+        elif new_class:
+            merged['class'] = new_class
+
+        # IDのマージ（後置属性を優先）
+        if 'id' in trailing_attrs:
+            merged['id'] = trailing_attrs['id']
+
+        # その他の属性
+        for k, v in trailing_attrs.items():
+            if k not in ('class', 'id'):
+                merged[k] = v
+
+        return merged
+
     @staticmethod
     def parse_bracket_content(content: str) -> tuple[str, dict]:
         """

@@ -50,6 +50,7 @@ class TestMarkdownToHTMLConverter(unittest.TestCase):
         self.converter.css_embedder = MagicMock()
         self.converter.markdown_processor = MagicMock()
         self.converter.html_document_builder = MagicMock()
+        self.converter.pdf_processor = MagicMock()
 
     def test_convert_success(self):
         # Setup mocks
@@ -199,6 +200,34 @@ class TestMarkdownToHTMLConverter(unittest.TestCase):
         # 1.5 TB
         size_bytes = 1.5 * 1024**4
         self.assertEqual(self.converter._format_size(size_bytes), "1.5 TB")
+
+    def test_convert_pdf_success(self):
+        self.config.pdf_output = Path("output.pdf")
+        self.converter.file_handler.read_text.return_value = "# Test"
+        self.converter.markdown_processor.convert_markdown_to_html.return_value = "<h1>Test</h1>"
+        self.converter.media_embedder.embed_media_in_html.return_value = ("<h1>Test</h1>", 0, {})
+        self.converter.html_document_builder.extract_title_from_html.return_value = "Title"
+        self.converter.html_document_builder.build_document.return_value = "<html>Test</html>"
+        self.converter.css_embedder.embed_css_in_html.return_value = "<html>Test</html>"
+        self.converter.pdf_processor.export_html_to_pdf.return_value = True
+
+        result = self.converter.convert()
+        self.assertTrue(result)
+        self.converter.pdf_processor.export_html_to_pdf.assert_called_once()
+
+    def test_convert_pdf_failure_returns_false(self):
+        self.config.pdf_output = Path("output.pdf")
+        self.converter.file_handler.read_text.return_value = "# Test"
+        self.converter.markdown_processor.convert_markdown_to_html.return_value = "<h1>Test</h1>"
+        self.converter.media_embedder.embed_media_in_html.return_value = ("<h1>Test</h1>", 0, {})
+        self.converter.html_document_builder.extract_title_from_html.return_value = "Title"
+        self.converter.html_document_builder.build_document.return_value = "<html>Test</html>"
+        self.converter.css_embedder.embed_css_in_html.return_value = "<html>Test</html>"
+        self.converter.pdf_processor.export_html_to_pdf.return_value = False
+
+        result = self.converter.convert()
+        self.assertFalse(result)
+        self.converter.pdf_processor.export_html_to_pdf.assert_called_once()
 
 if __name__ == '__main__':
     unittest.main()

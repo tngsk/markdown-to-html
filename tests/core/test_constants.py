@@ -22,6 +22,10 @@ class TestConstants(unittest.TestCase):
 
         self.assertEqual(constants.BASE_CSS_FILE, "base.css")
 
+        self.assertIsInstance(constants.ALLOWED_COMPONENTS, list)
+        self.assertIn("mono-badge", constants.ALLOWED_COMPONENTS)
+        self.assertIn("mono-layout", constants.ALLOWED_COMPONENTS)
+
 
 
     def test_mime_type_registry(self):
