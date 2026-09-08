@@ -58,16 +58,16 @@ def test_base_css_print_styles():
     assert "@media print" in content
     assert "background-image: none !important;" in content
     assert '"BIZ UDGothic"' in content
-    assert "font-size: 12px !important;" in content
-    assert "--font-display: 16px !important;" in content
-    assert "--font-title: 16px !important;" in content
-    assert "--font-subtitle: 16px !important;" in content
-    assert "--font-body: 12px !important;" in content
-    assert "--font-compact: 12px !important;" in content
+    assert "font-size: 16px !important;" in content
+    assert "--font-display: 3.0rem !important;" in content
+    assert "--font-title: 2.25rem !important;" in content
+    assert "--font-subtitle: 1.7rem !important;" in content
+    assert "--font-body: 1.35rem !important;" in content
+    assert "--font-compact: 1.1rem !important;" in content
     assert "box-shadow: inset 0 -0.22em 0 0" in content
     assert "heading-highlight" in content
     assert "border: none !important;" in content
-    assert "font-size: 16px !important;" in content
+    assert "font-size: 13px !important;" in content
     assert "white-space: pre !important;" in content
     assert "ui-monospace" in content
 
