@@ -67,10 +67,12 @@ def test_base_css_print_styles():
     assert "box-shadow: inset 0 -0.22em 0 0" in content
     assert "heading-highlight" in content
     assert "border: none !important;" in content
-    assert "font-size: 13px !important;" in content
+    assert "font-size: 14px !important;" in content
     assert "white-space: pre !important;" in content
     assert "ui-monospace" in content
     assert "max-width: 100% !important;" in content
     assert "text-wrap: wrap !important;" in content
+    assert "font-size: inherit !important;" in content
+    assert ":not(pre) > code" in content
 
 

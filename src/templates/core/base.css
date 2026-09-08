@@ -621,17 +621,23 @@ h4.heading-marker, h5.heading-marker, h6.heading-marker {
         text-wrap: wrap !important;
     }
 
-    /* コードブロックの印刷最適化: アンダースコアの分裂・重複や不要な改行を防止 */
+    /* コードブロックの印刷最適化: 14px、アンダースコアの分裂・重複や不要な改行を防止 */
     pre,
-    code,
+    pre code,
     mono-code-block pre,
     mono-code-block code {
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
-        font-size: 13px !important;
+        font-size: 14px !important;
         line-height: 1.45 !important;
         white-space: pre !important;
         word-break: normal !important;
         overflow-wrap: normal !important;
+    }
+
+    /* インラインコードの印刷スタイル: 本文フォントサイズと同一化 (inherit) */
+    :not(pre) > code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
+        font-size: inherit !important;
     }
 }
 
