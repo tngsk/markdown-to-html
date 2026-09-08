@@ -577,17 +577,31 @@ h4.heading-marker, h5.heading-marker, h6.heading-marker {
 /* Print specific global adjustments */
 @media print {
     :root {
-        /* Typography Trinity & Hierarchy 印刷用中間スケール（画面大判表示とコンパクト表示の中間最適スケール） */
-        --font-display: 3.0rem !important;   /* 約48px (大見出し) */
-        --font-title: 2.25rem !important;    /* 約36px (セクション見出し・h2) */
-        --font-subtitle: 1.7rem !important;  /* 約27.2px (サブ見出し・h3) */
-        --font-body: 1.35rem !important;     /* 約21.6px (本文) */
-        --font-compact: 1.1rem !important;   /* 約17.6px (伴奏・ボックス内) */
+        /* Typography Trinity & Hierarchy 印刷用統一スケール（見出し16px、その他12px統一） */
+        --font-display: 16px !important;
+        --font-title: 16px !important;
+        --font-subtitle: 16px !important;
+        --font-body: 12px !important;
+        --font-compact: 12px !important;
     }
 
     html {
         /* PDF出力時の基準フォントサイズ */
+        font-size: 12px !important;
+    }
+
+    /* 見出し要素のフォントサイズ統一 (16px) */
+    h1, h2, h3, h4, h5, h6,
+    .column h1, .column h2, .column h3, .column h4, .column h5, .column h6,
+    .text-display, .text-hero, .text-xlarge {
         font-size: 16px !important;
+    }
+
+    /* 本文・リスト・テーブル・ブロック・ボックス等のフォントサイズ統一 (12px) */
+    body, p, li, table, th, td, blockquote,
+    .column, mono-layout,
+    .text-body, .text-large, .text-compact, .text-small {
+        font-size: 12px !important;
     }
 
     body {
@@ -613,13 +627,13 @@ h4.heading-marker, h5.heading-marker, h6.heading-marker {
         transition: none !important;
     }
 
-    /* コードブロックの印刷最適化: アンダースコアの分裂・重複や不要な改行を防止 */
+    /* コードブロックの印刷最適化: 12px統一、アンダースコアの分裂・重複や不要な改行を防止 */
     pre,
     code,
     mono-code-block pre,
     mono-code-block code {
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
-        font-size: 13px !important;
+        font-size: 12px !important;
         line-height: 1.45 !important;
         white-space: pre !important;
         word-break: normal !important;
