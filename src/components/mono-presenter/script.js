@@ -45,7 +45,7 @@ class MonoPresenter extends MonoBaseElement {
     }
 
     extractSlides() {
-        const ignoredTags = new Set(['SCRIPT', 'TEMPLATE', 'STYLE', 'MONO-ZOOM', 'MONO-PRESENTER', 'MONO-BRUSH', 'MONO-SYNC']);
+        const ignoredTags = new Set(['SCRIPT', 'TEMPLATE', 'STYLE', 'MONO-ZOOM', 'MONO-PRESENTER', 'MONO-BRUSH', 'MONO-SYNC', 'MONO-TOPIC-RAIL']);
         const elements = Array.from(document.body.children).filter(el => !ignoredTags.has(el.tagName));
         if (elements.length === 0) return;
 

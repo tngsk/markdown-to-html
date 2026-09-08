@@ -37,13 +37,13 @@ class MonoTopicRail extends MonoBaseElement {
         const uniqueElements = Array.from(new Set(elements));
         if (uniqueElements.length === 0) return;
 
-        // Doc 5-tone CSS変数の配列
+        // Doc 5-tone 高視認性カラー配列
         const toneVars = [
-            "var(--mono-marker-yellow)",
-            "var(--mono-marker-pink)",
-            "var(--mono-marker-green)",
-            "var(--mono-marker-cyan)",
-            "var(--mono-marker-orange)"
+            "#eab308", // Yellow
+            "#ec4899", // Pink
+            "#10b981", // Green
+            "#06b6d4", // Cyan
+            "#f97316"  // Orange
         ];
 
         container.innerHTML = "";

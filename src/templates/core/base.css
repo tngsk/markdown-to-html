@@ -521,7 +521,9 @@ mono-layout {
 /* Space直系 見出しマーカー体系 (Heading Marker) ------------------ */
 /* 文字ベースラインに重なる72%〜91%帯比率、複数行折り返し追従 */
 .marker,
-.heading-marker {
+.heading-marker,
+[class*="marker-"],
+[class*="heading-marker-"] {
     --marker-current-color: var(--marker-space-normal);
     background: linear-gradient(
         transparent 72%,
@@ -533,12 +535,17 @@ mono-layout {
     -webkit-box-decoration-break: clone;
 }
 
-/* 見出しに付与された場合はブロック余白への不要な延長を抑制 */
+/* 見出しに付与された場合はブロック余白への不要な延長を抑制しつつ、CSS Grid内での幅潰れを防止 */
 h1.marker, h2.marker, h3.marker, h4.marker, h5.marker, h6.marker,
+h1[class*="marker-"], h2[class*="marker-"], h3[class*="marker-"],
+h4[class*="marker-"], h5[class*="marker-"], h6[class*="marker-"],
 h1.heading-marker, h2.heading-marker, h3.heading-marker,
 h4.heading-marker, h5.heading-marker, h6.heading-marker,
-.text-display.marker, .text-display.heading-marker {
-    width: fit-content;
+.text-display.marker, .text-display.heading-marker,
+.text-display[class*="marker-"], .text-display[class*="heading-marker-"] {
+    display: table;
+    width: auto;
+    max-width: 100%;
 }
 
 /* Space 3トーン */
