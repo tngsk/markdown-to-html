@@ -36,6 +36,7 @@ ALLOWED_COMPONENTS = [
     "mono-clock",
     "mono-code-block",
     "mono-compare",
+    "mono-connector",
     "mono-countdown",
     "mono-dice",
     "mono-drawer",
