@@ -1,6 +1,13 @@
 :host {
     display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    z-index: 5;
     pointer-events: none;
+    grid-column: 1 / -1;
 }
 
 /* スクロールする左端カラーラインコンテナ */
@@ -9,6 +16,7 @@
     top: 0;
     left: 0;
     width: 3px;
+    height: 100%;
     z-index: 5;
     pointer-events: none;
 }
@@ -39,8 +47,9 @@
     font-weight: 600;
     letter-spacing: 0.02em;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-    z-index: 50;
+    z-index: 9999;
     pointer-events: auto;
+    cursor: pointer;
     opacity: 0;
     transform: translateY(-8px);
     transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.25s ease;

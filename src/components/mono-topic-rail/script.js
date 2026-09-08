@@ -2,6 +2,7 @@ class MonoTopicRail extends MonoBaseElement {
     constructor() {
         super();
         this.topics = [];
+        this.currentActiveIndex = -1;
         this.onScrollBound = this.onScroll.bind(this);
         this.onResizeBound = this.onResize.bind(this);
         this.resizeTimer = null;
@@ -12,20 +13,40 @@ class MonoTopicRail extends MonoBaseElement {
         if (document.readyState === "loading") {
             document.addEventListener("DOMContentLoaded", () => this.initRail());
         } else {
-            setTimeout(() => this.initRail(), 50);
+            setTimeout(() => this.initRail(), 30);
+        }
+
+        // 画像やフォント読み込み完了時の座標再計算
+        window.addEventListener("load", () => {
+            this.renderSegments();
+            this.updateActiveBadge();
+        });
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => {
+                this.renderSegments();
+                this.updateActiveBadge();
+            });
         }
     }
 
     disconnectedCallback() {
         window.removeEventListener("scroll", this.onScrollBound);
+        document.removeEventListener("scroll", this.onScrollBound);
         window.removeEventListener("resize", this.onResizeBound);
         if (this.resizeTimer) clearTimeout(this.resizeTimer);
     }
 
-    initRail() {
-        const container = this.shadowRoot ? this.shadowRoot.querySelector(".topic-scroll-rail-container") : null;
-        if (!container) return;
+    getAbsoluteTop(element) {
+        let top = 0;
+        let current = element;
+        while (current) {
+            top += current.offsetTop || 0;
+            current = current.offsetParent;
+        }
+        return top;
+    }
 
+    initRail() {
         // 見出しの .topic または .section を走査
         const elements = Array.from(
             document.querySelectorAll(
@@ -48,7 +69,7 @@ class MonoTopicRail extends MonoBaseElement {
         this.topics = uniqueElements.map((el, i) => {
             const title = el.textContent.trim() || `Topic ${i + 1}`;
             const color = toneVars[i % toneVars.length];
-            return { element: el, title, color, index: i };
+            return { element: el, title, color, index: i, top: 0 };
         });
 
         this.renderSegments();
@@ -60,8 +81,12 @@ class MonoTopicRail extends MonoBaseElement {
         const container = this.shadowRoot ? this.shadowRoot.querySelector(".topic-scroll-rail-container") : null;
         if (!container || !this.topics.length) return;
 
+        // 各トピックの絶対座標を再計算
+        this.topics.forEach(t => {
+            t.top = this.getAbsoluteTop(t.element);
+        });
+
         container.innerHTML = "";
-        const scrollY = window.scrollY || window.pageYOffset;
         const totalHeight = Math.max(
             document.documentElement.scrollHeight,
             document.body.scrollHeight
@@ -69,13 +94,11 @@ class MonoTopicRail extends MonoBaseElement {
 
         for (let i = 0; i < this.topics.length; i++) {
             const current = this.topics[i];
-            const rect = current.element.getBoundingClientRect();
-            const startTop = rect.top + scrollY;
+            const startTop = current.top;
 
             let endTop;
             if (i < this.topics.length - 1) {
-                const nextRect = this.topics[i + 1].element.getBoundingClientRect();
-                endTop = nextRect.top + scrollY;
+                endTop = this.topics[i + 1].top;
             } else {
                 endTop = totalHeight;
             }
@@ -93,9 +116,10 @@ class MonoTopicRail extends MonoBaseElement {
 
     setupEventListeners() {
         window.addEventListener("scroll", this.onScrollBound, { passive: true });
+        document.addEventListener("scroll", this.onScrollBound, { passive: true });
         window.addEventListener("resize", this.onResizeBound, { passive: true });
 
-        // 右上バッジをクリックで現在のセクションへスクロール
+        // 右上バッジをクリックで現在のセクション先頭へスムーズスクロール
         const badge = this.shadowRoot ? this.shadowRoot.querySelector(".topic-current-badge") : null;
         if (badge) {
             badge.addEventListener("click", () => {
@@ -115,7 +139,7 @@ class MonoTopicRail extends MonoBaseElement {
         this.resizeTimer = setTimeout(() => {
             this.renderSegments();
             this.updateActiveBadge();
-        }, 150);
+        }, 100);
     }
 
     updateActiveBadge() {
@@ -125,14 +149,12 @@ class MonoTopicRail extends MonoBaseElement {
         const badgeTitle = this.shadowRoot ? this.shadowRoot.querySelector(".topic-badge-title") : null;
         if (!badge || !badgeTitle) return;
 
-        const scrollY = window.scrollY || window.pageYOffset;
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
         const focalPoint = scrollY + window.innerHeight * 0.35;
 
         let activeIndex = -1;
         for (let i = 0; i < this.topics.length; i++) {
-            const rect = this.topics[i].element.getBoundingClientRect();
-            const top = rect.top + scrollY;
-            if (top <= focalPoint) {
+            if (this.topics[i].top <= focalPoint) {
                 activeIndex = i;
             } else {
                 break;
@@ -147,7 +169,7 @@ class MonoTopicRail extends MonoBaseElement {
             badge.style.setProperty("--active-topic-color", activeTopic.color);
             badge.classList.add("visible");
         } else {
-            // 最初のトピックより前は非表示
+            // 最初のトピック見出しに到達する前（タイトル等）は非表示
             badge.classList.remove("visible");
         }
     }
