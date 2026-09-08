@@ -354,3 +354,31 @@ def test_embed_media_ab_test_tag_mixed(mock_exists, mock_resolve, mock_encode, m
     assert media_count == 1
     assert "asset-1" in asset_store
     assert asset_store["asset-1"] == "data:image/webp;base64,base64_data_B"
+
+
+def test_embed_media_sha256_deduplication(media_embedder, tmp_path):
+    """Test embed_media_in_html deduplicates identical images across different file paths using SHA-256"""
+    # 異なるパスに同一内容の画像ファイルを配置
+    dir_a = tmp_path / "section_a"
+    dir_b = tmp_path / "section_b"
+    dir_a.mkdir()
+    dir_b.mkdir()
+
+    file_a = dir_a / "logo.png"
+    file_b = dir_b / "logo_copy.png"
+    identical_bytes = b"identical_png_image_binary_content"
+    file_a.write_bytes(identical_bytes)
+    file_b.write_bytes(identical_bytes)
+
+    # 実際の読み取り・エンコードを使用
+    media_embedder.file_handler.read_binary.side_effect = lambda p: p.read_bytes()
+
+    html_input = '<img src="section_a/logo.png"><img src="section_b/logo_copy.png">'
+    result_html, media_count, asset_store = media_embedder.embed_media_in_html(html_input, tmp_path)
+
+    # 重複が排除されて単一のアセットのみが生成されること
+    assert media_count == 1
+    assert len(asset_store) == 1
+    assert 'data-lazy-src="asset-1"' in result_html
+    assert result_html.count('data-lazy-src="asset-1"') == 2
+

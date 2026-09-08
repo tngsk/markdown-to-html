@@ -54,3 +54,60 @@ def test_mono_link_trailing_attributes():
     assert 'title="Site"' in html
     assert '{' not in html
     assert '}' not in html
+
+
+def test_ogp_parser_and_cache(tmp_path, monkeypatch):
+    parser = Parser()
+    parser._memory_cache.clear()
+    monkeypatch.setattr(parser, "_get_cache_dir", lambda: tmp_path)
+
+    sample_html = (
+        '<!doctype html><html><head>'
+        '<meta content="サンプルサイト" property="og:title">'
+        '<meta content="説明文です" property="og:description">'
+        '<meta property="og:image" content="/assets/cover.png">'
+        '</head><body></body></html>'
+    ).encode("utf-8")
+
+    call_count = 0
+    def mock_download(url, limit, timeout=8):
+        nonlocal call_count
+        call_count += 1
+        if url == "https://example.org/page":
+            return sample_html, "text/html", "utf-8", "https://example.org/page"
+        if url == "https://example.org/assets/cover.png":
+            return b"fake_png_data", "image/png", "utf-8", "https://example.org/assets/cover.png"
+        raise ValueError(f"Unknown url: {url}")
+
+    monkeypatch.setattr(parser, "download_resource", mock_download)
+
+    # 1回目の取得：パースとキャッシュ生成の検証
+    data1 = parser.fetch_og_data("https://example.org/page")
+    assert data1["title"] == "サンプルサイト"
+    assert data1["desc"] == "説明文です"
+    assert data1["image"].startswith("data:image/png;base64,")
+    assert call_count == 2
+
+    # 2回目の取得：キャッシュヒットによりダウンロードがバイパスされることの検証
+    data2 = parser.fetch_og_data("https://example.org/page")
+    assert data2 == data1
+    assert call_count == 2
+
+
+def test_ogp_security_and_fallback(monkeypatch):
+    parser = Parser()
+    parser._memory_cache.clear()
+
+    # サイズ上限超過エラーをシミュレート
+    def mock_oversize(url, limit, timeout=8):
+        raise ValueError("プレビュー取得サイズが上限を超過しました")
+
+    monkeypatch.setattr(parser, "download_resource", mock_oversize)
+    data = parser.fetch_og_data("https://example.org/huge")
+    assert data == {"title": "", "desc": "", "image": ""}
+
+    # クラッシュせずにパーサーが安全に完了すること
+    result = parser.process('@[link: "Huge"](url: "https://example.org/huge")')
+    assert 'title="Huge"' in result
+    assert '<mono-link' in result
+

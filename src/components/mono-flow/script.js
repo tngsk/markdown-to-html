@@ -1,3 +1,70 @@
+const MonoFlowGeometry = (() => {
+  function calculateFlowCurve(fromRect, toRect, wrapperRect, direction = "LR") {
+    // Calculate center points relative to the wrapper
+    const fromX = fromRect.left - wrapperRect.left + fromRect.width / 2;
+    const fromY = fromRect.top - wrapperRect.top + fromRect.height / 2;
+
+    const toX = toRect.left - wrapperRect.left + toRect.width / 2;
+    const toY = toRect.top - wrapperRect.top + toRect.height / 2;
+
+    let startX, startY, endX, endY, d;
+    const curvature = 0.5;
+
+    if (direction === "TB") {
+      // Vertical layout: from bottom center to top center
+      startX = fromX;
+      startY = fromY + fromRect.height / 2;
+      endX = toX;
+      endY = toY - toRect.height / 2;
+
+      const dy = endY - startY;
+      const control1X = startX;
+      const control1Y = startY + dy * curvature;
+      const control2X = endX;
+      const control2Y = endY - dy * curvature;
+
+      d = `M ${startX} ${startY} C ${control1X} ${control1Y}, ${control2X} ${control2Y}, ${endX} ${endY}`;
+    } else {
+      // Horizontal layout: from right center to left center
+      startX = fromX + fromRect.width / 2;
+      startY = fromY;
+      endX = toX - toRect.width / 2;
+      endY = toY;
+
+      const dx = endX - startX;
+      const control1X = startX + dx * curvature;
+      const control1Y = startY;
+      const control2X = endX - dx * curvature;
+      const control2Y = endY;
+
+      d = `M ${startX} ${startY} C ${control1X} ${control1Y}, ${control2X} ${control2Y}, ${endX} ${endY}`;
+    }
+
+    const midX = startX + (endX - startX) / 2;
+    const midY = startY + (endY - startY) / 2;
+
+    return {
+      startX,
+      startY,
+      endX,
+      endY,
+      d,
+      midX,
+      midY,
+    };
+  }
+
+  return { calculateFlowCurve };
+})();
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = MonoFlowGeometry;
+}
+
+if (typeof MonoBaseElement === "undefined") {
+  var MonoBaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
+}
+
 class MonoFlow extends MonoBaseElement {
   constructor() {
     super();
@@ -129,59 +196,24 @@ class MonoFlow extends MonoBaseElement {
       const toY = toRect.top - wrapperRect.top + toRect.height / 2;
 
       const direction = this.getAttribute("direction") || "LR";
-
-      let startX, startY, endX, endY, d;
-
-      if (direction === "TB") {
-        // Vertical layout: from bottom center to top center
-        startX = fromX;
-        startY = fromY + fromRect.height / 2;
-        endX = toX;
-        endY = toY - toRect.height / 2;
-
-        // Create a vertical S-curve path
-        const curvature = 0.5;
-        const dy = endY - startY;
-        const control1X = startX;
-        const control1Y = startY + dy * curvature;
-        const control2X = endX;
-        const control2Y = endY - dy * curvature;
-
-        d = `M ${startX} ${startY} C ${control1X} ${control1Y}, ${control2X} ${control2Y}, ${endX} ${endY}`;
-      } else {
-        // Horizontal layout: from right center to left center
-        startX = fromX + fromRect.width / 2;
-        startY = fromY;
-        endX = toX - toRect.width / 2;
-        endY = toY;
-
-        // Create a horizontal S-curve path
-        const curvature = 0.5;
-        const dx = endX - startX;
-        const control1X = startX + dx * curvature;
-        const control1Y = startY;
-        const control2X = endX - dx * curvature;
-        const control2Y = endY;
-
-        d = `M ${startX} ${startY} C ${control1X} ${control1Y}, ${control2X} ${control2Y}, ${endX} ${endY}`;
-      }
+      const geom = MonoFlowGeometry.calculateFlowCurve(
+        fromRect,
+        toRect,
+        wrapperRect,
+        direction
+      );
 
       const pathEl = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "path",
       );
-      pathEl.setAttribute("d", d);
+      pathEl.setAttribute("d", geom.d);
       pathEl.setAttribute("class", "flow-path");
       pathEl.setAttribute("marker-end", "url(#arrow)");
       svg.appendChild(pathEl);
 
       // Add label if it exists
       if (edge.label) {
-        // Calculate the midpoint of the bezier curve for the label
-        // A simple approximation is the exact midpoint of start and end
-        const midX = startX + (endX - startX) / 2;
-        const midY = startY + (endY - startY) / 2;
-
         const groupEl = document.createElementNS(
           "http://www.w3.org/2000/svg",
           "g",
@@ -191,8 +223,8 @@ class MonoFlow extends MonoBaseElement {
           "http://www.w3.org/2000/svg",
           "text",
         );
-        textEl.setAttribute("x", midX);
-        textEl.setAttribute("y", midY);
+        textEl.setAttribute("x", geom.midX);
+        textEl.setAttribute("y", geom.midY);
         textEl.setAttribute("class", "flow-label");
         textEl.textContent = edge.label;
 
@@ -226,4 +258,6 @@ class MonoFlow extends MonoBaseElement {
   }
 }
 
-customElements.define("mono-flow", MonoFlow);
+if (typeof customElements !== "undefined") {
+  customElements.define("mono-flow", MonoFlow);
+}

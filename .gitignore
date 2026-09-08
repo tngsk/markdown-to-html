@@ -232,3 +232,4 @@ watch_and_run.sh
 educational_templates/
 scripts/
 Makefile
+.mono-cache/

@@ -1,15 +1,45 @@
 import re
 import urllib.request
+import urllib.parse
 import base64
+import hashlib
+import json
 import logging
+from html.parser import HTMLParser
+from pathlib import Path
 from src.processors.base_parser import BaseComponentParser
 
 logger = logging.getLogger(__name__)
+
+class MetadataParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.values = {}
+        self.title = ""
+        self.in_title = False
+
+    def handle_starttag(self, tag, attrs):
+        attrs_dict = dict(attrs)
+        if tag == "meta":
+            key = attrs_dict.get("property", attrs_dict.get("name", "")).lower().strip()
+            if key and "content" in attrs_dict:
+                self.values.setdefault(key, attrs_dict["content"])
+        elif tag == "title":
+            self.in_title = True
+
+    def handle_endtag(self, tag):
+        if tag == "title":
+            self.in_title = False
+
+    def handle_data(self, value):
+        if self.in_title:
+            self.title += value
 
 class Parser(BaseComponentParser):
     # OPTIONS: url: "url", style: "full|small|card"
     PATTERN = r"@\[link(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?(?:\{([^}]*)\})?"
     FAST_PATH_MARKERS = ("@[link",)
+    _memory_cache = {}
 
     @property
     def block_level_tags(self) -> list[str]:
@@ -28,8 +58,34 @@ class Parser(BaseComponentParser):
             fragment = quote(unquote(fragment))
             return urlunsplit((scheme, netloc, path, query, fragment))
 
+    def _get_cache_dir(self) -> Path:
+        cache_dir = Path.cwd() / ".mono-cache"
+        try:
+            cache_dir.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            pass
+        return cache_dir
+
+    def download_resource(self, url: str, limit: int, timeout: int = 8) -> tuple[bytes, str, str, str]:
+        parts = urllib.parse.urlsplit(url)
+        if parts.scheme not in ("http", "https") or not parts.hostname or any(ord(c) < 33 for c in url):
+            raise ValueError(f"不正なURL形式です: {url}")
+
+        req = urllib.request.Request(
+            url,
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) MonoDoc/1.0"}
+        )
+        with urllib.request.urlopen(req, timeout=timeout) as response:
+            final_url = response.url
+            data = response.read(limit + 1)
+            if len(data) > limit:
+                raise ValueError("プレビュー取得サイズが上限を超過しました")
+            content_type = response.headers.get_content_type()
+            charset = response.headers.get_content_charset() or "utf-8"
+            return data, content_type, charset, final_url
+
     def fetch_og_data(self, url: str) -> dict:
-        """Fetch OpenGraph metadata and image from URL"""
+        """Fetch OpenGraph metadata and image from URL with caching and size limits"""
         data = {
             "title": "",
             "desc": "",
@@ -39,43 +95,57 @@ class Parser(BaseComponentParser):
         if not url.startswith("http://") and not url.startswith("https://"):
             return data
 
+        if url in self._memory_cache:
+            return self._memory_cache[url]
+
+        cache_dir = self._get_cache_dir()
+        url_hash = hashlib.sha256(url.encode("utf-8")).hexdigest()
+        cache_file = cache_dir / f"{url_hash}.json"
+
+        if cache_file.is_file():
+            try:
+                cached_data = json.loads(cache_file.read_text(encoding="utf-8"))
+                self._memory_cache[url] = cached_data
+                return cached_data
+            except (OSError, ValueError):
+                pass
+
         try:
             safe_url = self.safe_encode_url(url)
-            req = urllib.request.Request(safe_url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
-            html = urllib.request.urlopen(req, timeout=5).read().decode('utf-8', errors='ignore')
+            raw_html, content_type, charset, final_url = self.download_resource(safe_url, limit=2_000_000)
+            if content_type not in ("text/html", "application/xhtml+xml"):
+                return data
 
-            # Extract og:image
-            image_match = re.search(r'<meta\s+property=[\"\'\s]?og:image[\"\'\s]?\s+content=[\"\'\s]?([^\"\'>\s]+)', html, re.IGNORECASE)
-            # Extract og:title
-            title_match = re.search(r'<meta\s+property=[\"\'\s]?og:title[\"\'\s]?\s+content=[\"\'\s]?([^\"\'>]+)', html, re.IGNORECASE)
-            if not title_match:
-                title_match = re.search(r'<title>(.*?)</title>', html, re.IGNORECASE)
-            # Extract og:description
-            desc_match = re.search(r'<meta\s+property=[\"\'\s]?og:description[\"\'\s]?\s+content=[\"\'\s]?([^\"\'>]+)', html, re.IGNORECASE)
+            html_text = raw_html.decode(charset, errors="replace")
+            meta_parser = MetadataParser()
+            meta_parser.feed(html_text)
 
-            if title_match:
-                data["title"] = title_match.group(1).strip()
-            if desc_match:
-                # Remove newlines to prevent markdown from splitting the tag
-                data["desc"] = desc_match.group(1).replace('\n', ' ').strip()
+            title = meta_parser.values.get("og:title") or meta_parser.title.strip()
+            desc = meta_parser.values.get("og:description") or meta_parser.values.get("description", "")
+            data["title"] = title.strip()
+            data["desc"] = desc.replace("\n", " ").strip()
 
-            if image_match:
-                img_url = image_match.group(1).strip()
-                # Ensure img_url is absolute
-                from urllib.parse import urljoin
-                img_url = urljoin(url, img_url)
+            img_url = meta_parser.values.get("og:image")
+            if img_url:
+                absolute_img_url = urllib.parse.urljoin(final_url, img_url.strip())
+                try:
+                    img_data, img_mime, _, _ = self.download_resource(absolute_img_url, limit=8_000_000)
+                    if img_mime in ("image/png", "image/jpeg", "image/webp", "image/gif", "image/svg+xml"):
+                        b64 = base64.b64encode(img_data).decode("utf-8")
+                        data["image"] = f"data:{img_mime};base64,{b64}"
+                except Exception as img_err:
+                    logger.debug(f"OGP画像の取得をスキップしました ({absolute_img_url}): {img_err}")
 
-                # Fetch image and convert to base64
-                img_req = urllib.request.Request(img_url, headers={'User-Agent': 'Mozilla/5.0'})
-                img_response = urllib.request.urlopen(img_req, timeout=5)
-                img_data = img_response.read()
-                content_type = img_response.headers.get('Content-Type', 'image/jpeg')
-                b64 = base64.b64encode(img_data).decode('utf-8')
-                data["image"] = f"data:{content_type};base64,{b64}"
+            if cache_dir.exists():
+                try:
+                    cache_file.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+                except OSError:
+                    pass
 
         except Exception as e:
             logger.warning(f"Failed to fetch OpenGraph data for {url}: {e}")
 
+        self._memory_cache[url] = data
         return data
 
     def process(self, markdown_content: str) -> str:
