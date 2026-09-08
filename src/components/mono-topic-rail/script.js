@@ -2,8 +2,9 @@ class MonoTopicRail extends MonoBaseElement {
     constructor() {
         super();
         this.topics = [];
-        this.observer = null;
         this.onScrollBound = this.onScroll.bind(this);
+        this.onResizeBound = this.onResize.bind(this);
+        this.resizeTimer = null;
     }
 
     connectedCallback() {
@@ -11,19 +12,18 @@ class MonoTopicRail extends MonoBaseElement {
         if (document.readyState === "loading") {
             document.addEventListener("DOMContentLoaded", () => this.initRail());
         } else {
-            setTimeout(() => this.initRail(), 0);
+            setTimeout(() => this.initRail(), 50);
         }
     }
 
     disconnectedCallback() {
-        if (this.observer) {
-            this.observer.disconnect();
-        }
         window.removeEventListener("scroll", this.onScrollBound);
+        window.removeEventListener("resize", this.onResizeBound);
+        if (this.resizeTimer) clearTimeout(this.resizeTimer);
     }
 
     initRail() {
-        const container = this.shadowRoot ? this.shadowRoot.querySelector(".topic-rail-container") : null;
+        const container = this.shadowRoot ? this.shadowRoot.querySelector(".topic-scroll-rail-container") : null;
         if (!container) return;
 
         // 見出しの .topic または .section を走査
@@ -33,7 +33,6 @@ class MonoTopicRail extends MonoBaseElement {
             )
         );
 
-        // 重複除外
         const uniqueElements = Array.from(new Set(elements));
         if (uniqueElements.length === 0) return;
 
@@ -46,61 +45,111 @@ class MonoTopicRail extends MonoBaseElement {
             "#f97316"  // Orange
         ];
 
-        container.innerHTML = "";
         this.topics = uniqueElements.map((el, i) => {
             const title = el.textContent.trim() || `Topic ${i + 1}`;
             const color = toneVars[i % toneVars.length];
-
-            const seg = document.createElement("div");
-            seg.className = "topic-rail-segment";
-            seg.style.setProperty("--segment-color", color);
-            seg.setAttribute("data-title", title);
-            seg.style.flex = "1";
-
-            seg.addEventListener("click", () => {
-                el.scrollIntoView({ behavior: "smooth", block: "start" });
-            });
-
-            container.appendChild(seg);
-            return { element: el, segment: seg, index: i };
+            return { element: el, title, color, index: i };
         });
 
-        this.setupObserver();
-        this.updateActive();
+        this.renderSegments();
+        this.setupEventListeners();
+        this.updateActiveBadge();
     }
 
-    setupObserver() {
+    renderSegments() {
+        const container = this.shadowRoot ? this.shadowRoot.querySelector(".topic-scroll-rail-container") : null;
+        if (!container || !this.topics.length) return;
+
+        container.innerHTML = "";
+        const scrollY = window.scrollY || window.pageYOffset;
+        const totalHeight = Math.max(
+            document.documentElement.scrollHeight,
+            document.body.scrollHeight
+        );
+
+        for (let i = 0; i < this.topics.length; i++) {
+            const current = this.topics[i];
+            const rect = current.element.getBoundingClientRect();
+            const startTop = rect.top + scrollY;
+
+            let endTop;
+            if (i < this.topics.length - 1) {
+                const nextRect = this.topics[i + 1].element.getBoundingClientRect();
+                endTop = nextRect.top + scrollY;
+            } else {
+                endTop = totalHeight;
+            }
+
+            const segHeight = Math.max(0, endTop - startTop);
+
+            const seg = document.createElement("div");
+            seg.className = "topic-scroll-segment";
+            seg.style.top = `${startTop}px`;
+            seg.style.height = `${segHeight}px`;
+            seg.style.setProperty("--segment-color", current.color);
+            container.appendChild(seg);
+        }
+    }
+
+    setupEventListeners() {
         window.addEventListener("scroll", this.onScrollBound, { passive: true });
+        window.addEventListener("resize", this.onResizeBound, { passive: true });
+
+        // 右上バッジをクリックで現在のセクションへスクロール
+        const badge = this.shadowRoot ? this.shadowRoot.querySelector(".topic-current-badge") : null;
+        if (badge) {
+            badge.addEventListener("click", () => {
+                if (this.currentActiveIndex >= 0 && this.topics[this.currentActiveIndex]) {
+                    this.topics[this.currentActiveIndex].element.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+            });
+        }
     }
 
     onScroll() {
-        this.updateActive();
+        this.updateActiveBadge();
     }
 
-    updateActive() {
+    onResize() {
+        if (this.resizeTimer) clearTimeout(this.resizeTimer);
+        this.resizeTimer = setTimeout(() => {
+            this.renderSegments();
+            this.updateActiveBadge();
+        }, 150);
+    }
+
+    updateActiveBadge() {
         if (!this.topics.length) return;
 
-        const scrollY = window.scrollY || window.pageYOffset;
-        const viewportMiddle = scrollY + window.innerHeight * 0.35;
+        const badge = this.shadowRoot ? this.shadowRoot.querySelector(".topic-current-badge") : null;
+        const badgeTitle = this.shadowRoot ? this.shadowRoot.querySelector(".topic-badge-title") : null;
+        if (!badge || !badgeTitle) return;
 
-        let activeIndex = 0;
+        const scrollY = window.scrollY || window.pageYOffset;
+        const focalPoint = scrollY + window.innerHeight * 0.35;
+
+        let activeIndex = -1;
         for (let i = 0; i < this.topics.length; i++) {
             const rect = this.topics[i].element.getBoundingClientRect();
             const top = rect.top + scrollY;
-            if (top <= viewportMiddle) {
+            if (top <= focalPoint) {
                 activeIndex = i;
             } else {
                 break;
             }
         }
 
-        this.topics.forEach((t, i) => {
-            if (i === activeIndex) {
-                t.segment.classList.add("active");
-            } else {
-                t.segment.classList.remove("active");
-            }
-        });
+        this.currentActiveIndex = activeIndex;
+
+        if (activeIndex >= 0) {
+            const activeTopic = this.topics[activeIndex];
+            badgeTitle.textContent = activeTopic.title;
+            badge.style.setProperty("--active-topic-color", activeTopic.color);
+            badge.classList.add("visible");
+        } else {
+            // 最初のトピックより前は非表示
+            badge.classList.remove("visible");
+        }
     }
 }
 
