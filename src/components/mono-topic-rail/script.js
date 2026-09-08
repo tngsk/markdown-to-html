@@ -1,7 +1,3 @@
-if (typeof MonoBaseElement === "undefined") {
-    var MonoBaseElement = typeof HTMLElement !== "undefined" ? HTMLElement : class {};
-}
-
 class MonoTopicRail extends MonoBaseElement {
     constructor() {
         super();
