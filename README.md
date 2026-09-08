@@ -75,12 +75,12 @@ Mono Docは、16pxのドットグリッドを基盤とした3段階の流体ス�
 | コンポーネント | 構文例 |
 |---|---|
 | レイアウト | `@[hbox]{.gap-group}\n::: 左\n:::\n::: 右\n:::\n@[/hbox]` |
-| 比較（2/3要素） | `@[compare]\n::: Before\n従来\n:::\n::: After\n新提案\n:::\n@[/compare]` |
+| 比較（2/3要素） | `@[compare](gap: "group")\n::: Before\n従来\n:::\n::: After\n新提案\n:::\n@[/compare]` |
 | セクション | `@[section](padding: "group")\n...コンテンツ...\n@[/section]` |
 | ズーム | `@[zoom]()` または `-p presentation` |
 | コードブロック | 通常のコードブロック（```）から自動変換 |
 | ダイアグラム | `@[mermaid]\ngraph TD; A-->B;\n@[/mermaid]` |
-| リンクカード | `@[link: タイトル](url: "https://example.com")` |
+| リンクカード | `@[link: タイトル](url: "https://example.com")`（TTLキャッシュ対応） |
 | テーマ切替 | `@[theme: corporate]()` |
 
 詳細なコンポーネント仕様や教育系パッケージ（`@interactive`）については [doc/SKILL.md](doc/SKILL.md) を参照してください。

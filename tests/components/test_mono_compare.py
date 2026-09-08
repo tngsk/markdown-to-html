@@ -64,3 +64,39 @@ def test_compare_fallback_and_attributes():
     assert 'class="custom-border"' in html
     assert 'id="compare-section"' in html
     assert html.count('<div class="compare-item"') == 3
+
+
+def test_compare_gap_options():
+    parser = Parser()
+
+    # セマンティックgap指定（item, flow）
+    md_item = """@[compare](gap: "item")
+:::
+左
+:::
+右
+@[end]"""
+    html_item = parser.process(md_item)
+    assert 'gap="item"' in html_item
+
+    # カスタム長gap指定（16px）
+    md_custom = """@[compare](gap: "16px")
+:::
+1
+:::
+2
+:::
+3
+@[end]"""
+    html_custom = parser.process(md_custom)
+    assert 'gap="16px"' in html_custom
+
+    # gap未指定の場合はデフォルト挙動（gap属性なしでCSSデフォルトが適用される）
+    md_default = """@[compare]
+:::
+A
+:::
+B
+@[end]"""
+    html_default = parser.process(md_default)
+    assert 'gap=' not in html_default

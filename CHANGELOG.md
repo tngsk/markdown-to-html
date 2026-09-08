@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `mono-compare` における Spacing Trinity（item, group, flow, none）および任意CSS長（16px等）の動的バインドによるカラム間余白（gap）制御
+- `mono-link` におけるローカルキャッシュの有効期限管理（TTL: デフォルト7日間、環境変数 `MONO_CACHE_TTL`）およびネットワーク障害時の古いキャッシュへの優雅なフォールバック
 - 16px繊細ドットグリッド背景体系（HTML・PDF両対応、CSS Gridコンテンツ領域との幾何学的原点同期）
 - `mono-compare` コンポーネント（2要素: 1:1等幅対比、3要素: 1:2:1視線誘導対比の自動判別・明示指定）
 - `mono-link` における `MetadataParser`（HTMLParser）による属性順序非依存のOGP抽出、サイズ上限ガード（2MB/8MB）、およびローカルJSONキャッシュ（`.mono-cache`）

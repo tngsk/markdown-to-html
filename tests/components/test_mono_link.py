@@ -111,3 +111,75 @@ def test_ogp_security_and_fallback(monkeypatch):
     assert 'title="Huge"' in result
     assert '<mono-link' in result
 
+
+def test_ogp_cache_ttl_and_expiration(tmp_path, monkeypatch):
+    import json
+    import hashlib
+    import time
+
+    parser = Parser()
+    parser._memory_cache.clear()
+    monkeypatch.setattr(parser, "_get_cache_dir", lambda: tmp_path)
+
+    # 1. 期限切れキャッシュファイルを直接生成
+    url = "https://example.org/ttl-test"
+    url_hash = hashlib.sha256(url.encode("utf-8")).hexdigest()
+    cache_file = tmp_path / f"{url_hash}.json"
+
+    old_time = time.time() - (8 * 86400)  # 8日前（7日のTTLを超過）
+    cache_file.write_text(json.dumps({
+        "title": "Old Title",
+        "desc": "Old Desc",
+        "image": "",
+        "cached_at": old_time
+    }), encoding="utf-8")
+
+    call_count = 0
+    def mock_download(u, limit, timeout=8):
+        nonlocal call_count
+        call_count += 1
+        new_html = '<html><head><title>New Title</title></head></html>'.encode("utf-8")
+        return new_html, "text/html", "utf-8", u
+
+    monkeypatch.setattr(parser, "download_resource", mock_download)
+
+    # 取得実行：期限切れのため再ダウンロードされること
+    data = parser.fetch_og_data(url)
+    assert call_count == 1
+    assert data["title"] == "New Title"
+    assert data["cached_at"] > old_time
+
+
+def test_ogp_cache_ttl_stale_fallback_on_network_error(tmp_path, monkeypatch):
+    import json
+    import hashlib
+    import time
+
+    parser = Parser()
+    parser._memory_cache.clear()
+    monkeypatch.setattr(parser, "_get_cache_dir", lambda: tmp_path)
+
+    url = "https://example.org/offline-test"
+    url_hash = hashlib.sha256(url.encode("utf-8")).hexdigest()
+    cache_file = tmp_path / f"{url_hash}.json"
+
+    old_time = time.time() - (10 * 86400)
+    cache_file.write_text(json.dumps({
+        "title": "Stale Cached Title",
+        "desc": "Stale Desc",
+        "image": "",
+        "cached_at": old_time
+    }), encoding="utf-8")
+
+    # ネットワーク接続エラーをシミュレート
+    def mock_network_error(u, limit, timeout=8):
+        raise ConnectionError("Network unreachable")
+
+    monkeypatch.setattr(parser, "download_resource", mock_network_error)
+
+    # 期限切れだがネットワーク障害のため、既存の古いキャッシュが安全に返却されること
+    data = parser.fetch_og_data(url)
+    assert data["title"] == "Stale Cached Title"
+    assert data["desc"] == "Stale Desc"
+
+

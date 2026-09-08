@@ -5,6 +5,8 @@ import base64
 import hashlib
 import json
 import logging
+import os
+import time
 from html.parser import HTMLParser
 from pathlib import Path
 from src.processors.base_parser import BaseComponentParser
@@ -39,11 +41,22 @@ class Parser(BaseComponentParser):
     # OPTIONS: url: "url", style: "full|small|card"
     PATTERN = r"@\[link(?:(?:\:\s*)?([^\]]*))\](?:\(((?:[^()]*|\([^()]*\))*)\))?(?:\{([^}]*)\})?"
     FAST_PATH_MARKERS = ("@[link",)
+    DEFAULT_CACHE_TTL = 7 * 86400  # 7 days in seconds
     _memory_cache = {}
 
     @property
     def block_level_tags(self) -> list[str]:
         return []
+
+    def get_cache_ttl(self) -> float:
+        """Get cache TTL in seconds from MONO_CACHE_TTL environment variable or default"""
+        env_val = os.environ.get("MONO_CACHE_TTL")
+        if env_val:
+            try:
+                return float(env_val)
+            except ValueError:
+                pass
+        return float(self.DEFAULT_CACHE_TTL)
 
     def safe_encode_url(self, url: str) -> str:
         """Encode URL properly handling non-ASCII characters without double encoding"""
@@ -95,26 +108,43 @@ class Parser(BaseComponentParser):
         if not url.startswith("http://") and not url.startswith("https://"):
             return data
 
+        ttl = self.get_cache_ttl()
+        now = time.time()
+
+        # インメモリキャッシュのTTL検証
         if url in self._memory_cache:
-            return self._memory_cache[url]
+            mem_data = self._memory_cache[url]
+            mem_cached_at = mem_data.get("cached_at")
+            if mem_cached_at is not None and (now - float(mem_cached_at) < ttl):
+                return mem_data
 
         cache_dir = self._get_cache_dir()
         url_hash = hashlib.sha256(url.encode("utf-8")).hexdigest()
         cache_file = cache_dir / f"{url_hash}.json"
 
+        cached_data = None
+        is_cache_valid = False
+
         if cache_file.is_file():
             try:
                 cached_data = json.loads(cache_file.read_text(encoding="utf-8"))
-                self._memory_cache[url] = cached_data
-                return cached_data
+                cached_at = cached_data.get("cached_at")
+                if cached_at is None:
+                    cached_at = cache_file.stat().st_mtime
+                if now - float(cached_at) < ttl:
+                    is_cache_valid = True
             except (OSError, ValueError):
-                pass
+                cached_data = None
+
+        if is_cache_valid and cached_data:
+            self._memory_cache[url] = cached_data
+            return cached_data
 
         try:
             safe_url = self.safe_encode_url(url)
             raw_html, content_type, charset, final_url = self.download_resource(safe_url, limit=2_000_000)
             if content_type not in ("text/html", "application/xhtml+xml"):
-                return data
+                return cached_data or data
 
             html_text = raw_html.decode(charset, errors="replace")
             meta_parser = MetadataParser()
@@ -136,6 +166,7 @@ class Parser(BaseComponentParser):
                 except Exception as img_err:
                     logger.debug(f"OGP画像の取得をスキップしました ({absolute_img_url}): {img_err}")
 
+            data["cached_at"] = now
             if cache_dir.exists():
                 try:
                     cache_file.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
@@ -144,6 +175,9 @@ class Parser(BaseComponentParser):
 
         except Exception as e:
             logger.warning(f"Failed to fetch OpenGraph data for {url}: {e}")
+            if cached_data:
+                self._memory_cache[url] = cached_data
+                return cached_data
 
         self._memory_cache[url] = data
         return data

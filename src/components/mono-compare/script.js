@@ -10,6 +10,14 @@ class MonoCompare extends MonoBaseElement {
     connectedCallback() {
         this.mountTemplate("template-mono-compare");
         this.resolveMode();
+        this.resolveGap();
+    }
+
+    resolveGap() {
+        const gap = this.getAttribute("gap");
+        if (gap && !["item", "group", "flow", "none"].includes(gap.toLowerCase())) {
+            this.style.setProperty("--compare-custom-gap", gap);
+        }
     }
 
     resolveMode() {

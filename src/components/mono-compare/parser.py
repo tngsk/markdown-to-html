@@ -43,10 +43,13 @@ class Parser(BaseComponentParser):
 
             inner_html = "\n".join(items)
 
-            # Clean mode from args so it's not redundantly added to common attributes
-            args_for_common = {k: v for k, v in args.items() if k != 'mode'}
+            # Clean mode and gap from args so they are not redundantly added to common attributes
+            gap = args.get('gap')
+            gap_attr = f' gap="{self.escape_html(gap)}"' if gap else ''
+
+            args_for_common = {k: v for k, v in args.items() if k not in ('mode', 'gap')}
             common_attrs = self.get_common_attributes(args_for_common)
 
-            return f'<mono-compare mode="{mode}"{common_attrs} markdown="1">\n{inner_html}\n</mono-compare>'
+            return f'<mono-compare mode="{mode}"{gap_attr}{common_attrs} markdown="1">\n{inner_html}\n</mono-compare>'
 
         return pattern.sub(replacer, markdown_content)
