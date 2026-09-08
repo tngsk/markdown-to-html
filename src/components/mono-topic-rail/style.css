@@ -10,22 +10,23 @@
     grid-column: 1 / -1;
 }
 
-/* スクロールする左端カラーラインコンテナ（幅5px） */
+/* スクロールするカラーラインコンテナ（幅2px、コンテンツ左側とブラウザ左端の中間に配置） */
 .topic-scroll-rail-container {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 5px;
+    left: var(--rail-left, 1.5rem);
+    width: 2px;
     height: 100%;
     z-index: 5;
     pointer-events: none;
+    transition: left 0.15s ease-out;
 }
 
-/* 各セクション区間の左端カラーライン（幅5px、不透明度100%） */
+/* 各セクション区間のカラーライン（幅2px、ソリッド、不透明度100%） */
 .topic-scroll-segment {
     position: absolute;
     left: 0;
-    width: 5px;
+    width: 2px;
     background-color: var(--segment-color, #eab308);
     opacity: 1;
     pointer-events: none;

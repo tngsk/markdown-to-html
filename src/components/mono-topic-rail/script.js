@@ -36,6 +36,24 @@ class MonoTopicRail extends MonoBaseElement {
         return top;
     }
 
+    calculateRailLeft() {
+        // ドキュメント内のコンテンツ要素（見出しや最初のトピック要素）の左端座標を取得
+        const sampleElement = this.topics.length > 0 
+            ? this.topics[0].element 
+            : document.querySelector("h1, h2, p, .column");
+        
+        if (!sampleElement) return 16;
+
+        const rect = sampleElement.getBoundingClientRect();
+        const contentLeft = rect.left;
+
+        // コンテンツ左側とブラウザ左端（0px）の間の中間位置
+        if (contentLeft > 4) {
+            return Math.round(contentLeft / 2);
+        }
+        return 4;
+    }
+
     initRail() {
         // 見出しの .topic または .section を走査
         const elements = Array.from(
@@ -47,7 +65,7 @@ class MonoTopicRail extends MonoBaseElement {
         const uniqueElements = Array.from(new Set(elements));
         if (uniqueElements.length === 0) return;
 
-        // Doc 5-tone 高視認性カラー配列（不透明度100%の鮮明カラー）
+        // Doc 5-tone 高視認性カラー配列（2pxソリッド用）
         const toneVars = [
             "#eab308", // Yellow
             "#ec4899", // Pink
@@ -69,6 +87,11 @@ class MonoTopicRail extends MonoBaseElement {
     renderSegments() {
         const container = this.shadowRoot ? this.shadowRoot.querySelector(".topic-scroll-rail-container") : null;
         if (!container || !this.topics.length) return;
+
+        // コンテンツ左端とブラウザ左端の中間位置を計算して配置
+        const railLeft = this.calculateRailLeft();
+        container.style.setProperty("--rail-left", `${railLeft}px`);
+        container.style.left = `${railLeft}px`;
 
         // 各トピックの絶対座標を再計算
         this.topics.forEach(t => {
