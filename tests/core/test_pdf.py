@@ -50,3 +50,12 @@ def test_config_resolve_pdf_output_file():
         pdf_output=None
     )
     assert config3.resolve_pdf_output_file() is None
+
+
+def test_base_css_print_styles():
+    css_path = Path("src/templates/core/base.css")
+    content = css_path.read_text(encoding="utf-8")
+    assert "@media print" in content
+    assert "background-image: none !important;" in content
+    assert '"BIZ UDGothic"' in content
+

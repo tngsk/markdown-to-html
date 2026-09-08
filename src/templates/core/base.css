@@ -569,6 +569,13 @@ h4.heading-marker, h5.heading-marker, h6.heading-marker {
         print-color-adjust: exact !important;
     }
 
+    body {
+        /* PDF書き出し時の巨大な背景ドット画像の生成を抑止 */
+        background-image: none !important;
+        /* macOS ChromiumでのPDFテキスト抽出時のKangxi部首グリフ文字化けを防止する印刷用フォントスタック */
+        font-family: "BIZ UDGothic", "Meiryo", "Arial Unicode MS", "Yu Gothic", "Noto Sans JP", sans-serif !important;
+    }
+
     body > * {
         opacity: 1.0 !important;
         filter: none !important;
