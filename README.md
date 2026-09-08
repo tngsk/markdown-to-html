@@ -90,6 +90,7 @@ Mono Space直系の見出しマーカー（文字ベースラインに重なる7
 | ダイアグラム | `@[mermaid]\ngraph TD; A-->B;\n@[/mermaid]` |
 | リンクカード | `@[link: タイトル](url: "https://example.com")`（TTLキャッシュ対応） |
 | テーマ切替 | `@[theme: corporate]()` |
+| トピックレール | `## 導入 {.topic}`（画面左端に3pxのDoc 5-tone進捗ラインを表示） |
 
 詳細なコンポーネント仕様や教育系パッケージ（`@interactive`）については [doc/SKILL.md](doc/SKILL.md) を参照してください。
 

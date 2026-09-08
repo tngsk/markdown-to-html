@@ -4,7 +4,7 @@
     --component-grid-column: 1 / -1;
     width: 100%;
     position: relative;
-
+    z-index: 10;
 
     overflow: hidden;
     /* Default to base theme color if no color or image is specified */

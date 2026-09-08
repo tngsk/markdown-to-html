@@ -61,6 +61,7 @@ ALLOWED_COMPONENTS = [
     "mono-synth",
     "mono-textfield-input",
     "mono-theme",
+    "mono-topic-rail",
     "mono-zoom",
 ]
 
@@ -166,6 +167,7 @@ MARKDOWN_EXTENSIONS = [
     "src.extensions.math",
     "src.extensions.notes",
     "src.extensions.highlight",
+    "src.extensions.topic_rail",
 ]
 
 

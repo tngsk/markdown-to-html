@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- 空間アンカリング用垂直カラーレールコンポーネント（`mono-topic-rail`、`src.extensions.topic_rail`）: `{.topic}` / `{.section}` 見出しに連動した画面左端3pxのDoc 5-toneマルチセグメント表示、ホバーツールチップ、クリックによるスムーズスクロール、印刷時自動非表示
+- `mono-section` と `mono-topic-rail` の重なり順制御（フルブリードセクション通過時にカラーラインが背面に潜り込む `z-index: 10` 対 `z-index: 5` のスタッキング階層設計）
 - Mono Space直系の見出しマーカー体系（`{.marker}`, `{.heading-marker}`: 72%〜91%帯比率、複数行追従の`box-decoration-break: clone`）
 - Space 3トーン（`normal`, `ai`, `warning`）およびDoc 5カラー（`yellow`, `pink`, `green`, `cyan`, `orange`）の相互運用サポート（見出し属性クラスおよびインライン `==強調=={ai}` 双方に対応）
 - `mono-compare` における Spacing Trinity（item, group, flow, none）および任意CSS長（16px等）の動的バインドによるカラム間余白（gap）制御
