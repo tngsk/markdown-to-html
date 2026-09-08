@@ -19,7 +19,7 @@
 }
 
 :root {
-    --content-max-width: min(92vw, 1800px);
+    --content-max-width: min(92vw, 1792px);
     --font-color: var(--color-base-content, #111827);
     --font-color-light: var(--color-base-content-muted, #374151);
     --body-padding-x: clamp(1rem, 3.5vw, 3.5rem);
@@ -79,10 +79,11 @@ body {
     background-color: var(--color-base-200, #f3f4f6);
     background-image: radial-gradient(circle, var(--dot-color) 1px, transparent 1px);
     background-size: var(--dot-size) var(--dot-size);
+    background-position: calc(50% - min(46vw, 896px)) var(--body-padding-y);
 
-    /* CSS Grid Layout: フルスクリーン画面フル活用（min(92vw, 1800px)） */
+    /* CSS Grid Layout: フルスクリーン画面フル活用（min(92vw, 1792px)） */
     display: grid;
-    grid-template-columns: minmax(var(--body-padding-x), 1fr) minmax(0, var(--content-max-width, 1800px)) minmax(
+    grid-template-columns: minmax(var(--body-padding-x), 1fr) minmax(0, var(--content-max-width, 1792px)) minmax(
             var(--body-padding-x),
             1fr
         );

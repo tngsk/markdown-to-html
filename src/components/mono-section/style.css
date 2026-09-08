@@ -31,7 +31,7 @@
     /* Allow custom height, default to auto */
     min-height: var(--section-height, auto);
     display: grid;
-    grid-template-columns: minmax(var(--body-padding-x, 1rem), 1fr) minmax(0, var(--content-max-width, 1800px)) minmax(
+    grid-template-columns: minmax(var(--body-padding-x, 1rem), 1fr) minmax(0, var(--content-max-width, 1792px)) minmax(
             var(--body-padding-x, 1rem),
             1fr
         );
