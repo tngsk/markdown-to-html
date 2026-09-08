@@ -42,7 +42,6 @@ ALLOWED_COMPONENTS = [
     "mono-drawer",
     "mono-export",
     "mono-flipcard",
-    "mono-flow",
     "mono-group-assignment",
     "mono-hero",
     "mono-icon",

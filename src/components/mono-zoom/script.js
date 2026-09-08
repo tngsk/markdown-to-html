@@ -11,7 +11,6 @@ class MonoZoom extends MonoBaseElement {
             'blockquote:not(.no-zoom)',
             'table:not(.no-zoom)',
             'mono-mermaid:not(.no-zoom)',
-            'mono-flow:not(.no-zoom)',
             'mono-image:not(.no-zoom)',
             'mono-code-block:not(.no-zoom)',
             'img:not(.colab-badge):not(.no-zoom)',

@@ -96,7 +96,6 @@ mono-zoom mono-code-block {
     margin: 0 auto var(--zoom-margin-flow) auto !important;
 }
 
-mono-zoom mono-flow,
 mono-zoom mono-media-grid {
     width: 100% !important;
     max-width: var(--zoom-max-width-lg) !important;

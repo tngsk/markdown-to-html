@@ -201,7 +201,6 @@
     margin: 0 auto var(--space-group) auto !important;
 }
 
-::slotted(mono-flow),
 ::slotted(mono-media-grid) {
     width: 100% !important;
     max-width: var(--zoom-max-width-lg, min(94vw, 1700px)) !important;

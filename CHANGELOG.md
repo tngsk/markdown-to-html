@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- 自由配置可能なベジェコネクタコンポーネント（`mono-connector`）: 任意要素間（ID指定）および任意座標間（相対パーセント/ピクセル指定）を滑らかに結ぶ3次ベジェ曲線、Space 3-tone連動、ハロー付きラベル、ResizeObserverによる動的追従
 - 空間アンカリング用垂直カラーレールコンポーネント（`mono-topic-rail`、`src.extensions.topic_rail`）: `{.topic}` / `{.section}` 見出しに連動した画面左端3pxのDoc 5-toneマルチセグメント表示、ホバーツールチップ、クリックによるスムーズスクロール、印刷時自動非表示
 - `mono-section` と `mono-topic-rail` の重なり順制御（フルブリードセクション通過時にカラーラインが背面に潜り込む `z-index: 10` 対 `z-index: 5` のスタッキング階層設計）
 - Mono Space直系の見出しマーカー体系（`{.marker}`, `{.heading-marker}`: 72%〜91%帯比率、複数行追従の`box-decoration-break: clone`）
@@ -33,6 +34,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 手書きブラシのトグル操作を `B` キー（および `Esc` で解除）へと刷新し、マーカー調の蛍光赤ピンク（`rgba(244, 63, 94, 0.75)`）による一定ストローク描画へ変更
 - プレゼンター機能（`mono-presenter`）のステータスを開発中（wip / experimental）へ変更
 - ドキュメント体系（`README.md`, `doc/SKILL.md`, `AGENTS.md`）の実装整合性訂正（PDFコマンド、サーバー起動コマンド、テキストサイズ記法、教育系コンポーネントの仕様等）
+
+### Removed
+- 開発保留中（frozen）であった旧フローチャートコンポーネント（`mono-flow`）の完全廃止（自由配置ベジェコネクタ `mono-connector` への統合代替）
 
 ### Fixed
 - `MediaEmbedder` におけるパス境界検証（`markdown_dir` および `Path.cwd()`）と通常ファイル検証（`is_file()`）を復元し、ディレクトリトラバーサルによる意図しないファイル埋め込みを防止

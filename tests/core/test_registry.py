@@ -32,11 +32,11 @@ class TestComponentRegistry(unittest.TestCase):
         self.assertIn("mono-presenter", wip)
         self.assertEqual(len(wip), 1)
         
-        # Verify 11 frozen components
+        # Verify 10 frozen components
         self.assertIn("mono-clock", frozen)
         self.assertIn("mono-countdown", frozen)
         self.assertIn("mono-dice", frozen)
-        self.assertEqual(len(frozen), 11)
+        self.assertEqual(len(frozen), 10)
 
     def test_category_filtering(self):
         interactive = get_components_by_category("interactive")
