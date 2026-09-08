@@ -444,6 +444,16 @@ mono-layout {
     --mono-underline-green: rgba(74, 222, 128, 0.75);
     --mono-underline-cyan: rgba(56, 189, 248, 0.75);
     --mono-underline-orange: rgba(251, 146, 60, 0.75);
+
+    /* Space 3-Tone Heading Markers */
+    --marker-space-normal: #fff272;
+    --marker-space-ai: #e6caff;
+    --marker-space-warning: #ffd5a4;
+
+    --mono-marker-ai: rgba(230, 202, 255, 0.75);
+    --mono-marker-warning: rgba(255, 213, 164, 0.75);
+    --mono-underline-ai: rgba(192, 132, 252, 0.75);
+    --mono-underline-warning: rgba(251, 146, 60, 0.75);
 }
 
 [data-theme="dark"],
@@ -462,6 +472,15 @@ mono-layout {
     --mono-underline-green: rgba(74, 222, 128, 0.8);
     --mono-underline-cyan: rgba(56, 189, 248, 0.8);
     --mono-underline-orange: rgba(251, 146, 60, 0.8);
+
+    --marker-space-normal: rgba(234, 179, 8, 0.42);
+    --marker-space-ai: rgba(192, 132, 252, 0.42);
+    --marker-space-warning: rgba(251, 146, 60, 0.42);
+
+    --mono-marker-ai: rgba(192, 132, 252, 0.38);
+    --mono-marker-warning: rgba(249, 115, 22, 0.38);
+    --mono-underline-ai: rgba(192, 132, 252, 0.8);
+    --mono-underline-warning: rgba(251, 146, 60, 0.8);
 }
 
 .mono-marker {
@@ -474,11 +493,13 @@ mono-layout {
     -webkit-box-decoration-break: clone;
 }
 
-.mono-marker-yellow { --marker-bg: var(--mono-marker-yellow); }
-.mono-marker-pink   { --marker-bg: var(--mono-marker-pink); }
-.mono-marker-green  { --marker-bg: var(--mono-marker-green); }
-.mono-marker-cyan   { --marker-bg: var(--mono-marker-cyan); }
-.mono-marker-orange { --marker-bg: var(--mono-marker-orange); }
+.mono-marker-yellow  { --marker-bg: var(--mono-marker-yellow); }
+.mono-marker-pink    { --marker-bg: var(--mono-marker-pink); }
+.mono-marker-green   { --marker-bg: var(--mono-marker-green); }
+.mono-marker-cyan    { --marker-bg: var(--mono-marker-cyan); }
+.mono-marker-orange  { --marker-bg: var(--mono-marker-orange); }
+.mono-marker-ai      { --marker-bg: var(--mono-marker-ai); }
+.mono-marker-warning { --marker-bg: var(--mono-marker-warning); }
 
 .mono-underline {
     background: linear-gradient(transparent 65%, var(--underline-bg, var(--mono-underline-yellow)) 65%);
@@ -489,11 +510,48 @@ mono-layout {
     -webkit-box-decoration-break: clone;
 }
 
-.mono-underline-yellow { --underline-bg: var(--mono-underline-yellow); }
-.mono-underline-pink   { --underline-bg: var(--mono-underline-pink); }
-.mono-underline-green  { --underline-bg: var(--mono-underline-green); }
-.mono-underline-cyan   { --underline-bg: var(--mono-underline-cyan); }
-.mono-underline-orange { --underline-bg: var(--mono-underline-orange); }
+.mono-underline-yellow  { --underline-bg: var(--mono-underline-yellow); }
+.mono-underline-pink    { --underline-bg: var(--mono-underline-pink); }
+.mono-underline-green   { --underline-bg: var(--mono-underline-green); }
+.mono-underline-cyan    { --underline-bg: var(--mono-underline-cyan); }
+.mono-underline-orange  { --underline-bg: var(--mono-underline-orange); }
+.mono-underline-ai      { --underline-bg: var(--mono-underline-ai); }
+.mono-underline-warning { --underline-bg: var(--mono-underline-warning); }
+
+/* Space直系 見出しマーカー体系 (Heading Marker) ------------------ */
+/* 文字ベースラインに重なる72%〜91%帯比率、複数行折り返し追従 */
+.marker,
+.heading-marker {
+    --marker-current-color: var(--marker-space-normal);
+    background: linear-gradient(
+        transparent 72%,
+        var(--marker-current-color) 72%,
+        var(--marker-current-color) 91%,
+        transparent 91%
+    );
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+/* 見出しに付与された場合はブロック余白への不要な延長を抑制 */
+h1.marker, h2.marker, h3.marker, h4.marker, h5.marker, h6.marker,
+h1.heading-marker, h2.heading-marker, h3.heading-marker,
+h4.heading-marker, h5.heading-marker, h6.heading-marker,
+.text-display.marker, .text-display.heading-marker {
+    width: fit-content;
+}
+
+/* Space 3トーン */
+.marker-normal, .heading-marker-normal   { --marker-current-color: var(--marker-space-normal); }
+.marker-ai, .heading-marker-ai           { --marker-current-color: var(--marker-space-ai); }
+.marker-warning, .heading-marker-warning { --marker-current-color: var(--marker-space-warning); }
+
+/* Doc 5カラー */
+.marker-yellow, .heading-marker-yellow   { --marker-current-color: var(--mono-marker-yellow); }
+.marker-pink, .heading-marker-pink       { --marker-current-color: var(--mono-marker-pink); }
+.marker-green, .heading-marker-green     { --marker-current-color: var(--mono-marker-green); }
+.marker-cyan, .heading-marker-cyan       { --marker-current-color: var(--mono-marker-cyan); }
+.marker-orange, .heading-marker-orange   { --marker-current-color: var(--mono-marker-orange); }
 
 /* Print specific global adjustments */
 @media print {

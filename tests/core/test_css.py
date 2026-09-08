@@ -149,6 +149,18 @@ class TestCSSEmbedder(unittest.TestCase):
         self.assertIn("--shadow-sm:", result)
         self.assertIn("--content-max-width:", result)
 
+    def test_base_css_space_marker_system(self):
+        base_css_path = Path(__file__).parent.parent.parent / "src" / "templates" / "core" / "base.css"
+        content = base_css_path.read_text(encoding="utf-8")
+        self.assertIn("--marker-space-normal:", content)
+        self.assertIn("--marker-space-ai:", content)
+        self.assertIn("--marker-space-warning:", content)
+        self.assertIn(".marker,", content)
+        self.assertIn(".heading-marker", content)
+        self.assertIn(".marker-ai", content)
+        self.assertIn(".marker-warning", content)
+        self.assertIn("box-decoration-break: clone;", content)
+
 
 if __name__ == '__main__':
     unittest.main()

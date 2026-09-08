@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Mono Space直系の見出しマーカー体系（`{.marker}`, `{.heading-marker}`: 72%〜91%帯比率、複数行追従の`box-decoration-break: clone`）
+- Space 3トーン（`normal`, `ai`, `warning`）およびDoc 5カラー（`yellow`, `pink`, `green`, `cyan`, `orange`）の相互運用サポート（見出し属性クラスおよびインライン `==強調=={ai}` 双方に対応）
 - `mono-compare` における Spacing Trinity（item, group, flow, none）および任意CSS長（16px等）の動的バインドによるカラム間余白（gap）制御
 - `mono-link` におけるローカルキャッシュの有効期限管理（TTL: デフォルト7日間、環境変数 `MONO_CACHE_TTL`）およびネットワーク障害時の古いキャッシュへの優雅なフォールバック
 - 16px繊細ドットグリッド背景体系（HTML・PDF両対応、CSS Gridコンテンツ領域との幾何学的原点同期）

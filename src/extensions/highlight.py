@@ -3,11 +3,13 @@ from xml.etree import ElementTree as etree
 from markdown.extensions import Extension
 from markdown.inlinepatterns import InlineProcessor
 
-VALID_COLORS = {"yellow", "pink", "green", "cyan", "orange"}
+VALID_COLORS = {"yellow", "pink", "green", "cyan", "orange", "ai", "warning"}
 COLOR_ALIASES = {
     "blue": "cyan",
     "sky": "cyan",
     "red": "pink",
+    "normal": "yellow",
+    "purple": "ai",
 }
 
 

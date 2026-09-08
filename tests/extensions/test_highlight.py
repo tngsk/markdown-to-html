@@ -18,6 +18,10 @@ def test_resolve_color():
     assert resolve_color("cyan") == "cyan"
     assert resolve_color("blue") == "cyan"  # alias
     assert resolve_color("orange") == "orange"
+    assert resolve_color("ai") == "ai"
+    assert resolve_color("purple") == "ai"  # alias
+    assert resolve_color("warning") == "warning"
+    assert resolve_color("normal") == "yellow"  # alias
     assert resolve_color("unknown_color") == "yellow"  # fallback
 
 
@@ -40,6 +44,12 @@ def test_marker_inline_parsing():
     
     html_orange = md.convert("これは ==重要オレンジ=={orange} です。")
     assert '<mark class="mono-marker mono-marker-orange">重要オレンジ</mark>' in html_orange
+
+    html_ai = md.convert("これは ==重要AI=={ai} です。")
+    assert '<mark class="mono-marker mono-marker-ai">重要AI</mark>' in html_ai
+
+    html_warning = md.convert("これは ==重要警告=={warning} です。")
+    assert '<mark class="mono-marker mono-marker-warning">重要警告</mark>' in html_warning
 
 
 def test_underline_inline_parsing():
