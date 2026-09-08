@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- 16px繊細ドットグリッド背景体系（HTML・PDF両対応、CSS Gridコンテンツ領域との幾何学的原点同期）
+- `mono-compare` コンポーネント（2要素: 1:1等幅対比、3要素: 1:2:1視線誘導対比の自動判別・明示指定）
+- `mono-link` における `MetadataParser`（HTMLParser）による属性順序非依存のOGP抽出、サイズ上限ガード（2MB/8MB）、およびローカルJSONキャッシュ（`.mono-cache`）
+- `MediaEmbedder` におけるバイナリのSHA-256コンテンツハッシュによる画像重複排除
+- `mono-flow` におけるDOM非依存の幾何計算モジュール（`MonoFlowGeometry`）の抽出
 - `minimal` プロファイルによる完全静的ドキュメント出力（Zero-JS、画像直接Data URI埋め込み、コードブロックアンラップ、CSP `script-src 'none'`、未対応コンポーネント検知・中断）
 - `BaseComponentParser`、`mono-badge`、`mono-link` における後置属性構文（`{.class #id}`）の共通解釈とマージ機能
 - 蛍光マーカー記法（`==テキスト=={color}`）および蛍光アンダーライン記法（`++テキスト++{color}`）の軽量インライン構文（5色対応: yellow, pink, green, cyan, orange）
@@ -15,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - プレゼンテーションモード（`-p presentation`）における手書き蛍光ブラシ機能（`mono-brush`）の標準統合
 
 ### Changed
+- プロジェクト正式名称を Mono から Mono Doc へ刷新
+- コンテンツ最大幅を 1800px から 16px の完全な整数倍である 1792px（112グリッド）へアラインメント
 - `mono-link` パーサーにおいて明示指定されたラベルをカードタイトルとして最優先し、OGPタイトルをフォールバックとして扱うよう仕様統一
 - `mono-export` においてサーバー送信時のHTTPステータスおよびレスポンスJSON内の `status === 'success'` の二重検証を実装
 - 手書きブラシのトグル操作を `B` キー（および `Esc` で解除）へと刷新し、マーカー調の蛍光赤ピンク（`rgba(244, 63, 94, 0.75)`）による一定ストローク描画へ変更

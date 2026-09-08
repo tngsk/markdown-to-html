@@ -1,6 +1,6 @@
-# Mono
+# Mono Doc
 
-Markdownを、ローカル画像やスタイルが埋め込まれた単一の自己完結型HTMLファイル（Single-File HTML）に変換するCLIツールです。プロジェクターでのプレゼンテーションから配布用ドキュメントまで、基本コンテンツはオフライン環境で完全動作します（外部画像や一部CDN連携機能を除く）。
+Markdownを、ローカル画像やスタイルが埋め込まれた単一の自己完結型HTMLファイル（Single-File HTML）および高精度PDFに変換するCLIツールです。16pxの繊細なドットグリッドによる知的で構造的なキャンバス上に、プロジェクターでのプレゼンテーションから配布用ドキュメントまで、オフライン環境で完全動作する成果物を生成します。
 
 ## インストール
 
@@ -32,7 +32,9 @@ uv run main.py --version
 
 ## 記法
 
-### 3×3 デザイントークン
+### 3×3 デザイントークン & 16px ドットグリッド
+
+Mono Docは、16pxのドットグリッドを基盤とした3段階の流体スケール（Typography Trinity / Spacing Trinity）を採用しています。
 
 ```markdown
 # 看板見出し {.text-display}
@@ -55,6 +57,7 @@ uv run main.py --version
 
 - タイポグラフィ: `.text-display`（大見出し）、`.text-body`（本文）、`.text-compact`（注釈・カラム内）
 - 余白: `.gap-flow`（均一112px）、`.gap-group`（64px）、`.gap-item`（23px）
+- 背景基盤: 16px四方の精緻なドットグリッドがコンテンツ境界（CSS Grid）と数理的に連動します。
 
 ### テキスト強調（マーカー・アンダーライン）
 
@@ -72,6 +75,7 @@ uv run main.py --version
 | コンポーネント | 構文例 |
 |---|---|
 | レイアウト | `@[hbox]{.gap-group}\n::: 左\n:::\n::: 右\n:::\n@[/hbox]` |
+| 比較（2/3要素） | `@[compare]\n::: Before\n従来\n:::\n::: After\n新提案\n:::\n@[/compare]` |
 | セクション | `@[section](padding: "group")\n...コンテンツ...\n@[/section]` |
 | ズーム | `@[zoom]()` または `-p presentation` |
 | コードブロック | 通常のコードブロック（```）から自動変換 |
