@@ -36,8 +36,10 @@
     --space-group: clamp(2.0rem, 3.5vw, 4.0rem);  /* 中間的・コンテナ/カラム間（約48〜64px） */
     --space-item: clamp(0.75rem, 1.2vw, 1.5rem);  /* 微小・要素内/インライン（約16〜24px） */
 
-    /* 2. Typography Trinity (タイポグラフィ3層体系) */
+    /* 2. Typography Trinity (タイポグラフィ3層体系 + 見出し階層トークン) */
     --font-display: clamp(2.5rem, 1.8rem + 3.5vw, 5.5rem);     /* 看板・大見出し（モバイル40px〜FHD88px） */
+    --font-title: clamp(2.0rem, 1.5rem + 1.8vw, 3.8rem);       /* セクション見出し・h2 */
+    --font-subtitle: clamp(1.65rem, 1.35rem + 1.2vw, 2.8rem);  /* サブ見出し・h3 */
     --font-body: clamp(1.5rem, 1.25rem + 0.8vw, 2.4rem);         /* 主旋律・標準本文（モバイル24px〜FHD35.4px） */
     --font-compact: clamp(1.25rem, 1.05rem + 0.65vw, 2.0rem);   /* 伴奏・box内/注釈（モバイル20px〜FHD29.3px） */
 
@@ -72,7 +74,7 @@ body {
         -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue",
         "Segoe UI", "Yu Gothic Medium", "Hiragino Kaku Gothic ProN",
         "Noto Sans JP", Meiryo, sans-serif;
-    font-size: clamp(1.5rem, 1.25rem + 0.8vw, 2.4rem);
+    font-size: var(--font-body);
     line-height: 1.85;
     font-feature-settings: "palt" 1;
     color: var(--font-color);
@@ -199,14 +201,14 @@ h1 {
 }
 
 h2 {
-    font-size: clamp(2.0rem, 1.5rem + 1.8vw, 3.8rem);
+    font-size: var(--font-title);
     font-weight: 700;
     line-height: 1.25;
     scroll-margin-top: 2.5rem;
 }
 
 h3 {
-    font-size: clamp(1.65rem, 1.35rem + 1.2vw, 2.8rem);
+    font-size: var(--font-subtitle);
     font-weight: 600;
     color: var(--font-color-light);
     line-height: 1.35;
@@ -375,15 +377,25 @@ th {
 
 /* カラム内・レイアウト内のテキスト最適化（--font-compact に完全統合） */
 .column,
-mono-layout {
+mono-layout,
+:where(.column, [class*="card"], [class*="preview"], blockquote) {
     font-size: var(--font-compact);
-    line-height: 1.75;
+    line-height: 1.65;
 }
 
-.column h1 { font-size: calc(var(--font-compact) * 1.5); }
-.column h2 { font-size: calc(var(--font-compact) * 1.3); }
-.column h3 { font-size: calc(var(--font-compact) * 1.15); }
-.column h4 { font-size: var(--font-compact); }
+.column h1 { font-size: calc(var(--font-compact) * 1.6); }
+.column h2 { font-size: calc(var(--font-compact) * 1.35); }
+.column h3 { font-size: calc(var(--font-compact) * 1.18); }
+.column h4,
+.column h5,
+.column h6 { font-size: var(--font-compact); }
+
+.column p,
+.column li,
+mono-layout p,
+mono-layout li {
+    font-size: var(--font-compact);
+}
 
 /* Colab -------------------------------------------------- */
 .colab-badge {
@@ -565,10 +577,12 @@ h4.heading-marker, h5.heading-marker, h6.heading-marker {
 /* Print specific global adjustments */
 @media print {
     :root {
-        /* Typography Trinity 印刷用スケーリング（画面大判表示とコンパクト表示の中間最適スケール） */
-        --font-display: 3.0rem !important;  /* 約48px (大見出し) */
-        --font-body: 1.35rem !important;    /* 約21.6px (本文) */
-        --font-compact: 1.1rem !important;  /* 約17.6px (伴奏・ボックス内) */
+        /* Typography Trinity & Hierarchy 印刷用中間スケール（画面大判表示とコンパクト表示の中間最適スケール） */
+        --font-display: 3.0rem !important;   /* 約48px (大見出し) */
+        --font-title: 2.25rem !important;    /* 約36px (セクション見出し・h2) */
+        --font-subtitle: 1.7rem !important;  /* 約27.2px (サブ見出し・h3) */
+        --font-body: 1.35rem !important;     /* 約21.6px (本文) */
+        --font-compact: 1.1rem !important;   /* 約17.6px (伴奏・ボックス内) */
     }
 
     html {
@@ -577,7 +591,6 @@ h4.heading-marker, h5.heading-marker, h6.heading-marker {
     }
 
     body {
-        font-size: var(--font-body) !important;
         /* Print background colors */
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
@@ -585,44 +598,6 @@ h4.heading-marker, h5.heading-marker, h6.heading-marker {
         background-image: none !important;
         /* macOS ChromiumでのPDFテキスト抽出時のKangxi部首グリフ文字化けを防止する印刷用フォントスタック */
         font-family: "BIZ UDGothic", "Meiryo", "Arial Unicode MS", "Yu Gothic", "Noto Sans JP", sans-serif !important;
-    }
-
-    h1 {
-        font-size: var(--font-display) !important;
-    }
-
-    h2 {
-        font-size: 2.25rem !important;
-    }
-
-    h3 {
-        font-size: 1.7rem !important;
-    }
-
-    h4, h5, h6 {
-        font-size: var(--font-compact) !important;
-    }
-
-    /* ボックス内（カラム・レイアウト等）のフォントサイズ最適化 */
-    .column,
-    mono-layout,
-    :where(.column, [class*="card"], [class*="preview"], blockquote) {
-        font-size: var(--font-compact) !important;
-        line-height: 1.65 !important;
-    }
-
-    .column h1 { font-size: 1.8rem !important; }
-    .column h2 { font-size: 1.5rem !important; }
-    .column h3 { font-size: 1.3rem !important; }
-    .column h4,
-    .column h5,
-    .column h6 { font-size: var(--font-compact) !important; }
-
-    .column p,
-    .column li,
-    mono-layout p,
-    mono-layout li {
-        font-size: var(--font-compact) !important;
     }
 
     .heading-highlight,
