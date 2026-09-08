@@ -10,71 +10,26 @@
     grid-column: 1 / -1;
 }
 
-/* スクロールする左端カラーラインコンテナ */
+/* スクロールする左端カラーラインコンテナ（幅5px） */
 .topic-scroll-rail-container {
     position: absolute;
     top: 0;
     left: 0;
-    width: 3px;
+    width: 5px;
     height: 100%;
     z-index: 5;
     pointer-events: none;
 }
 
-/* 各セクション区間の左端カラーライン */
+/* 各セクション区間の左端カラーライン（幅5px、不透明度100%） */
 .topic-scroll-segment {
     position: absolute;
     left: 0;
-    width: 3px;
+    width: 5px;
     background-color: var(--segment-color, #eab308);
+    opacity: 1;
     pointer-events: none;
     box-sizing: border-box;
-}
-
-/* 画面右上に固定表示されるセクション名インジケーター（カラー反転） */
-.topic-current-badge {
-    position: fixed;
-    top: 1.25rem;
-    right: 1.5rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.35rem 0.85rem;
-    background-color: var(--active-topic-color, #111827);
-    color: #ffffff;
-    border-radius: 9999px;
-    font-size: 0.825rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-    z-index: 9999;
-    pointer-events: auto;
-    cursor: pointer;
-    opacity: 0;
-    transform: translateY(-8px);
-    transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.25s ease;
-}
-
-.topic-current-badge.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.topic-badge-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: #ffffff;
-    opacity: 0.85;
-    flex-shrink: 0;
-}
-
-.topic-badge-title {
-    white-space: nowrap;
-    max-width: 360px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.2;
 }
 
 /* 印刷・PDF出力時は完全非表示 */
