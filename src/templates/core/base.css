@@ -519,7 +519,7 @@ mono-layout {
 .mono-underline-warning { --underline-bg: var(--mono-underline-warning); }
 
 /* Space直系 見出しマーカー体系 (Heading Marker) ------------------ */
-/* 見出し本体の背景をリセットし、内部の .heading-marker-text にテキスト幅でマーカーを引く */
+/* 見出し本体の背景をリセットし、内部の .heading-highlight にテキスト幅でマーカーを引く */
 .marker,
 .heading-marker,
 [class*="marker-"],
@@ -527,25 +527,27 @@ mono-layout {
     --marker-current-color: var(--marker-space-normal);
 }
 
+.heading-highlight,
 .heading-marker-text {
-    background: linear-gradient(
-        transparent 72%,
-        var(--marker-current-color, var(--marker-space-normal)) 72%,
-        var(--marker-current-color, var(--marker-space-normal)) 91%,
-        transparent 91%
-    );
+    /* Skia PDF出力時の透明境界補間による黒フリンジ（黒ボーダー）を根本防止するインセットシャドウ */
+    box-shadow: inset 0 -0.22em 0 0 var(--marker-current-color, var(--marker-space-normal));
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
     display: inline;
+    border: none !important;
+    outline: none !important;
+    text-decoration: none !important;
 }
 
-/* 見出し本体の不要な背景と全幅拡張を抑制 */
+/* 見出し本体の不要な背景と全幅拡張・枠線を抑制 */
 h1.marker, h2.marker, h3.marker, h4.marker, h5.marker, h6.marker,
 h1[class*="marker-"], h2[class*="marker-"], h3[class*="marker-"],
 h4[class*="marker-"], h5[class*="marker-"], h6[class*="marker-"],
 h1.heading-marker, h2.heading-marker, h3.heading-marker,
 h4.heading-marker, h5.heading-marker, h6.heading-marker {
     background: none !important;
+    border: none !important;
+    outline: none !important;
 }
 
 /* Space 3トーン */
@@ -562,18 +564,43 @@ h4.heading-marker, h5.heading-marker, h6.heading-marker {
 
 /* Print specific global adjustments */
 @media print {
-    html,
-    body {
-        /* Print background colors */
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
+    html {
+        /* PDF出力時の文字サイズをコンパクトに最適化（約80%スケール） */
+        font-size: 14px !important;
     }
 
     body {
+        font-size: 1.15rem !important;
+        /* Print background colors */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
         /* PDF書き出し時の巨大な背景ドット画像の生成を抑止 */
         background-image: none !important;
         /* macOS ChromiumでのPDFテキスト抽出時のKangxi部首グリフ文字化けを防止する印刷用フォントスタック */
         font-family: "BIZ UDGothic", "Meiryo", "Arial Unicode MS", "Yu Gothic", "Noto Sans JP", sans-serif !important;
+    }
+
+    h1 {
+        font-size: 2.4rem !important;
+    }
+
+    h2 {
+        font-size: 2.0rem !important;
+    }
+
+    h3 {
+        font-size: 1.5rem !important;
+    }
+
+    h4, h5, h6 {
+        font-size: 1.15rem !important;
+    }
+
+    .heading-highlight,
+    .heading-marker-text {
+        border: none !important;
+        outline: none !important;
+        text-decoration: none !important;
     }
 
     body > * {

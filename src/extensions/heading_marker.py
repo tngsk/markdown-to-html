@@ -22,10 +22,10 @@ class HeadingMarkerPostprocessor(Postprocessor):
             start_tag = m.group(1)
             content = m.group(2)
             end_tag = m.group(3)
-            # すでにheading-marker-textで包まれている場合は二重ラップを回避
-            if 'class="heading-marker-text"' in content:
+            # すでにheading-highlightまたはheading-marker-textで包まれている場合は二重ラップを回避
+            if 'class="heading-highlight"' in content or 'class="heading-marker-text"' in content:
                 return m.group(0)
-            return f'{start_tag}<span class="heading-marker-text">{content}</span>{end_tag}'
+            return f'{start_tag}<span class="heading-highlight">{content}</span>{end_tag}'
 
         return self.HEADING_MARKER_PATTERN.sub(wrap_heading_text, text)
 
