@@ -613,6 +613,14 @@ h4.heading-marker, h5.heading-marker, h6.heading-marker {
         transition: none !important;
     }
 
+    /* テキスト改行位置の紙面幅成り行き化: 42em行長制限およびpretty早期折り返しの解除 */
+    p,
+    li,
+    blockquote {
+        max-width: 100% !important;
+        text-wrap: wrap !important;
+    }
+
     /* コードブロックの印刷最適化: アンダースコアの分裂・重複や不要な改行を防止 */
     pre,
     code,

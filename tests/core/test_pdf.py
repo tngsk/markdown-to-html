@@ -70,5 +70,7 @@ def test_base_css_print_styles():
     assert "font-size: 13px !important;" in content
     assert "white-space: pre !important;" in content
     assert "ui-monospace" in content
+    assert "max-width: 100% !important;" in content
+    assert "text-wrap: wrap !important;" in content
 
 
