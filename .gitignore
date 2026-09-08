@@ -233,3 +233,4 @@ educational_templates/
 scripts/
 Makefile
 .mono-cache/
+scratch/

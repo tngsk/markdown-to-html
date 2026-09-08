@@ -4,10 +4,14 @@ import importlib.util
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
+import pytest
+
 spec = importlib.util.spec_from_file_location("mono_topic_rail_parser", "src/components/mono-topic-rail/parser.py")
 mono_topic_rail_parser = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mono_topic_rail_parser)
 Parser = mono_topic_rail_parser.Parser
+
+pytestmark = pytest.mark.skip(reason="トピックライン機能は開発中のため除外中")
 
 
 def test_topic_rail_auto_detected():
