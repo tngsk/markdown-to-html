@@ -109,4 +109,18 @@
         page-break-inside: avoid;
         break-inside: avoid;
     }
+
+    .copy-button {
+        display: none !important;
+    }
+
+    .code-content-slot pre,
+    .code-content-slot code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
+        font-size: 13px !important;
+        line-height: 1.45 !important;
+        white-space: pre !important;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+    }
 }

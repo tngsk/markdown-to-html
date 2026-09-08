@@ -612,6 +612,19 @@ h4.heading-marker, h5.heading-marker, h6.heading-marker {
         filter: none !important;
         transition: none !important;
     }
+
+    /* コードブロックの印刷最適化: アンダースコアの分裂・重複や不要な改行を防止 */
+    pre,
+    code,
+    mono-code-block pre,
+    mono-code-block code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
+        font-size: 13px !important;
+        line-height: 1.45 !important;
+        white-space: pre !important;
+        word-break: normal !important;
+        overflow-wrap: normal !important;
+    }
 }
 
 /* Accessibility: 視覚運動軽減設定への配慮 */

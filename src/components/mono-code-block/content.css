@@ -6,6 +6,7 @@ mono-code-block pre {
     background: transparent;
     color: var(--mono-code-text, var(--color-base-content));
     line-height: 1.5;
+    white-space: pre;
 }
 
 mono-code-block code {
@@ -17,6 +18,7 @@ mono-code-block code {
     font-variant-ligatures: none;
     font-size: 0.95em;
     line-height: 1.5;
+    white-space: pre;
 }
 
 /* Scrollbar styling for the code block */
