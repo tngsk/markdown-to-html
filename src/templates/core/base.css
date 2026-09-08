@@ -564,13 +564,20 @@ h4.heading-marker, h5.heading-marker, h6.heading-marker {
 
 /* Print specific global adjustments */
 @media print {
+    :root {
+        /* Typography Trinity 印刷用スケーリング（画面大判表示から印刷スケールへ） */
+        --font-display: 2.2rem !important;
+        --font-body: 1.05rem !important;
+        --font-compact: 0.92rem !important;
+    }
+
     html {
         /* PDF出力時の文字サイズをコンパクトに最適化（約80%スケール） */
         font-size: 14px !important;
     }
 
     body {
-        font-size: 1.15rem !important;
+        font-size: var(--font-body) !important;
         /* Print background colors */
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
@@ -581,19 +588,41 @@ h4.heading-marker, h5.heading-marker, h6.heading-marker {
     }
 
     h1 {
-        font-size: 2.4rem !important;
+        font-size: var(--font-display) !important;
     }
 
     h2 {
-        font-size: 2.0rem !important;
+        font-size: 1.75rem !important;
     }
 
     h3 {
-        font-size: 1.5rem !important;
+        font-size: 1.35rem !important;
     }
 
     h4, h5, h6 {
-        font-size: 1.15rem !important;
+        font-size: var(--font-compact) !important;
+    }
+
+    /* ボックス内（カラム・レイアウト等）のフォントサイズ最適化 */
+    .column,
+    mono-layout,
+    :where(.column, [class*="card"], [class*="preview"], blockquote) {
+        font-size: var(--font-compact) !important;
+        line-height: 1.6 !important;
+    }
+
+    .column h1 { font-size: 1.35rem !important; }
+    .column h2 { font-size: 1.2rem !important; }
+    .column h3 { font-size: 1.05rem !important; }
+    .column h4,
+    .column h5,
+    .column h6 { font-size: var(--font-compact) !important; }
+
+    .column p,
+    .column li,
+    mono-layout p,
+    mono-layout li {
+        font-size: var(--font-compact) !important;
     }
 
     .heading-highlight,
