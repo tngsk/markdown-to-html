@@ -1,0 +1,69 @@
+:host {
+    display: block;
+    width: 100%;
+    margin: 0;
+}
+
+.compare-container {
+    display: grid;
+    width: 100%;
+    box-sizing: border-box;
+    gap: var(--space-group, 2.5rem);
+    align-items: stretch;
+}
+
+/* 2要素比較モード（1:1 等幅分割・Before & After・二者択一） */
+:host([mode="2"]) .compare-container {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+}
+
+/* 3要素比較モード（1:2:1 成果物フォーカス型・三者視点） */
+:host([mode="3"]) .compare-container {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+}
+
+/* Mono Space直系の幾何補正（視線誘導：左上 → 中央成果物 → 右下） */
+:host([mode="3"]) ::slotted(:nth-child(1)) {
+    align-self: start;
+}
+
+:host([mode="3"]) ::slotted(:nth-child(2)) {
+    align-self: center;
+}
+
+:host([mode="3"]) ::slotted(:nth-child(3)) {
+    align-self: end;
+}
+
+/* スロットアイテムの共通スタイリング */
+::slotted(*) {
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* モバイル対応（画面幅768px以下では1列垂直スタックにフォールバック） */
+@media (max-width: 768px) {
+    .compare-container {
+        grid-template-columns: 1fr !important;
+        gap: var(--space-group, 2rem) !important;
+    }
+
+    :host([mode="3"]) ::slotted(:nth-child(1)),
+    :host([mode="3"]) ::slotted(:nth-child(2)),
+    :host([mode="3"]) ::slotted(:nth-child(3)) {
+        align-self: auto !important;
+    }
+}
+
+/* 印刷・PDF出力対応 */
+@media print {
+    :host {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .compare-container {
+        page-break-inside: avoid;
+    }
+}

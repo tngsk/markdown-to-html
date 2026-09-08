@@ -52,6 +52,10 @@
     --padding-lg: var(--space-group);
     --padding-md: var(--space-group);
     --padding-sm: var(--space-item);
+
+    /* 3. Dot Grid (16px繊細ドットグリッド体系) */
+    --dot-size: 16px;
+    --dot-color: rgba(100, 116, 139, 0.12);
 }
 
 html {
@@ -72,7 +76,9 @@ body {
     line-height: 1.85;
     font-feature-settings: "palt" 1;
     color: var(--font-color);
-    background: var(--color-base-200, #f3f4f6);
+    background-color: var(--color-base-200, #f3f4f6);
+    background-image: radial-gradient(circle, var(--dot-color) 1px, transparent 1px);
+    background-size: var(--dot-size) var(--dot-size);
 
     /* CSS Grid Layout: フルスクリーン画面フル活用（min(92vw, 1800px)） */
     display: grid;
